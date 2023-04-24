@@ -28,12 +28,12 @@ const HomeScreenStack = ({navigation}) => {
         name="HomeScreen"
         component={HomeScreen}
         options={{
-          title: 'HOME', //Set Header Title
+          title: 'Dashboard', //Set Header Title
           headerLeft: () => (
             <NavigationDrawerHeader navigationProps={navigation} />
           ),
           headerStyle: {
-            backgroundColor: '#ff3333', //Set Header color
+            backgroundColor: 'skyblue', //Set Header color
           },
           headerTintColor: '#fff', //Set Header text color
           headerTitleStyle: {
@@ -52,7 +52,7 @@ const PastRequestStack = ({navigation}) => {
         name="PastRequest"
         component={PastRequestScreen}
         options={{
-          title: 'Past Requests', //Set Header Title
+          title: 'Assets', //Set Header Title
           headerLeft: () => (
             <NavigationDrawerHeader navigationProps={navigation} />
           ),
@@ -76,7 +76,7 @@ const MyProfileStack = ({navigation}) => {
         name="ProfileScreen"
         component={ProfileScreen}
         options={{
-          title: 'My Profile', //Set Header Title
+          title: 'Locations', //Set Header Title
           headerLeft: () => (
             <NavigationDrawerHeader navigationProps={navigation} />
           ),
@@ -97,7 +97,7 @@ const AcceptedRequestStack = ({navigation}) => {
   return (
     <Stack.Navigator initialRouteName="AcceptedScreen">
       <Stack.Screen
-        name="AcceptedRequest"
+        name="Reports"
         component={AcceptedScreen}
         options={{
           title: 'Accepted Requests', //Set Header Title
@@ -244,13 +244,13 @@ const DrawerNavigatorRoutes = ({navgiation, route}) => {
       drawerContent={(props) => <CustomSidebarMenu {...props} />}>
       <Drawer.Screen
         name="HomeScreenStack"
-        options={{drawerLabel: 'Home', drawerIcon: (({focused}) => <Icon name="home" size={30} color="#900" />)}}
+        options={{drawerLabel: 'Dashboard', drawerIcon: (({focused}) => <Icon name="home" size={30} color="#900" />)}}
         component={HomeScreenStack}
         initialParams={{ params : user_data}}
       />
       <Drawer.Screen
         name="MapViewScreen"
-        options={{drawerLabel: 'Map View', drawerIcon: (({focused}) => <Icon name="map" size={30} color="#900" />)}}
+        options={{drawerLabel: 'Assets', drawerIcon: (({focused}) => <Icon name="map" size={30} color="#900" />)}}
         component={MapViewStack}
       />
       {/* <Drawer.Screen
@@ -260,31 +260,25 @@ const DrawerNavigatorRoutes = ({navgiation, route}) => {
       /> */}
       <Drawer.Screen
         name="AcceptedScreen"
-        options={{drawerLabel: 'Accepted Request', drawerIcon: (({focused}) => <Icon name="check-circle-outline" size={30} color="#900" />)}}
+        options={{drawerLabel: 'Locations', drawerIcon: (({focused}) => <Icon name="check-circle-outline" size={30} color="#900" />)}}
         component={AcceptedRequestStack}
         initialParams={{ params: user_data }}
       />
       <Drawer.Screen
         name="MyRaisedRequestScreen"
-        options={{drawerLabel: 'My Raised Request', drawerIcon: (({focused}) => <Icon name="playlist-add" size={30} color="#900" />)}}
+        options={{drawerLabel: 'Reports', drawerIcon: (({focused}) => <Icon name="playlist-add" size={30} color="#900" />)}}
         component={MyRaisedRequestStack}
         initialParams={{ params: user_data }}
       />
       <Drawer.Screen
         name="DonationHistoryScreen"
-        options={{drawerLabel: 'Donation History', drawerIcon: (({focused}) => <Icon name="history" size={30} color="#900" />)}}
+        options={{drawerLabel: 'Logs', drawerIcon: (({focused}) => <Icon name="history" size={30} color="#900" />)}}
         component={DonationHistoryStack}
         initialParams={{ params: user_data }}
       />
       <Drawer.Screen
-        name="PastRequestScreen"
-        options={{drawerLabel: 'Past Requests', drawerIcon: (({focused}) => <Icon name="playlist-add-check" size={30} color="#900" />)}}
-        component={PastRequestStack}
-        initialParams={{ params: user_data }}
-      />
-      <Drawer.Screen
         name="MyProfileStack"
-        options={{drawerLabel: 'My Profile', drawerIcon: (({focused}) => <Icon name="account-box" size={30} color="#900" />)}}
+        options={{drawerLabel: 'User Profile', drawerIcon: (({focused}) => <Icon name="account-box" size={30} color="#900" />)}}
         component={MyProfileStack}
         initialParams={{ params: user_data }}
       />

@@ -90,7 +90,7 @@ const LoginScreen = ({navigation}) => {
         <View>
           <KeyboardAvoidingView enabled>
             <View style={{alignItems: 'center'}}>
-              <Text style={styles.appNameStyle}>BLOOD SAVER APP</Text>
+              <Text style={styles.appNameStyle}>Asset Management System</Text>
             </View>
             <View style={styles.SectionStyle}>
               <TextInput
@@ -98,10 +98,9 @@ const LoginScreen = ({navigation}) => {
                 onChangeText={(UserEmail) =>
                   setUserEmail(UserEmail)
                 }
-                placeholder="EMAIL" //dummy@abc.com
+                placeholder="Username" //dummy@abc.com
                 placeholderTextColor="#8b9cb5"
                 autoCapitalize="none"
-                keyboardType="email-address"
                 returnKeyType="next"
                 onSubmitEditing={() =>
                   passwordInputRef.current &&
@@ -117,7 +116,7 @@ const LoginScreen = ({navigation}) => {
                 onChangeText={(UserPassword) =>
                   setUserPassword(UserPassword)
                 }
-                placeholder="PASSWORD" //12345
+                placeholder="Password" //12345
                 placeholderTextColor="#8b9cb5"
                 keyboardType="default"
                 ref={passwordInputRef}
@@ -156,7 +155,7 @@ const styles = StyleSheet.create({
   mainBody: {
     flex: 1,
     justifyContent: 'center',
-    backgroundColor: '#ff3333',
+    backgroundColor: '#fff',
     alignContent: 'center',
   },
   SectionStyle: {
@@ -168,7 +167,7 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   buttonStyle: {
-    backgroundColor: '#00b300',
+    backgroundColor: 'blue',
     borderWidth: 0,
     color: '#FFFFFF',
     borderColor: '#00b300',
@@ -193,8 +192,8 @@ const styles = StyleSheet.create({
     paddingRight: 15,
     borderWidth: 1,
     borderRadius: 30,
-    borderColor: '#ffffff',
-    backgroundColor: '#ffffff'
+    borderColor: 'black',
+    backgroundColor: '#fff111'
   },
   registerTextStyle: {
     color: '#FFFFFF',
@@ -207,7 +206,7 @@ const styles = StyleSheet.create({
   appNameStyle: { 
     fontSize: 45,
     fontWeight: 'bold',
-    color: '#f2f2f2',
+    color: 'blue',
     fontFamily: '',
     marginTop: -50,
     textAlign: 'center'
