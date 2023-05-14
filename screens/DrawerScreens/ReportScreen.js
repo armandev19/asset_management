@@ -1,15 +1,11 @@
 import React, {useState, useEffect} from 'react';
 import {View, Text, SafeAreaView, FlatList, StyleSheet, TouchableOpacity, Button, Modal, ToastAndroid, Alert, TextInput} from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
-import { Avatar, Card, Title, Paragraph, List } from 'react-native-paper';
 import Loader from './../Components/loader';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useFocusEffect } from '@react-navigation/native';
-
 import { selectUserData, setUserData } from '../redux/navSlice';
 import { useSelector } from 'react-redux';
 
-const AcceptedScreen = ({navigation, route}) => {
+const ReportScreen = ({navigation, route}) => {
   const [selectedId, setSelectedId] = useState(null);
   const [modalVisible, setModalVisible] = useState({modalVisible: false});
   const [loading, setLoading] = useState(false);
@@ -256,4 +252,4 @@ const styles = StyleSheet.create({
   }
 });
  
-export default AcceptedScreen;
+export default ReportScreen;

@@ -6,14 +6,12 @@ import {createDrawerNavigator} from '@react-navigation/drawer';
 import { useFocusEffect } from '@react-navigation/native';
 // Import Screens
 import HomeScreen from './DrawerScreens/HomeScreen';
-import AcceptedScreen from './DrawerScreens/AcceptedScreen';
-import MyRaisedRequestScreen from './DrawerScreens/MyRaisedRequestScreen';
-import DonationHistoryScreen from './DrawerScreens/DonationHistoryScreen';
-import PastRequestScreen from './DrawerScreens/PastRequestScreen';
-import MapViewScreen from './DrawerScreens/MapViewScreen';
+import AssetScreen from './DrawerScreens/AssetScreen';
+import LocationsScreen from './DrawerScreens/LocationsScreen';
+import ReportScreen from './DrawerScreens/ReportScreen';
+import LogsScreen from './DrawerScreens/LogsScreen';
+
 import CustomSidebarMenu from './Components/CustomSidebarMenu';
-import ProfileScreen from './DrawerScreens/ProfileScreen';
-import UsersScreen from './DrawerScreens/UsersScreen';
 
 import NavigationDrawerHeader from './Components/NavigationDrawerHead';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -33,7 +31,7 @@ const HomeScreenStack = ({navigation}) => {
             <NavigationDrawerHeader navigationProps={navigation} />
           ),
           headerStyle: {
-            backgroundColor: 'skyblue', //Set Header color
+            backgroundColor: '#348ceb', //Set Header color
           },
           headerTintColor: '#fff', //Set Header text color
           headerTitleStyle: {
@@ -45,19 +43,19 @@ const HomeScreenStack = ({navigation}) => {
   );
 };
 
-const PastRequestStack = ({navigation}) => {
+const AssetStack = ({navigation}) => {
   return (
-    <Stack.Navigator initialRouteName="PastRequestScreen">
+    <Stack.Navigator initialRouteName="AssetScreen">
       <Stack.Screen
-        name="PastRequest"
-        component={PastRequestScreen}
+        name="Assets"
+        component={AssetScreen}
         options={{
           title: 'Assets', //Set Header Title
           headerLeft: () => (
             <NavigationDrawerHeader navigationProps={navigation} />
           ),
           headerStyle: {
-            backgroundColor: '#ff3333', //Set Header color
+            backgroundColor: '#348ceb', //Set Header color
           },
           headerTintColor: '#fff', //Set Header text color
           headerTitleStyle: {
@@ -69,19 +67,19 @@ const PastRequestStack = ({navigation}) => {
   );
 };
 
-const MyProfileStack = ({navigation}) => {
+const LocationsStack = ({navigation}) => {
   return (
-    <Stack.Navigator initialRouteName="ProfileScreen">
+    <Stack.Navigator initialRouteName="LocationsScreen">
       <Stack.Screen
-        name="ProfileScreen"
-        component={ProfileScreen}
+        name="Locations"
+        component={LocationsScreen}
         options={{
           title: 'Locations', //Set Header Title
           headerLeft: () => (
             <NavigationDrawerHeader navigationProps={navigation} />
           ),
           headerStyle: {
-            backgroundColor: '#ff3333', //Set Header color
+            backgroundColor: '#348ceb', //Set Header color
           },
           headerTintColor: '#fff', //Set Header text color
           headerTitleStyle: {
@@ -93,19 +91,19 @@ const MyProfileStack = ({navigation}) => {
   );
 };
 
-const AcceptedRequestStack = ({navigation}) => {
+const ReportStack = ({navigation}) => {
   return (
-    <Stack.Navigator initialRouteName="AcceptedScreen">
+    <Stack.Navigator initialRouteName="ReportScreen">
       <Stack.Screen
         name="Reports"
-        component={AcceptedScreen}
+        component={ReportScreen}
         options={{
-          title: 'Accepted Requests', //Set Header Title
+          title: 'Reports', //Set Header Title
           headerLeft: () => (
             <NavigationDrawerHeader navigationProps={navigation} />
           ),
           headerStyle: {
-            backgroundColor: '#ff3333', //Set Header color
+            backgroundColor: '#348ceb', //Set Header color
           },
           headerTintColor: '#fff', //Set Header text color
           headerTitleStyle: {
@@ -117,91 +115,19 @@ const AcceptedRequestStack = ({navigation}) => {
   );
 };
 
-const MyRaisedRequestStack = ({navigation, route}) => {
+const LogsStack = ({navigation}) => {
   return (
-    <Stack.Navigator initialRouteName="MyRaisedRequestScreen">
+    <Stack.Navigator initialRouteName="LogsScreen">
       <Stack.Screen
-        name="MyRaisedRequest"
-        component={MyRaisedRequestScreen}
+        name="Logs"
+        component={LogsScreen}
         options={{
-          title: 'My Raised Request', //Set Header Title
+          title: 'Logs', //Set Header Title
           headerLeft: () => (
             <NavigationDrawerHeader navigationProps={navigation} />
           ),
           headerStyle: {
-            backgroundColor: '#ff3333', //Set Header color
-          },
-          headerTintColor: '#fff', //Set Header text color
-          headerTitleStyle: {
-            fontWeight: 'bold', //Set Header text style
-          },
-        }}
-      />
-    </Stack.Navigator>
-  );
-};
-
-const DonationHistoryStack = ({navigation}) => {
-  return (
-    <Stack.Navigator initialRouteName="DonationHistoryScreen">
-      <Stack.Screen
-        name="DonationHistory"
-        component={DonationHistoryScreen}
-        options={{
-          title: 'Donation History', //Set Header Title
-          headerLeft: () => (
-            <NavigationDrawerHeader navigationProps={navigation} />
-          ),
-          headerStyle: {
-            backgroundColor: '#ff3333', //Set Header color
-          },
-          headerTintColor: '#fff', //Set Header text color
-          headerTitleStyle: {
-            fontWeight: 'bold', //Set Header text style
-          },
-        }}
-      />
-    </Stack.Navigator>
-  );
-};
-
-const MapViewStack = ({navigation}) => {
-  return (
-    <Stack.Navigator initialRouteName="MapView">
-      <Stack.Screen
-        name="MapView"
-        component={MapViewScreen}
-        options={{
-          title: 'Map View', //Set Header Title
-          headerLeft: () => (
-            <NavigationDrawerHeader navigationProps={navigation} />
-          ),
-          headerStyle: {
-            backgroundColor: '#ff3333', //Set Header color
-          },
-          headerTintColor: '#fff', //Set Header text color
-          headerTitleStyle: {
-            fontWeight: 'bold', //Set Header text style
-          },
-        }}
-      />
-    </Stack.Navigator>
-  );
-};
-
-const UsersScreenStack = ({navigation}) => {
-  return (
-    <Stack.Navigator initialRouteName="UsersScreen">
-      <Stack.Screen
-        name="Users List"
-        component={UsersScreen}
-        options={{
-          title: 'Users List', //Set Header Title
-          headerLeft: () => (
-            <NavigationDrawerHeader navigationProps={navigation} />
-          ),
-          headerStyle: {
-            backgroundColor: '#ff3333', //Set Header color
+            backgroundColor: '#348ceb', //Set Header color
           },
           headerTintColor: '#fff', //Set Header text color
           headerTitleStyle: {
@@ -214,24 +140,6 @@ const UsersScreenStack = ({navigation}) => {
 };
 
 const DrawerNavigatorRoutes = ({navgiation, route}) => {
-  const[user_data, setUserData] = useState({});
-  
-  useFocusEffect(
-    React.useCallback(() => {
-        setTimeout(async () => {
-
-            try {
-                const userData = await AsyncStorage.getItem('user_id');
-                if (userData !== null) {
-                    let userDataArray = JSON.parse(userData);
-                    setUserData(userDataArray);
-                }
-            } catch (e) {
-                console.log(e);
-            }
-        });
-    }, [])
-  );
   return (
     <Drawer.Navigator
       screenOptions={{headerShown: false, color: 'red', textColor: 'yellow',
@@ -244,45 +152,30 @@ const DrawerNavigatorRoutes = ({navgiation, route}) => {
       drawerContent={(props) => <CustomSidebarMenu {...props} />}>
       <Drawer.Screen
         name="HomeScreenStack"
-        options={{drawerLabel: 'Dashboard', drawerIcon: (({focused}) => <Icon name="home" size={30} color="#900" />)}}
+        options={{drawerLabel: 'Dashboard', drawerIcon: (({focused}) => <Icon name="home" size={30} color="#348ceb" />)}}
         component={HomeScreenStack}
-        initialParams={{ params : user_data}}
       />
       <Drawer.Screen
-        name="MapViewScreen"
-        options={{drawerLabel: 'Assets', drawerIcon: (({focused}) => <Icon name="map" size={30} color="#900" />)}}
-        component={MapViewStack}
-      />
-      {/* <Drawer.Screen
-        name="MyProfileStack"
-        options={{drawerLabel: 'My Profile', drawerIcon: (({focused}) => <Icon name="user" size={30} color="#900" />)}}
-        component={MyProfileStack}
-      /> */}
-      <Drawer.Screen
-        name="AcceptedScreen"
-        options={{drawerLabel: 'Locations', drawerIcon: (({focused}) => <Icon name="check-circle-outline" size={30} color="#900" />)}}
-        component={AcceptedRequestStack}
-        initialParams={{ params: user_data }}
+        name="AssetScreen"
+        options={{drawerLabel: 'Assets', drawerIcon: (({focused}) => <Icon name="settings" size={30} color="#348ceb" />)}}
+        component={AssetStack}
       />
       <Drawer.Screen
-        name="MyRaisedRequestScreen"
-        options={{drawerLabel: 'Reports', drawerIcon: (({focused}) => <Icon name="playlist-add" size={30} color="#900" />)}}
-        component={MyRaisedRequestStack}
-        initialParams={{ params: user_data }}
+        name="LocationsScreen"
+        options={{drawerLabel: 'Locations', drawerIcon: (({focused}) => <Icon name="location-on" size={30} color="#348ceb" />)}}
+        component={LocationsStack}
       />
       <Drawer.Screen
-        name="DonationHistoryScreen"
-        options={{drawerLabel: 'Logs', drawerIcon: (({focused}) => <Icon name="history" size={30} color="#900" />)}}
-        component={DonationHistoryStack}
-        initialParams={{ params: user_data }}
+        name="ReportScreen"
+        options={{drawerLabel: 'Reports', drawerIcon: (({focused}) => <Icon name="list" size={30} color="#348ceb" />)}}
+        component={ReportStack}
       />
       <Drawer.Screen
-        name="MyProfileStack"
-        options={{drawerLabel: 'User Profile', drawerIcon: (({focused}) => <Icon name="account-box" size={30} color="#900" />)}}
-        component={MyProfileStack}
-        initialParams={{ params: user_data }}
+        name="LogsSreen"
+        options={{drawerLabel: 'Logs', drawerIcon: (({focused}) => <Icon name="info" size={30} color="#348ceb" />)}}
+        component={LogsStack}
       />
-     {(() => {
+     {/* {(() => {
         if (user_data.access == 'Admin') {
             return (
             <Drawer.Screen
@@ -293,7 +186,7 @@ const DrawerNavigatorRoutes = ({navgiation, route}) => {
             />
         );
       }
-    })()}
+    })()} */}
        
     </Drawer.Navigator>
   );

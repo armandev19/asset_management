@@ -15,17 +15,18 @@ const CustomSidebarMenu = (props) => {
   const [userEmail, setUserEmail] = useState('');
   const [userPassword, setUserPassword] = useState('');
   const dispatch = useDispatch();
+  
+  const currentUserData = useSelector(selectUserData);
 
   return (
     <View style={stylesSidebar.sideMenuContainer}>
       <View style={stylesSidebar.profileHeader}>
         <View style={stylesSidebar.profileHeaderPicCircle}>
-          <Text style={{fontSize: 25, color: '#cc0000'}}>
-            {'About React'.charAt(0)}
-          </Text>
         </View>
         <Text style={stylesSidebar.profileHeaderText}>
-          Profile
+          {currentUserData.firstname} {currentUserData.middlename} {currentUserData.lastname}
+          {`\n`}
+          {currentUserData.access}
         </Text>
       </View>
       <View style={stylesSidebar.profileHeaderLine} />
@@ -34,7 +35,11 @@ const CustomSidebarMenu = (props) => {
         <DrawerItemList {...props} />
         <DrawerItem
           label={({color}) => 
-            <Text style={{color: '#000000'}}>
+            <Text style={{
+              color: '#348ceb',
+              fontSize: 20,
+              fontWeight: 'bold'
+              }}>
               LOG OUT
             </Text>
           }
@@ -82,7 +87,7 @@ const stylesSidebar = StyleSheet.create({
   },
   profileHeader: {
     flexDirection: 'row',
-    backgroundColor: 'white',
+    backgroundColor: '#348ceb',
     padding: 15,
     textAlign: 'center',
   },
@@ -90,22 +95,23 @@ const stylesSidebar = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 60 / 2,
-    color: 'white',
-    backgroundColor: '#cc0000',
+    color: 'black',
+    backgroundColor: 'white',
     textAlign: 'center',
     justifyContent: 'center',
     alignItems: 'center',
   },
   profileHeaderText: {
-    color: 'white',
+    color: '#ffffff',
     alignSelf: 'center',
     paddingHorizontal: 10,
     fontWeight: 'bold',
+    fontSize: 20
   },
   profileHeaderLine: {
     height: 1,
     marginHorizontal: 20,
-    backgroundColor: '#cc0000',
+    backgroundColor: '#348ceb',
     marginTop: 15,
   },
 });
