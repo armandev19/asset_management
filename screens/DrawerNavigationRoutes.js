@@ -23,10 +23,10 @@ const HomeScreenStack = ({navigation}) => {
   return (
     <Stack.Navigator initialRouteName="HomeScreen">
       <Stack.Screen
-        name="HomeScreen"
+        name="Dashboard"
         component={HomeScreen}
         options={{
-          title: 'Dashboard', //Set Header Title
+          title: 'DASHBOARD', //Set Header Title
           headerLeft: () => (
             <NavigationDrawerHeader navigationProps={navigation} />
           ),
@@ -50,7 +50,7 @@ const AssetStack = ({navigation}) => {
         name="Assets"
         component={AssetScreen}
         options={{
-          title: 'Assets', //Set Header Title
+          title: 'ASSETS', //Set Header Title
           headerLeft: () => (
             <NavigationDrawerHeader navigationProps={navigation} />
           ),

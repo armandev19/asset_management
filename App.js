@@ -16,6 +16,8 @@ import DetailScreen from './screens/DetailScreen'
 import DonationDetailsScreen from './screens/DonationDetailsScreen'
 import EditProfileScreen from './screens/EditProfileScreen'
 import UserDetailsScreen from './screens/UserDetailsScreen'
+import AssetDetailsScreen from './screens/AssetDetailsScreen'
+
 import { Provider } from 'react-redux';
 import { store } from './screens/redux/store';
 
@@ -52,7 +54,7 @@ const Auth = () => {
 const App = () => {
   // global.url = "http://192.168.7.152/bloodmap/";
   // global.url = "https://homeworldconstruction.com/mobile/blood_saver/"
-  global.url = "http://192.168.1.8/bloodmap/";
+  global.url = "http://192.168.1.10/asset_management/";
   const appState = useRef(AppState.currentState);
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
 
@@ -125,6 +127,12 @@ const App = () => {
           title="User Details"
           component={UserDetailsScreen}
           options={{title: "User Details"}}
+        />
+        <Stack.Screen
+          name="AssetDetailsScreen"
+          title="Asset Details"
+          component={AssetDetailsScreen}
+          options={{title: "ASSET DETAILS"}}
         />
       </Stack.Navigator>
     </NavigationContainer>

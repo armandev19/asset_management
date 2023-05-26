@@ -5,78 +5,100 @@ import Loader from './../Components/loader';
 
 import { selectUserData, setUserData } from '../redux/navSlice';
 import { useSelector } from 'react-redux';
+import { ScrollView } from 'react-native-gesture-handler';
 
 const AssetScreen = ({navigation, route}) => {
 
 const [loading, setLoading] = useState(false);
-const [requests, setRequests] = useState([]);
+const [assets, setAssets] = useState([]);
 const [selectedId, setSelectedId] = useState(null);
 const [userdata, setUserData] = useState('');
 
 
 const currentUserData = useSelector(selectUserData);
 
-  const getAllApprovedRequest = () => {
-    setLoading(true)
-    let postDataApproved = {userAccess: userdata.access, userID: currentUserData.id};
-    let formBody = [];
-    for (let key in postDataApproved) {
-      let encodedKey = encodeURIComponent(key);
-      let encodedValue = encodeURIComponent(postDataApproved[key]);
-      formBody.push(encodedKey + '=' + encodedValue);
-    }
-    formBody = formBody.join('&');
-    fetch(global.url+'fetchApprovedRequest.php', {
-      method: 'POST',
-      body: formBody,
-      headers: {
-        //Header Defination
-        'Content-Type':
-        'application/x-www-form-urlencoded;charset=UTF-8',
-      },
+const getAssets = () => {
+  setLoading(true)
+  fetch(global.url+'getAssets.php', {
+    method: 'POST',
+    headers: {
+      'Content-Type':
+      'application/x-www-form-urlencoded;charset=UTF-8',
+    },
+  })
+    .then((response) => response.json())
+    .then((responseJson) => {
+      setLoading(false);
+      setAssets(responseJson.data);
     })
-      .then((response) => response.json())
-      .then((responseJson) => {
-        setLoading(false);
-        setRequests(responseJson.data);
-      })
-      .catch((error) => {
-        alert(error);
-        setLoading(false);
-        console.error(error);
-      });
-  }
+    .catch((error) => {
+      alert(error);
+      setLoading(false);
+      console.error(error);
+    });
+}
 
-  useEffect(()=>{
-    getAllApprovedRequest();
-  }, [])
-const renderItem = ({ item }) => {
-      const backgroundColor = item.id === selectedId ? "#f2f2f2" : "white";
-      const color = item.id === selectedId ? 'black' : 'black';
-      
-      return (
-            <Item
-            item={item}
-            onPress={() => setSelectedId(item.id)}
-            backgroundColor={{ backgroundColor }}
-            textColor={{ color }} 
-            />
-      );
-};
+useEffect(()=>{
+  getAssets();
+}, []);
 
-return (
-      <SafeAreaView style={{flex: 1}}>
-      <Loader loading={loading} />
-            <FlatList
-                  data={requests}
-                  renderItem={renderItem}
-                  keyExtractor={(item) => item.id}
-                  extraData={selectedId}
-                  style={{marginBottom: 15}}
-            />
-      </SafeAreaView>
-)
+  return (
+        <ScrollView styles={{flex: 1}}>
+          <View
+            style={{
+            justifyContent: 'center',
+            flex: 1
+          }}>
+            {assets.map((values, i) => (
+              <View>
+              <View style={{
+                width: '100%',
+                backgroundColor: 'white',
+                borderColor: '#717275cf',
+                borderWidth: 1,
+                padding: 5,
+                marginTop: 1,
+              }} key={i}>
+                <Text style={{color: 'black', fontSize: 20}}>{values.asset_name}</Text>
+                <Text style={{color: 'black', fontSize: 20}}>{values.asset_description}</Text>
+                <Text style={{color: 'black', fontSize: 20}}>{values.current_location}</Text>
+              </View>
+              <View>
+                <Button title='View' onPress={() => navigation.navigate("AssetDetailsScreen", values.id)}></Button>
+              </View>
+              </View>
+            ))}
+          </View>
+          
+          <TouchableOpacity style={styles.TouchableOpacityStyle}>
+              <Text>asdasd</Text>
+            </TouchableOpacity>
+        </ScrollView>
+  )
 };
 
  
 export default AssetScreen;
+
+const styles = StyleSheet.create({
+  assetContainer: {
+    padding: 10,
+    width: '100%',
+    backgroundColor: 'white',
+    color: 'white',
+    marginBottom: 5,
+    marginRight: 10,
+    marginLeft: 5,
+  },
+  TouchableOpacityStyle: {
+    //Here is the trick
+    backgroundColor: "red",
+    position: 'absolute',
+    width: 50,
+    height: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+    right: 30,
+    bottom: 30,
+ },
+});
