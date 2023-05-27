@@ -1,255 +1,121 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, SafeAreaView, FlatList, StyleSheet, TouchableOpacity, Button, Modal, ToastAndroid, Alert, TextInput} from 'react-native';
+import {View, Text, SafeAreaView, FlatList, StyleSheet, TouchableOpacity, Modal, ToastAndroid, Alert, TextInput} from 'react-native';
+import {Card, Title, Paragraph, Divider, List, Button, IconButton, Searchbar} from 'react-native-paper';
+
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Loader from './../Components/loader';
+
 import { selectUserData, setUserData } from '../redux/navSlice';
 import { useSelector } from 'react-redux';
+import { ScrollView } from 'react-native-gesture-handler';
 
-const LocationsScreen = ({navigation, route}) => {
-  const [selectedId, setSelectedId] = useState(null);
-  const [modalVisible, setModalVisible] = useState({modalVisible: false});
-  const [loading, setLoading] = useState(false);
-  const [qty, setQty] = useState();
-  const [purpose, setPurpose] = useState();
-  const [open, setOpen] = useState(false);
-  const [value, setValue] = useState(null);
-  const [userdata, setUserData] = useState('');
+const LocationScreen = ({navigation, route}) => {
 
-  const currentUserData = useSelector(selectUserData);
+const [loading, setLoading] = useState(false);
+const [assets, setAssets] = useState([]);
+const [selectedId, setSelectedId] = useState(null);
+const [userdata, setUserData] = useState('');
 
-  const [items, setItems] = useState([
-    {label: "A", value: 'A'},
-    {label: "B", value: 'B'},
-    {label: "AB", value: 'AB'},
-    {label: "O", value: 'O'},
-    {label: "A+", value: 'A+'},
-    {label: "A-", value: 'A-'},
-    {label: "B+", value: 'B+'},
-    {label: "B-", value: 'B-'},
-    {label: "AB+", value: 'AB+'},
-    {label: "AB-", value: 'AB-'},
-    {label: "O+", value: 'O+'},
-    {label: "O-", value: 'O-'},
-  ]);
-  const [requests, setRequests] = useState([]);
 
-  const getAllApprovedRequest = () => {
-    setLoading(true)
-    let postDataApproved = {userAccess: userdata.access, userID: currentUserData.id};
-    let formBody = [];
-    for (let key in postDataApproved) {
-      let encodedKey = encodeURIComponent(key);
-      let encodedValue = encodeURIComponent(postDataApproved[key]);
-      formBody.push(encodedKey + '=' + encodedValue);
-    }
-    formBody = formBody.join('&');
-    fetch(global.url+'fetchApprovedRequest.php', {
-      method: 'POST',
-      body: formBody,
-      headers: {
-        //Header Defination
-        'Content-Type':
-        'application/x-www-form-urlencoded;charset=UTF-8',
-      },
+const currentUserData = useSelector(selectUserData);
+
+const getLocations = () => {
+  setLoading(true)
+  fetch(global.url+'getLocations.php', {
+    method: 'POST',
+    headers: {
+      'Content-Type':
+      'application/x-www-form-urlencoded;charset=UTF-8',
+    },
+  })
+    .then((response) => response.json())
+    .then((responseJson) => {
+      setLoading(false);
+      setAssets(responseJson.data);
     })
-      .then((response) => response.json())
-      .then((responseJson) => {
-        setLoading(false);
-        setRequests(responseJson.data);
-      })
-      .catch((error) => {
-        alert(error);
-        setLoading(false);
-        console.error(error);
-      });
-  }
+    .catch((error) => {
+      alert(error);
+      setLoading(false);
+      console.error(error);
+    });
+}
 
-  useEffect(()=>{
-    getAllApprovedRequest();
-  }, [])
-
-  const renderItem = ({ item }) => {
-    const backgroundColor = item.id === selectedId ? "#f2f2f2" : "white";
-    const color = item.id === selectedId ? 'black' : 'black';
-
-    return (
-      <Item
-        item={item}
-        onPress={() => setSelectedId(item.id)}
-        backgroundColor={{ backgroundColor }}
-        textColor={{ color }} 
-      />
-    );
-  };
-
-  const tempDescription = (description, bloodtype, qty) => {
-    var temp = "QTY: "+qty+"\nBLOODTYPE: "+bloodtype
-    return temp
-  }
-  const Item = ({ item, onPress, backgroundColor, textColor }) => (
-    <List.Item
-      style={[styles.item, backgroundColor]}
-      title={item.request_number}
-      description={tempDescription(item.purpose, item.bloodtype, item.qty)}
-      left={props => <List.Icon icon='checkbox-marked-outline' color="green"/>}
-      right={props => 
-        <View style={{flexDirection: 'row'}}>
-          <Text style={{color: 'green', marginTop: 20, marginRight: 10, textTransform: 'uppercase', fontWeight: 'bold'}}>Approved</Text>
-        </View>
-      }
-      onPress={() => navigation.navigate('DetailScreen', item)}
-    />
-  );
-  
+useEffect(()=>{
+  getLocations();
+}, []);
 
   return (
-    <SafeAreaView style={{flex: 1}}>
-      <Loader loading={loading} />
-      <FlatList
-        data={requests}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-        extraData={selectedId}
-        style={{marginBottom: 15}}
-      />
-      <View style={styles.centeredView}>
-        <Modal
-          animationType="fade"
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={() => {
-            Alert.alert("Modal has been closed.");
-            setModalVisible(!modalVisible);
-          }}
-          backdropOpacity={0.9}
-          style={{height: 100}}
-        >
-          <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <Text style={styles.modalText}>NEW BLOOD DONATION REQUEST</Text>
-              <View style={styles.SectionStyle}>
-                <DropDownPicker
-                  open={open}
-                  value={value}
-                  items={items}
-                  setOpen={setOpen}
-                  setValue={setValue}
-                  setItems={setItems}
-                  containerStyle={{ width: "100%" }}
-                  placeholder="Select Blood Type"
-                />
-                <TextInput placeholder="Qty" placeholderTextColor={'black'} keyboardType="numeric" style={styles.inputStyle} onChangeText={(qty) =>
-                    setQty(qty)
-                  }>
-                </TextInput>
-                <TextInput 
-                  placeholder="Needed Date" 
-                  placeholderTextColor={'black'} 
-                  style={styles.inputStyle}
-                  
-                />
-                <TextInput multiline numberOfLines={4} placeholder="Purpose" placeholderTextColor={'black'} style={styles.inputStyle} onChangeText={(purpose) =>
-                    setPurpose(purpose)
-                  }>
-                </TextInput>
-                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', flex: 1}}>
-                  <View style={{flex: 1, padding: 10, margin: 0}}>
-                    <Button
-                      onPress={() => saveBloodRequest()}
-                      title="Save"
-                    />  
-                  </View>
-                  <View style={{flex: 1, padding: 10, margin: 0}}>
-                    <Button
-                      onPress={() => setModalVisible(!modalVisible)}
-                      title="Cancel"
-                    />  
-                  </View>
-                </View>
-              </View>
-            </View>
+      <View>
+        <View style={{flexDirection: 'row', marginBottom: 8}}>
+          <Searchbar
+            placeholder="Search"
+            // onChangeText={onChangeSearch}
+            // value={searchQuery}
+            style={{marginTop: 5, marginHorizontal: 5, flex: 6}}
+          />
+          <Button style={{marginHorizontal: 3, marginTop: 4, padding: 5}} labelStyle={{fontWeight: 'bold'}} icon="plus" compact="true" mode="contained" onPress={() => navigation.navigate('AddLocationScreen')}>
+          </Button>
+        </View>
+        <ScrollView styles={{flex: 1}}>
+          <View
+            style={{
+            justifyContent: 'center',
+            flex: 1
+          }}>
+            {assets.map((values, i) => (
+              <List.Item
+              style={{ backgroundColor: 'white', marginTop: 1}}
+              title={values.name}
+              description={values.address}
+              left={props => <List.Icon {...props} icon="folder"
+               />}
+              onPress={()=> navigation.navigate('AssetDetailsScreen', values.id)}
+            />
+            ))}
           </View>
-        </Modal>
+        </ScrollView>
       </View>
-    </SafeAreaView>
-  );
+  )
 };
 
+ 
+export default LocationScreen;
+
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  item: {
-    flex: 1,
-    marginVertical: 10,
-    marginHorizontal: 8,
-    borderRadius: 5,
-  },
-  title: {
-    fontSize: 25,
-  },
-  centeredView: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 1,
-  },
-  modalView: {
-    height: "50%",
-    width: "90%",
-    marginTop: 20,
-    backgroundColor: "white",
-    borderRadius: 10,
-    padding: 0,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 20
-  },
-  button: {
-    borderRadius: 20,
+  assetContainer: {
     padding: 10,
-    elevation: 2,
-  },
-  modalText: {
-    marginTop: 15,
-    marginBottom: 15,
-    textAlign: "center",
-    color: 'black',
-    fontSize: 20,
-    fontWeight: 'bold'
-  },
-  selectDropdown: {
-    paddingLeft: 10,
-    paddingRight: 10,
-    borderWidth: 1,
-    borderRadius: 30,
-    height: 40,
-    borderColor: '#dadae8',
+    width: '100%',
     backgroundColor: 'white',
-    width: '80%'
+    color: 'white',
+    marginBottom: 5,
+    marginRight: 10,
+    marginLeft: 5,
   },
-  inputStyle: {
-    color: 'black',
-    borderWidth: 1,
-    borderRadius: 5,
-    borderColor: 'black',
-    marginTop: 10,
-    flex: 1
+  TouchableOpacityStyle: {
+    //Here is the trick
+    backgroundColor: "red",
+    position: 'absolute',
+    width: 50,
+    height: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+    right: 30,
+    bottom: 30,
   },
-  SectionStyle: {
-    flex: 1,
-    margin: 20,
-  },
-  viewButtons: {
+  searchBox: {
+    marginTop: 8,
+    marginBottom: 5,
     flexDirection: 'row',
-    marginVertical: 5
+    backgroundColor: '#fff',
+    padding: 1,
+    width: '95%',
+    alignSelf: 'center',
+    borderRadius: 20,
+    shadowColor: '#ccc',
+    shadowOffset: {width: 0, height: 3},
+    shadowOpacity: 0.5,
+    shadowRadius: 5,
+    elevation: 10,
   }
 });
- 
-export default LocationsScreen;

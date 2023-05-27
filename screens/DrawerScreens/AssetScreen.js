@@ -1,5 +1,8 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, SafeAreaView, FlatList, StyleSheet, TouchableOpacity, Button, Modal, ToastAndroid, Alert, TextInput} from 'react-native';
+import {View, Text, SafeAreaView, FlatList, StyleSheet, TouchableOpacity, Modal, ToastAndroid, Alert, TextInput} from 'react-native';
+import {Card, Title, Paragraph, Divider, List, Button, IconButton, Searchbar} from 'react-native-paper';
+
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Loader from './../Components/loader';
 
@@ -43,6 +46,18 @@ useEffect(()=>{
 }, []);
 
   return (
+      <View>
+        <View style={{flexDirection: 'row', marginBottom: 8}}>
+          <Searchbar
+            placeholder="Search"
+            // onChangeText={onChangeSearch}
+            // value={searchQuery}
+            style={{marginTop: 5, marginHorizontal: 5, flex: 6}}
+          />
+          <Button style={{marginHorizontal: 3, marginTop: 4, padding: 5}} labelStyle={{fontWeight: 'bold'}} icon="plus" compact="true" mode="contained" onPress={() => navigation.navigate('AddAssetScreen')}>
+            
+          </Button>
+        </View>
         <ScrollView styles={{flex: 1}}>
           <View
             style={{
@@ -50,30 +65,18 @@ useEffect(()=>{
             flex: 1
           }}>
             {assets.map((values, i) => (
-              <View>
-              <View style={{
-                width: '100%',
-                backgroundColor: 'white',
-                borderColor: '#717275cf',
-                borderWidth: 1,
-                padding: 5,
-                marginTop: 1,
-              }} key={i}>
-                <Text style={{color: 'black', fontSize: 20}}>{values.asset_name}</Text>
-                <Text style={{color: 'black', fontSize: 20}}>{values.asset_description}</Text>
-                <Text style={{color: 'black', fontSize: 20}}>{values.current_location}</Text>
-              </View>
-              <View>
-                <Button title='View' onPress={() => navigation.navigate("AssetDetailsScreen", values.id)}></Button>
-              </View>
-              </View>
+              <List.Item
+              style={{ backgroundColor: 'white', marginTop: 1}}
+              title={values.asset_code}
+              description={values.asset_name}
+              left={props => <List.Icon {...props} icon="folder"
+               />}
+              onPress={()=> navigation.navigate('AssetDetailsScreen', values.id)}
+            />
             ))}
           </View>
-          
-          <TouchableOpacity style={styles.TouchableOpacityStyle}>
-              <Text>asdasd</Text>
-            </TouchableOpacity>
         </ScrollView>
+      </View>
   )
 };
 
@@ -100,5 +103,20 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     right: 30,
     bottom: 30,
- },
+  },
+  searchBox: {
+    marginTop: 8,
+    marginBottom: 5,
+    flexDirection: 'row',
+    backgroundColor: '#fff',
+    padding: 1,
+    width: '95%',
+    alignSelf: 'center',
+    borderRadius: 20,
+    shadowColor: '#ccc',
+    shadowOffset: {width: 0, height: 3},
+    shadowOpacity: 0.5,
+    shadowRadius: 5,
+    elevation: 10,
+  }
 });

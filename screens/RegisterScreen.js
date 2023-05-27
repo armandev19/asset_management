@@ -267,17 +267,6 @@ const RegisterScreen = (props) => {
           justifyContent: 'center',
           alignContent: 'center',
         }}>
-        <View style={{alignItems: 'center'}}>
-          {/* <Image
-            source={require('../Image/aboutreact.png')}
-            style={{
-              width: '50%',
-              height: 100,
-              resizeMode: 'contain',
-              margin: 30,
-            }}
-          /> */}
-        </View>
         <KeyboardAvoidingView enabled>
           <View style={styles.SectionStyle}>
             <TextInput

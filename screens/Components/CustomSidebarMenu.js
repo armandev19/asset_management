@@ -23,11 +23,20 @@ const CustomSidebarMenu = (props) => {
       <View style={stylesSidebar.profileHeader}>
         <View style={stylesSidebar.profileHeaderPicCircle}>
         </View>
-        <Text style={stylesSidebar.profileHeaderText}>
+
+        {currentUserData ? (
+          <Text style={stylesSidebar.profileHeaderText}>
           {currentUserData.firstname} {currentUserData.middlename} {currentUserData.lastname}
           {`\n`}
           {currentUserData.access}
         </Text>
+        ) :
+        (
+          <Text style={stylesSidebar.profileHeaderText}>
+            
+          </Text>
+        )}
+          
       </View>
       <View style={stylesSidebar.profileHeaderLine} />
  

@@ -12,11 +12,15 @@ import SplashScreen from './screens/SplashScreen';
 import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import DrawerNavigationRoutes from './screens/DrawerNavigationRoutes';
-import DetailScreen from './screens/DetailScreen'
-import DonationDetailsScreen from './screens/DonationDetailsScreen'
-import EditProfileScreen from './screens/EditProfileScreen'
-import UserDetailsScreen from './screens/UserDetailsScreen'
-import AssetDetailsScreen from './screens/AssetDetailsScreen'
+import DetailScreen from './screens/DetailScreen';
+import DonationDetailsScreen from './screens/DonationDetailsScreen';
+import EditProfileScreen from './screens/EditProfileScreen';
+import UserDetailsScreen from './screens/UserDetailsScreen';
+import AssetDetailsScreen from './screens/AssetDetailsScreen';
+import AddAssetScreen from './screens/AddAssetScreen';
+import AddLocationScreen from './screens/AddLocationScreen';
+
+
 
 import { Provider } from 'react-redux';
 import { store } from './screens/redux/store';
@@ -129,10 +133,48 @@ const App = () => {
           options={{title: "User Details"}}
         />
         <Stack.Screen
+          name="AddAssetScreen"
+          title="Add Asset"
+          component={AddAssetScreen}
+          options={{
+            title: "ADD LOCATION",
+            headerStyle: {
+              backgroundColor: '#348ceb', //Set Header color
+            },
+            headerTintColor: '#fff', //Set Header text color
+            headerTitleStyle: {
+              fontWeight: 'bold', //Set Header text style
+            },
+          }}
+        />
+        <Stack.Screen
+          name="AddLocationScreen"
+          title="Add Asset"
+          component={AddLocationScreen}
+          options={{
+            title: "ADD LOCATION",
+            headerStyle: {
+              backgroundColor: '#348ceb', //Set Header color
+            },
+            headerTintColor: '#fff', //Set Header text color
+            headerTitleStyle: {
+              fontWeight: 'bold', //Set Header text style
+            },
+          }}
+        />
+        <Stack.Screen
           name="AssetDetailsScreen"
           title="Asset Details"
           component={AssetDetailsScreen}
-          options={{title: "ASSET DETAILS"}}
+          options={{
+            title: "ASSET DETAILS",
+            headerStyle: {
+              backgroundColor: '#348ceb', //Set Header color
+            },
+            headerTintColor: '#fff', //Set Header text color
+            headerTitleStyle: {
+              fontWeight: 'bold', //Set Header text style
+            },}}
         />
       </Stack.Navigator>
     </NavigationContainer>
