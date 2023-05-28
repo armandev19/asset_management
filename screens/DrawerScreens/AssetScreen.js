@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, SafeAreaView, FlatList, StyleSheet, TouchableOpacity, Modal, ToastAndroid, Alert, TextInput} from 'react-native';
+import {View, Text, SafeAreaView, FlatList, StyleSheet, TouchableOpacity, Modal, ToastAndroid, Alert, TextInput, RefreshControl} from 'react-native';
 import {Card, Title, Paragraph, Divider, List, Button, IconButton, Searchbar} from 'react-native-paper';
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -41,42 +41,79 @@ const getAssets = () => {
     });
 }
 
+const onRefresh = () => {
+  getAssets();
+};
+
+function RowItem({ navigation, asset_code, asset_description, original_location, id }) {
+  return (
+    <Card style={{ margin: 5 }}>
+      <TouchableOpacity onPress={() => navigation.navigate("AssetDetailsScreen", id)}>
+        <View>
+          <View style={{ flexDirection: 'row', padding: 5 }}>
+            <Text adjustsFontSizeToFit style={{ color: 'black', fontSize: 15, fontWeight: "bold", textTransform: 'uppercase', width: '35%' }}>{asset_code}</Text>
+          </View>
+        </View>
+        <View style={styles.item}>
+          <Text adjustsFontSizeToFit style={styles.textTitle}>ASSSET NAME: </Text>
+          <View style={{ }}>
+            <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{asset_code}</Text>
+          </View>
+        </View>
+        <View style={styles.item}>
+          <Text adjustsFontSizeToFit style={styles.textTitle}>DESCRIPTION: </Text>
+          <View style={{ }}>
+            <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{asset_description}</Text>
+          </View>
+        </View>
+      </TouchableOpacity>
+    </Card>
+  );
+}
+
 useEffect(()=>{
   getAssets();
 }, []);
 
   return (
-      <View>
-        <View style={{flexDirection: 'row', marginBottom: 8}}>
+      <View style={{flex: 1, justifyContent: 'center'}}>
+        <View style={{flexDirection: 'row', marginBottom: 8, height: 50}}>
           <Searchbar
             placeholder="Search"
             // onChangeText={onChangeSearch}
             // value={searchQuery}
-            style={{marginTop: 5, marginHorizontal: 5, flex: 6}}
+            style={{marginTop: 10, marginHorizontal: 5, flex: 6}}
           />
           <Button style={{marginHorizontal: 3, marginTop: 4, padding: 5}} labelStyle={{fontWeight: 'bold'}} icon="plus" compact="true" mode="contained" onPress={() => navigation.navigate('AddAssetScreen')}>
             
           </Button>
         </View>
-        <ScrollView styles={{flex: 1}}>
-          <View
-            style={{
-            justifyContent: 'center',
-            flex: 1
-          }}>
-            {assets.map((values, i) => (
-              <List.Item
-              key={i}
-              style={{ backgroundColor: 'white', marginTop: 1}}
-              title={values.asset_code}
-              description={values.asset_name}
-              left={props => <List.Icon {...props} icon="folder"
-               />}
-              onPress={()=> navigation.navigate('AssetDetailsScreen', values.id)}
+        <View styles={{flex: 1, padding: 6, alignSelf: 'center'}}>
+            <FlatList
+              data={assets}
+              initialNumToRender={10}
+              windowSize={5}
+              maxToRenderPerBatch={5}
+              updateCellsBatchingPeriod={30}
+              removeClippedSubviews={false}
+              onEndReachedThreshold={0.1}
+              renderItem={({ item }) =>
+                <RowItem
+                  navigation={navigation}
+                  asset_code={item.asset_code}
+                  original_location={item.original}
+                  asset_description={item.asset_description}
+                  id={item.id}
+                />
+              }
+              refreshControl={
+                <RefreshControl
+                  refreshing={false}
+                  onRefresh={onRefresh}
+                />
+              }
             />
-            ))}
-          </View>
-        </ScrollView>
+            </View>
       </View>
   )
 };
@@ -85,6 +122,25 @@ useEffect(()=>{
 export default AssetScreen;
 
 const styles = StyleSheet.create({
+  item: {
+    flexDirection: 'row',
+    padding: 3,
+  },
+  textTitle: {
+    width: '30%',
+    color: '#3d3d3d',
+    fontWeight: "bold",
+    fontSize: 12,
+    textTransform: 'uppercase'
+  },
+  textChild: {
+    width: '70%',
+    color: '#404040',
+    flex: 1,
+    fontSize: 12,
+    marginLeft: 6,
+    textTransform: 'uppercase'
+  },
   assetContainer: {
     padding: 10,
     width: '100%',

@@ -73,6 +73,7 @@ const AddAssetScreen = ({route, navigation}) => {
 			setLoading(false);
 		});
 	}
+  
 	const getLocationDropdown = () => {
 		setLoading(true)
 		fetch(global.url+'getLocationDropdown.php', {
