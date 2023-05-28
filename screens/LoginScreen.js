@@ -1,7 +1,6 @@
 import React, {useState, createRef, useEffect} from 'react';
 import {
   StyleSheet,
-  TextInput,
   View,
   Text,
   ScrollView,
@@ -11,10 +10,12 @@ import {
   KeyboardAvoidingView,
 } from 'react-native';
  
+import {Card, Title, Paragraph, Divider, TextInput, Button} from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { setUserData } from './redux/navSlice';
 import { useDispatch } from 'react-redux';
 import Loader from './Components/loader';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
  
 const LoginScreen = ({navigation}) => {
   const [userEmail, setUserEmail] = useState('');
@@ -87,6 +88,8 @@ const LoginScreen = ({navigation}) => {
           justifyContent: 'center',
           alignContent: 'center',
         }}>
+        <Icon style={{fontSize: 200, color: 'green', textAlign: 'center', color: '#FFFFFF', marginTop: -150}} name="devices"></Icon>
+        <Text style={{textAlign: 'center', fontSize: 30, fontWeight: 'bold', marginBottom: 10, color: '#FFFFFF'}}>ASSET MANAGEMENT</Text>
         <View style={{
           backgroundColor: 'white', 
           marginLeft: 20,
@@ -98,37 +101,25 @@ const LoginScreen = ({navigation}) => {
           <KeyboardAvoidingView enabled>
             <View style={styles.SectionStyle}>
               <TextInput
-                style={styles.inputStyle}
-                onChangeText={(UserEmail) =>
-                  setUserEmail(UserEmail)
-                }
-                placeholder="Username" //dummy@abc.com
-                placeholderTextColor="#8b9cb5"
-                autoCapitalize="none"
-                returnKeyType="next"
-                onSubmitEditing={() =>
-                  passwordInputRef.current &&
-                  passwordInputRef.current.focus()
-                }
-                underlineColorAndroid="#f000"
-                blurOnSubmit={false}
-              />
+                style={{width: '100%'}}
+                theme={{ roundness: 20 }}
+								mode="outlined"
+                label="Username"
+								activeOutlineColor='#348ceb'
+                value={userEmail}
+                onChangeText={userEmail => setUserEmail(userEmail)}
+							/>
             </View>
             <View style={styles.SectionStyle}>
               <TextInput
-                style={styles.inputStyle}
-                onChangeText={(UserPassword) =>
-                  setUserPassword(UserPassword)
-                }
-                placeholder="Password" //12345
-                placeholderTextColor="#8b9cb5"
-                keyboardType="default"
-                ref={passwordInputRef}
-                onSubmitEditing={Keyboard.dismiss}
-                blurOnSubmit={false}
+                style={{width: '100%'}}
+                theme={{ roundness: 20 }}
+                mode="outlined"
+                label="Password"
+                activeOutlineColor='#348ceb'
+                value={userPassword}
+                onChangeText={userPassword => setUserPassword(userPassword)}
                 secureTextEntry={true}
-                underlineColorAndroid="#f000"
-                returnKeyType="next"
               />
             </View>
             {errortext != '' ? (
@@ -136,17 +127,17 @@ const LoginScreen = ({navigation}) => {
                 {errortext}
               </Text>
             ) : null}
-            <TouchableOpacity
+            <View style={styles.SectionStyle}>
+            <Button style={{padding: 5, flex: 1, borderRadius: 15}} labelStyle={{fontWeight: 'bold'}} compact="true" mode="contained" onPress={() => handleSubmitPress()}>
+              LOGIN
+            </Button>
+            {/* <TouchableOpacity
               style={styles.buttonStyle}
               activeOpacity={0.5}
               onPress={handleSubmitPress}>
               <Text style={styles.buttonTextStyle}>LOGIN</Text>
-            </TouchableOpacity>
-            <Text
-              style={styles.registerTextStyle}
-              onPress={() => navigation.navigate('RegisterScreen')}>
-              Don't have an account ? Sign Up
-            </Text>
+            </TouchableOpacity> */}
+            </View>
           </KeyboardAvoidingView>
         </View>
       </ScrollView>
@@ -164,9 +155,9 @@ const styles = StyleSheet.create({
   },
   SectionStyle: {
     flexDirection: 'row',
-    height: 50,
-    marginLeft: 25,
-    marginRight: 25,
+    // height: 50,
+    // marginLeft: 25,
+    // marginRight: 25,
     margin: 10,
   },
   buttonStyle: {

@@ -65,6 +65,7 @@ useEffect(()=>{
           }}>
             {assets.map((values, i) => (
               <List.Item
+              key={i}
               style={{ backgroundColor: 'white', marginTop: 1}}
               title={values.name}
               description={values.address}

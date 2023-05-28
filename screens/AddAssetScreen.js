@@ -8,7 +8,7 @@ import {
   ThemeProvider,
 } from "react-native-paper";
 import {View, Text, SafeAreaView, ScrollView, KeyboardAvoidingView, StyleSheet} from 'react-native';
-import {Card, Title, Paragraph, Divider, TextInput, Button} from 'react-native-paper';
+import {Card, Title, Paragraph, Divider, TextInput, Button, IconButton} from 'react-native-paper';
 import Loader from './Components/loader';
 import { selectUserData, setUserData } from './redux/navSlice';
 import { useSelector } from 'react-redux';
@@ -57,17 +57,16 @@ const AddAssetScreen = ({route, navigation}) => {
 				'application/x-www-form-urlencoded;charset=UTF-8',
 			},
 		})
-		.then((response) => response.text())
+		.then((response) => response.json())
 		.then((responseJson) => {
-			alert(responseJson)
 			if(responseJson.status == 'success'){
 				alert('Success!');
 			}else{
 				alert('Failed!');
 			}
-			// setTimeout(function(){
-			// 	navigation.replace('LocationsScreen');
-			// }, 1500)
+			setTimeout(function(){
+				navigation.replace('AssetScreen');
+			}, 1500)
 			setLoading(false);
 		})
 		.catch((error) => {
@@ -149,6 +148,7 @@ const AddAssetScreen = ({route, navigation}) => {
                     mode={'date'}
                     onChange={onChange}
                     style={styles.datePicker}
+                    format='MM DD YYYY'
                   />
                 )}
                 <View style={{
@@ -167,17 +167,25 @@ const AddAssetScreen = ({route, navigation}) => {
 									// onChangeText={text => setText(text)}
 								/>
                   {!isPickerShow && (
-                    <View>
-                      <Button icon="calendar" color='green' mode="contained" onPress={showPicker} />
+                    <View style={{padding: 5}}>
+                      <IconButton icon="calendar" color='green' mode="contained" onPress={showPicker} />
                     </View>
                   )}
                 </View>
-							<View style={{flexDirection: 'row'}}>
-								<Button style={{flex: 1, margin: 5}} icon="check" color='green' mode="contained" onPress={() => saveAsset()}>
+                <View style={{}}>
+                  <Button style={{marginTop: 10}} icon="camera" mode="contained" onPress={() => console.log('Pressed')}>
+                    Image
+                  </Button>
+                  <View style={{marginTop: 5}}>
+
+                  </View>
+                </View>
+							<View style={{}}>
+								<Button style={{marginTop: 15}} icon="check" color='green' mode="contained" onPress={() => saveAsset()}>
 									SAVE
 								</Button>
-								<Button style={{flex: 1, margin: 5}} icon="close" color='red' mode="contained" onPress={() => console.log('Pressed')}>
-									CANCEL
+                <Button style={{marginTop: 5}} icon="close" color='red' mode="contained" onPress={() => saveAsset()}>
+									Cancel
 								</Button>
 							</View>
             </KeyboardAvoidingView>

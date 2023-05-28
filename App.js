@@ -19,6 +19,7 @@ import UserDetailsScreen from './screens/UserDetailsScreen';
 import AssetDetailsScreen from './screens/AssetDetailsScreen';
 import AddAssetScreen from './screens/AddAssetScreen';
 import AddLocationScreen from './screens/AddLocationScreen';
+import UpdateAssetScreen from './screens/UpdateAssetScreen';
 
 
 
@@ -137,7 +138,7 @@ const App = () => {
           title="Add Asset"
           component={AddAssetScreen}
           options={{
-            title: "ADD LOCATION",
+            title: "ADD ASSET",
             headerStyle: {
               backgroundColor: '#348ceb', //Set Header color
             },
@@ -168,6 +169,20 @@ const App = () => {
           component={AssetDetailsScreen}
           options={{
             title: "ASSET DETAILS",
+            headerStyle: {
+              backgroundColor: '#348ceb', //Set Header color
+            },
+            headerTintColor: '#fff', //Set Header text color
+            headerTitleStyle: {
+              fontWeight: 'bold', //Set Header text style
+            },}}
+        />
+        <Stack.Screen
+          name="UpdateAssetScreen"
+          title="Update Asset"
+          component={UpdateAssetScreen}
+          options={{
+            title: "UPDATE ASSET",
             headerStyle: {
               backgroundColor: '#348ceb', //Set Header color
             },
