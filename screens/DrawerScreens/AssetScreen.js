@@ -76,44 +76,45 @@ useEffect(()=>{
 }, []);
 
   return (
-      <View style={{flex: 1, justifyContent: 'center'}}>
-        <View style={{flexDirection: 'row', marginBottom: 8, height: 50}}>
-          <Searchbar
-            placeholder="Search"
-            // onChangeText={onChangeSearch}
-            // value={searchQuery}
-            style={{marginTop: 10, marginHorizontal: 5, flex: 6}}
-          />
-          <Button style={{marginHorizontal: 3, marginTop: 4, padding: 5}} labelStyle={{fontWeight: 'bold'}} icon="plus" compact="true" mode="contained" onPress={() => navigation.navigate('AddAssetScreen')}>
-            
-          </Button>
-        </View>
+      <View style={{flex: 1, justifyContent: 'center', backgroundColor: '#f2f3f8',}}>
         <View styles={{flex: 1, padding: 6, alignSelf: 'center'}}>
-            <FlatList
-              data={assets}
-              initialNumToRender={10}
-              windowSize={5}
-              maxToRenderPerBatch={5}
-              updateCellsBatchingPeriod={30}
-              removeClippedSubviews={false}
-              onEndReachedThreshold={0.1}
-              renderItem={({ item }) =>
-                <RowItem
-                  navigation={navigation}
-                  asset_code={item.asset_code}
-                  original_location={item.original}
-                  asset_description={item.asset_description}
-                  id={item.id}
-                />
-              }
-              refreshControl={
-                <RefreshControl
-                  refreshing={false}
-                  onRefresh={onRefresh}
-                />
-              }
-            />
+          <Card style={{ margin: 6, padding: 6, marginTop: 100 }}>
+            <View style={{flexDirection: 'row', alignItems: 'center' }}>
+              <Searchbar
+                placeholder="Search"
+                // onChangeText={onChangeSearch}
+                // value={searchQuery}
+                style={{ marginHorizontal: 5, flex: 6}}
+              />
+              <Button style={{marginHorizontal: 5, marginTop: 1, padding: 5}} labelStyle={{fontWeight: 'bold'}} icon="plus" compact="true" mode="contained" onPress={() => navigation.navigate('AddAssetScreen')}>
+              </Button>
             </View>
+          </Card>
+          <FlatList
+            data={assets}
+            initialNumToRender={10}
+            windowSize={5}
+            maxToRenderPerBatch={5}
+            updateCellsBatchingPeriod={30}
+            removeClippedSubviews={false}
+            onEndReachedThreshold={0.1}
+            renderItem={({ item }) =>
+              <RowItem
+                navigation={navigation}
+                asset_code={item.asset_code}
+                original_location={item.original}
+                asset_description={item.asset_description}
+                id={item.id}
+              />
+            }
+            refreshControl={
+              <RefreshControl
+                refreshing={false}
+                onRefresh={onRefresh}
+              />
+            }
+          />
+        </View>
       </View>
   )
 };
