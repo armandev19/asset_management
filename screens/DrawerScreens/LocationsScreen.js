@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, SafeAreaView, FlatList, StyleSheet, TouchableOpacity, Modal, ToastAndroid, Alert, TextInput} from 'react-native';
+import {View, Text, SafeAreaView, FlatList, StyleSheet, TouchableOpacity, Modal, ToastAndroid, Alert, TextInput, RefreshControl} from 'react-native';
 import {Card, Title, Paragraph, Divider, List, Button, IconButton, Searchbar} from 'react-native-paper';
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -41,22 +41,28 @@ const getLocations = () => {
     });
 }
 
+const onRefresh = () => {
+  getLocations();
+};
+
 useEffect(()=>{
   getLocations();
 }, []);
 
   return (
       <View>
-        <View style={{flexDirection: 'row', marginBottom: 8}}>
-          <Searchbar
-            placeholder="Search"
-            // onChangeText={onChangeSearch}
-            // value={searchQuery}
-            style={{marginTop: 5, marginHorizontal: 5, flex: 6}}
-          />
-          <Button style={{marginHorizontal: 3, marginTop: 4, padding: 5}} labelStyle={{fontWeight: 'bold'}} icon="plus" compact="true" mode="contained" onPress={() => navigation.navigate('AddLocationScreen')}>
-          </Button>
-        </View>
+        <Card style={{ margin: 6, padding: 6}}>
+            <View style={{flexDirection: 'row', alignItems: 'center' }}>
+              <Searchbar
+                placeholder="Search"
+                // onChangeText={onChangeSearch}
+                // value={searchQuery}
+                style={{ marginHorizontal: 5, flex: 6}}
+              />
+              <Button style={{marginHorizontal: 5, marginTop: 1, padding: 5}} labelStyle={{fontWeight: 'bold'}} icon="plus" compact="true" mode="contained" onPress={() => navigation.navigate('AddLocationScreen')}>
+              </Button>
+            </View>
+        </Card>
         <ScrollView styles={{flex: 1}}>
           <View
             style={{
@@ -71,7 +77,13 @@ useEffect(()=>{
               description={values.address}
               left={props => <List.Icon {...props} icon="folder"
                />}
-              onPress={()=> navigation.navigate('AssetDetailsScreen', values.id)}
+              onPress={()=> navigation.navigate('UpdateLocationScreen', values.id)}
+              refreshControl={
+                <RefreshControl
+                  refreshing={false}
+                  onRefresh={onRefresh}
+                />
+              }
             />
             ))}
           </View>

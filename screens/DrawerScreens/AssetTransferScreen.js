@@ -10,7 +10,7 @@ import { selectUserData, setUserData } from '../redux/navSlice';
 import { useSelector } from 'react-redux';
 import { ScrollView } from 'react-native-gesture-handler';
 
-const AssetScreen = ({navigation, route}) => {
+const AssetTransferScreen = ({navigation, route}) => {
 
 const [loading, setLoading] = useState(false);
 const [assets, setAssets] = useState([]);
@@ -22,7 +22,7 @@ const currentUserData = useSelector(selectUserData);
 
 const getAssets = () => {
   setLoading(true)
-  fetch(global.url+'getAssets.php', {
+  fetch(global.url+'getAssetsTransfer.php', {
     method: 'POST',
     headers: {
       'Content-Type':
@@ -86,7 +86,7 @@ useEffect(()=>{
                 // value={searchQuery}
                 style={{ marginHorizontal: 5, flex: 6}}
               />
-              <Button style={{marginHorizontal: 5, marginTop: 1, padding: 5}} labelStyle={{fontWeight: 'bold'}} icon="plus" compact="true" mode="contained" onPress={() => navigation.navigate('AddAssetScreen')}>
+              <Button style={{marginHorizontal: 5, marginTop: 1, padding: 5}} labelStyle={{fontWeight: 'bold'}} icon="plus" compact="true" mode="contained" onPress={() => navigation.navigate('AddAssetTransferScreen')}>
               </Button>
             </View>
           </Card>
@@ -122,7 +122,7 @@ useEffect(()=>{
 };
 
  
-export default AssetScreen;
+export default AssetTransferScreen;
 
 const styles = StyleSheet.create({
   item: {

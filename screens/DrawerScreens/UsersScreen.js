@@ -10,19 +10,19 @@ import { selectUserData, setUserData } from '../redux/navSlice';
 import { useSelector } from 'react-redux';
 import { ScrollView } from 'react-native-gesture-handler';
 
-const AssetScreen = ({navigation, route}) => {
+const UsersScreen = ({navigation, route}) => {
 
 const [loading, setLoading] = useState(false);
-const [assets, setAssets] = useState([]);
+const [users, setUsers] = useState([]);
 const [selectedId, setSelectedId] = useState(null);
 const [userdata, setUserData] = useState('');
 
 
 const currentUserData = useSelector(selectUserData);
 
-const getAssets = () => {
+const getUsers = () => {
   setLoading(true)
-  fetch(global.url+'getAssets.php', {
+  fetch(global.url+'getUsers.php', {
     method: 'POST',
     headers: {
       'Content-Type':
@@ -32,7 +32,7 @@ const getAssets = () => {
     .then((response) => response.json())
     .then((responseJson) => {
       setLoading(false);
-      setAssets(responseJson.data);
+      setUsers(responseJson.data);
     })
     .catch((error) => {
       alert(error);
@@ -41,29 +41,25 @@ const getAssets = () => {
     });
 }
 
-const onRefresh = () => {
-  getAssets();
-};
-
-function RowItem({ navigation, asset_code, asset_name, asset_description, original_location, id }) {
+function RowItem({ navigation, firstname, lastname, id, access_level, address }) {
   return (
     <Card style={{ margin: 5 }}>
-      <TouchableOpacity onPress={() => navigation.navigate("AssetDetailsScreen", id)}>
+      <TouchableOpacity onPress={() => navigation.navigate("UpdateUsersScreen", id)}>
         <View>
           <View style={{ flexDirection: 'row', padding: 5 }}>
-            <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 15, fontWeight: "bold", textTransform: 'uppercase', width: '35%' }}>{asset_code}</Text>
+            <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 15, fontWeight: "bold", textTransform: 'uppercase', width: '35%' }}>{firstname+" "+lastname}</Text>
           </View>
         </View>
         <View style={styles.item}>
-          <Text adjustsFontSizeToFit style={styles.textTitle}>ASSSET NAME: </Text>
+          <Text adjustsFontSizeToFit style={styles.textTitle}>ACCESS: </Text>
           <View style={{ }}>
-            <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{asset_name}</Text>
+            <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{access_level}</Text>
           </View>
         </View>
         <View style={styles.item}>
-          <Text adjustsFontSizeToFit style={styles.textTitle}>DESCRIPTION: </Text>
+          <Text adjustsFontSizeToFit style={styles.textTitle}>ADDRESS: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{address}</Text></Text>
           <View style={{ }}>
-            <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{asset_description}</Text>
+            
           </View>
         </View>
       </TouchableOpacity>
@@ -71,58 +67,62 @@ function RowItem({ navigation, asset_code, asset_name, asset_description, origin
   );
 }
 
+const onRefresh = () => {
+  getUsers();
+};
+
 useEffect(()=>{
-  getAssets();
+  getUsers();
 }, []);
 
   return (
-      <View style={{justifyContent: 'center', backgroundColor: '#f2f3f8',}}>
-        <View styles={{flex: 1, padding: 6, alignSelf: 'center'}}>
-          <Card style={{ margin: 6, padding: 6}}>
-            <View style={{flexDirection: 'row', alignItems: 'center' }}>
-              <Searchbar
-                placeholder="Search"
-                // onChangeText={onChangeSearch}
-                // value={searchQuery}
-                style={{ marginHorizontal: 5, flex: 6}}
-              />
-              <Button style={{marginHorizontal: 5, marginTop: 1, padding: 5}} labelStyle={{fontWeight: 'bold'}} icon="plus" compact="true" mode="contained" onPress={() => navigation.navigate('AddAssetScreen')}>
-              </Button>
-            </View>
-          </Card>
-          <FlatList
-            data={assets}
-            contentContainerStyle={{paddingBottom: 20}}
-            initialNumToRender={10}
-            windowSize={5}
-            maxToRenderPerBatch={5}
-            updateCellsBatchingPeriod={30}
-            removeClippedSubviews={false}
-            onEndReachedThreshold={0.1}
-            renderItem={({ item }) =>
-              <RowItem
-                navigation={navigation}
-                asset_code={item.asset_code}
-                asset_name={item.asset_name}
-                original_location={item.original}
-                asset_description={item.asset_description}
-                id={item.id}
-              />
-            }
-            refreshControl={
-              <RefreshControl
-                refreshing={false}
-                onRefresh={onRefresh}
-              />
-            }
-          />
-        </View>
+    <View style={{justifyContent: 'center', backgroundColor: '#f2f3f8',}}>
+      <View styles={{flex: 1, padding: 6, alignSelf: 'center'}}>
+        <Card style={{ margin: 6, padding: 6}}>
+          <View style={{flexDirection: 'row', alignItems: 'center' }}>
+            <Searchbar
+              placeholder="Search"
+              // onChangeText={onChangeSearch}
+              // value={searchQuery}
+              style={{ marginHorizontal: 5, flex: 6}}
+            />
+            <Button style={{marginHorizontal: 5, marginTop: 1, padding: 5}} labelStyle={{fontWeight: 'bold'}} icon="plus" compact="true" mode="contained" onPress={() => navigation.navigate('AddUsersScreen')}>
+            </Button>
+          </View>
+        </Card>
+        <FlatList
+          data={users}
+          contentContainerStyle={{paddingBottom: 20}}
+          initialNumToRender={10}
+          windowSize={5}
+          maxToRenderPerBatch={5}
+          updateCellsBatchingPeriod={30}
+          removeClippedSubviews={false}
+          onEndReachedThreshold={0.1}
+          renderItem={({ item }) =>
+            <RowItem
+              navigation={navigation}
+              firstname={item.firstname}
+              lastname={item.lastname}
+              id={item.id}
+              access_level={item.access_level}
+              address={item.address}
+            />
+          }
+          refreshControl={
+            <RefreshControl
+              refreshing={false}
+              onRefresh={onRefresh}
+            />
+          }
+        />
       </View>
+    </View>
   )
 };
 
  
-export default AssetScreen;
+export default UsersScreen;
 
 const styles = StyleSheet.create({
   item: {

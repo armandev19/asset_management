@@ -14,16 +14,41 @@ import { selectUserData, setUserData } from './redux/navSlice';
 import { useSelector } from 'react-redux';
 import DropDown from "react-native-paper-dropdown";
 
-const AddLocationScreen = ({route, navigation}) => {
+const AddAssetTransferScreen = ({route, navigation}) => {
 	const currentUserData = useSelector(selectUserData);
 	const [loading, setLoading] = useState(false);
   const [showDropDown, setShowDropDown] = useState(false);
-	const [name, setName] = useState("");
-	const [address, setAddress] = useState("");
+  const [showDropDownAsset, setShowDropDownAsset] = useState(false);
+	const [asset, setAsset] = useState([]);
+	const [targetLocation, setTargetLocation] = useState("");
+	const [remarks, setRemarks] = useState("");
+  const [assetList, setAssetList] = useState([]);
+	const [locationList, setLocationList] = useState([]);
 
-	const saveLocation = () => {
+  const getAssets = () => {
+    setLoading(true)
+    fetch(global.url+'getAssetsDropdown.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type':
+        'application/x-www-form-urlencoded;charset=UTF-8',
+      },
+    })
+      .then((response) => response.json())
+      .then((responseJson) => {
+        setLoading(false);
+        setAssetList(responseJson.data);
+      })
+      .catch((error) => {
+        alert(error);
+        setLoading(false);
+        console.error(error);
+      });
+  }
+
+	const saveAssetTransfer = () => {
 		setLoading(true);
-		let dataToSend = { name: name, address : address, created_by: currentUserData.id };
+		let dataToSend = { asset: asset, targetLocation : targetLocation, remarks: remarks, created_by: currentUserData.id };
 		let formBody = [];
 		for (let key in dataToSend) {
 			let encodedKey = encodeURIComponent(key);
@@ -31,7 +56,7 @@ const AddLocationScreen = ({route, navigation}) => {
 			formBody.push(encodedKey + '=' + encodedValue);
 		}
 		formBody = formBody.join('&');
-		fetch(global.url+'saveLocation.php', {
+		fetch(global.url+'saveAssetTransfer.php', {
 			method: 'POST',
 			body: formBody,
 			headers: {
@@ -54,7 +79,35 @@ const AddLocationScreen = ({route, navigation}) => {
 		.catch((error) => {
 			setLoading(false);
 		});
+  }
+
+  const getLocationDropdown = () => {
+		setLoading(true)
+		fetch(global.url+'getLocationDropdown.php', {
+			method: 'POST',
+			headers: {
+				'Content-Type':
+				'application/x-www-form-urlencoded;charset=UTF-8',
+			},
+		})
+			.then((response) => response.json())
+			.then((responseJson) => {
+				setLoading(false);
+				setLocationList(responseJson.data);
+			})
+			.catch((error) => {
+				alert(error);
+				setLoading(false);
+				console.error(error);
+			});
 	}
+
+  
+
+  useEffect(()=>{
+    getAssets();
+    getLocationDropdown();
+  }, [])
     return (
 			<Provider theme={DefaultTheme}>
         <View style={{flex: 1, backgroundColor: 'white'}}>
@@ -66,22 +119,37 @@ const AddLocationScreen = ({route, navigation}) => {
 						alignContent: 'center',
 					}}>
             <KeyboardAvoidingView enabled style={{padding: 5}}>
+              <DropDown
+								label={"Asset"}
+								mode={"outlined"}
+								visible={showDropDownAsset}
+                style={{alignItems: 'center'}}
+								showDropDown={() => setShowDropDownAsset(true)}
+								onDismiss={() => setShowDropDownAsset(false)}
+								value={asset}
+								setValue={setAsset}
+								list={assetList}
+							/>
+							<DropDown
+								label={"Target Location"}
+								mode={"outlined"}
+								visible={showDropDown}
+                style={{alignItems: 'center'}}
+								showDropDown={() => setShowDropDown(true)}
+								onDismiss={() => setShowDropDown(false)}
+								value={targetLocation}
+								setValue={setTargetLocation}
+								list={locationList}
+							/>
               <TextInput
 								mode="outlined"
-                label="Name"
+                label="Remarks"
 								activeOutlineColor='#348ceb'
-                value={name}
-                onChangeText={name => setName(name)}
-							/>
-							<TextInput
-								mode="outlined"
-                label="Address"
-								activeOutlineColor='#348ceb'
-                value={address}
-                onChangeText={address => setAddress(address)}
+                value={remarks}
+                onChangeText={remarks => setRemarks(remarks)}
 							/>
 							<View style={{marginTop: 5}}>
-								<Button style={{margin: 1}} icon="check" color='green' mode="contained" onPress={() => saveLocation()}>
+								<Button style={{margin: 1}} icon="check" color='green' mode="contained" onPress={() => saveAssetTransfer()}>
 									SAVE
 								</Button>
 								<Button style={{margin: 1}} icon="close" color='red' mode="contained" onPress={() => console.log('Pressed')}>
@@ -97,7 +165,7 @@ const AddLocationScreen = ({route, navigation}) => {
 
 
  
-export default AddLocationScreen;
+export default AddAssetTransferScreen;
 
 const styles = StyleSheet.create({
     selectDropdown: {

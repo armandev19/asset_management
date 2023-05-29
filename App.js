@@ -20,8 +20,10 @@ import AssetDetailsScreen from './screens/AssetDetailsScreen';
 import AddAssetScreen from './screens/AddAssetScreen';
 import AddLocationScreen from './screens/AddLocationScreen';
 import UpdateAssetScreen from './screens/UpdateAssetScreen';
-
-
+import UpdateLocationScreen from './screens/UpdateLocationScreen';
+import UpdateUsersScreen from './screens/UpdateUsersScreen';
+import AddUsersScreen from './screens/AddUsersScreen';
+import AddAssetTransferScreen from './screens/AddAssetTransferScreen';
 
 import { Provider } from 'react-redux';
 import { store } from './screens/redux/store';
@@ -57,9 +59,9 @@ const Auth = () => {
 
 
 const App = () => {
-  // global.url = "http://192.168.7.152/bloodmap/";
+  global.url = "http://192.168.179.127/asset_management/";
   // global.url = "https://homeworldconstruction.com/mobile/blood_saver/"
-  global.url = "http://192.168.1.10/asset_management/";
+  // global.url = "http://192.168.1.10/asset_management/";
   const appState = useRef(AppState.currentState);
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
 
@@ -164,6 +166,37 @@ const App = () => {
           }}
         />
         <Stack.Screen
+          name="AddUsersScreen"
+          title="Add User"
+          component={AddUsersScreen}
+          options={{
+            title: "ADD USER",
+            headerStyle: {
+              backgroundColor: '#348ceb', //Set Header color
+            },
+            headerTintColor: '#fff', //Set Header text color
+            headerTitleStyle: {
+              fontWeight: 'bold', //Set Header text style
+            },
+          }}
+        />
+        <Stack.Screen
+          name="AddAssetTransferScreen"
+          title="Add Asset Transfer"
+          component={AddAssetTransferScreen}
+          options={{
+            title: "ADD ASSET TRANSFER",
+            headerStyle: {
+              backgroundColor: '#348ceb', //Set Header color
+            },
+            headerTintColor: '#fff', //Set Header text color
+            headerTitleStyle: {
+              fontWeight: 'bold', //Set Header text style
+            },
+          }}
+        />
+
+        <Stack.Screen
           name="AssetDetailsScreen"
           title="Asset Details"
           component={AssetDetailsScreen}
@@ -177,12 +210,41 @@ const App = () => {
               fontWeight: 'bold', //Set Header text style
             },}}
         />
+        
         <Stack.Screen
           name="UpdateAssetScreen"
           title="Update Asset"
           component={UpdateAssetScreen}
           options={{
             title: "UPDATE ASSET",
+            headerStyle: {
+              backgroundColor: '#348ceb', //Set Header color
+            },
+            headerTintColor: '#fff', //Set Header text color
+            headerTitleStyle: {
+              fontWeight: 'bold', //Set Header text style
+            },}}
+        />
+        <Stack.Screen
+          name="UpdateLocationScreen"
+          title="Update Location"
+          component={UpdateLocationScreen}
+          options={{
+            title: "UPDATE LOCATION",
+            headerStyle: {
+              backgroundColor: '#348ceb', //Set Header color
+            },
+            headerTintColor: '#fff', //Set Header text color
+            headerTitleStyle: {
+              fontWeight: 'bold', //Set Header text style
+            },}}
+        />
+        <Stack.Screen
+          name="UpdateUsersScreen"
+          title="Update User"
+          component={UpdateUsersScreen}
+          options={{
+            title: "UPDATE USER",
             headerStyle: {
               backgroundColor: '#348ceb', //Set Header color
             },
