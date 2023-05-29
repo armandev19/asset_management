@@ -56,9 +56,10 @@ const LoginScreen = ({navigation}) => {
         'application/x-www-form-urlencoded;charset=UTF-8',
       },
     })
-      .then((response) => response.json())
+      .then((response) => response.text())
       .then((responseJson) => {
         //Hide Loader
+        alert(responseJson)
         setLoading(false);
         console.log(responseJson);
         // If server response message same as Data Matched

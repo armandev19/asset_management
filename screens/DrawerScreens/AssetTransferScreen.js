@@ -6,6 +6,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Loader from './../Components/loader';
 
+import { useFocusEffect } from '@react-navigation/native';
 import { selectUserData, setUserData } from '../redux/navSlice';
 import { useSelector } from 'react-redux';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -45,13 +46,15 @@ const onRefresh = () => {
   getAssets();
 };
 
-function RowItem({ navigation, asset_code, asset_name, asset_description, original_location, id }) {
+function RowItem({ navigation, ref_no, asset_name, asset_description, original_location, id }) {
   return (
     <Card style={{ margin: 5 }}>
-      <TouchableOpacity onPress={() => navigation.navigate("AssetDetailsScreen", id)}>
+      <TouchableOpacity 
+      // onPress={() => navigation.navigate("UpdateAssetTransferDetailsScreen", id)}
+      >
         <View>
           <View style={{ flexDirection: 'row', padding: 5 }}>
-            <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 15, fontWeight: "bold", textTransform: 'uppercase', width: '35%' }}>{asset_code}</Text>
+            <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 15, fontWeight: "bold", textTransform: 'uppercase', width: '35%' }}>{ref_no}</Text>
           </View>
         </View>
         <View style={styles.item}>
@@ -71,9 +74,11 @@ function RowItem({ navigation, asset_code, asset_name, asset_description, origin
   );
 }
 
-useEffect(()=>{
-  getAssets();
-}, []);
+useFocusEffect(
+  React.useCallback(() => {
+    getAssets();
+  }, []),
+);
 
   return (
       <View style={{justifyContent: 'center', backgroundColor: '#f2f3f8',}}>
@@ -102,7 +107,7 @@ useEffect(()=>{
             renderItem={({ item }) =>
               <RowItem
                 navigation={navigation}
-                asset_code={item.asset_code}
+                ref_no={item.ref_no}
                 asset_name={item.asset_name}
                 original_location={item.original}
                 asset_description={item.asset_description}

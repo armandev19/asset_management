@@ -117,8 +117,8 @@ const UpdateLocationScreen = ({route, navigation}) => {
 				/>
       </Card.Content>
       
-      <Card.Actions style={{padding: 10}}>
-        <Button icon="check" mode="contained" style={{width: "100%"}} onPress={() => updateLocation()}>Save</Button>
+      <Card.Actions style={{padding: 1, margin: 15}}>
+        <Button icon="check" mode="contained" style={{width: "100%"}} onPress={() => updateLocation()}>Update</Button>
       </Card.Actions>
     </Card>
 		</View>

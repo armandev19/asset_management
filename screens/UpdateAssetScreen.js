@@ -66,9 +66,6 @@ const UpdateAssetScreen = ({route, navigation}) => {
 			}else{
 				alert('Failed!');
 			}
-			setTimeout(function(){
-				navigation.replace("AssetDetailsScreen")
-			}, 1500)
 			setLoading(false);
 		})
 		.catch((error) => {

@@ -71,9 +71,9 @@ const AddAssetTransferScreen = ({route, navigation}) => {
 			}else{
 				alert('Failed!');
 			}
-			setTimeout(function(){
-				navigation.replace('LocationsScreen');
-			}, 1500)
+			// setTimeout(function(){
+			// 	navigation.replace('LocationsScreen');
+			// }, 1500)
 			setLoading(false);
 		})
 		.catch((error) => {

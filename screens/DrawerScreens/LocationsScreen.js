@@ -6,6 +6,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Loader from './../Components/loader';
 
+import { useFocusEffect } from '@react-navigation/native';
 import { selectUserData, setUserData } from '../redux/navSlice';
 import { useSelector } from 'react-redux';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -13,12 +14,47 @@ import { ScrollView } from 'react-native-gesture-handler';
 const LocationScreen = ({navigation, route}) => {
 
 const [loading, setLoading] = useState(false);
-const [assets, setAssets] = useState([]);
+const [locations, setLocations] = useState([]);
 const [selectedId, setSelectedId] = useState(null);
 const [userdata, setUserData] = useState('');
-
-
 const currentUserData = useSelector(selectUserData);
+const [search, setSearch] = useState('');
+
+
+const onChangeSearch = () => {
+  setLoading(true)
+  let dataToSend = { search: search };
+  let formBody = [];
+  for (let key in dataToSend) {
+    let encodedKey = encodeURIComponent(key);
+    let encodedValue = encodeURIComponent(dataToSend[key]);
+    formBody.push(encodedKey + '=' + encodedValue);
+  }
+  formBody = formBody.join('&');
+  fetch(global.url+'getLocations.php', {
+    method: 'POST',
+    body: formBody,
+    headers: {
+      'Content-Type':
+      'application/x-www-form-urlencoded;charset=UTF-8',
+    },
+  })
+    .then((response) => response.json())
+    .then((responseJson) => {
+      setLoading(false);
+      setLocations(responseJson.data);
+    })
+    .catch((error) => {
+      alert(error);
+      setLoading(false);
+      console.error(error);
+    });
+}
+
+const handleSearchQueryChange = (query) => {
+  setSearch(query);
+  onChangeSearch(query);
+};
 
 const getLocations = () => {
   setLoading(true)
@@ -29,10 +65,11 @@ const getLocations = () => {
       'application/x-www-form-urlencoded;charset=UTF-8',
     },
   })
-    .then((response) => response.json())
+    .then((response) => response.text())
     .then((responseJson) => {
+      alert(responseJson)
       setLoading(false);
-      setAssets(responseJson.data);
+      // setLocations(responseJson.data);
     })
     .catch((error) => {
       alert(error);
@@ -45,18 +82,21 @@ const onRefresh = () => {
   getLocations();
 };
 
-useEffect(()=>{
-  getLocations();
-}, []);
-
+// useEffect(()=>{
+// }, []);
+useFocusEffect(
+  React.useCallback(() => {
+    getLocations();
+  }, []),
+);
   return (
       <View>
         <Card style={{ margin: 6, padding: 6}}>
             <View style={{flexDirection: 'row', alignItems: 'center' }}>
               <Searchbar
                 placeholder="Search"
-                // onChangeText={onChangeSearch}
-                // value={searchQuery}
+                onChangeText={handleSearchQueryChange}
+                value={search}
                 style={{ marginHorizontal: 5, flex: 6}}
               />
               <Button style={{marginHorizontal: 5, marginTop: 1, padding: 5}} labelStyle={{fontWeight: 'bold'}} icon="plus" compact="true" mode="contained" onPress={() => navigation.navigate('AddLocationScreen')}>
@@ -69,7 +109,7 @@ useEffect(()=>{
             justifyContent: 'center',
             flex: 1
           }}>
-            {assets.map((values, i) => (
+            {locations.map((values, i) => (
               <List.Item
               key={i}
               style={{ backgroundColor: 'white', marginTop: 1}}

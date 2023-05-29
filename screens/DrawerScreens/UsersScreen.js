@@ -6,6 +6,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Loader from './../Components/loader';
 
+import { useFocusEffect } from '@react-navigation/native';
 import { selectUserData, setUserData } from '../redux/navSlice';
 import { useSelector } from 'react-redux';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -71,10 +72,14 @@ const onRefresh = () => {
   getUsers();
 };
 
-useEffect(()=>{
-  getUsers();
-}, []);
-
+// useEffect(()=>{
+//   getUsers();
+// }, []);
+useFocusEffect(
+  React.useCallback(() => {
+    getUsers();
+  }, []),
+);
   return (
     <View style={{justifyContent: 'center', backgroundColor: '#f2f3f8',}}>
       <View styles={{flex: 1, padding: 6, alignSelf: 'center'}}>

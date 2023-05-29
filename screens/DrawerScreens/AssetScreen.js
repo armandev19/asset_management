@@ -8,7 +8,8 @@ import Loader from './../Components/loader';
 
 import { selectUserData, setUserData } from '../redux/navSlice';
 import { useSelector } from 'react-redux';
-import { ScrollView } from 'react-native-gesture-handler';
+
+import { useFocusEffect } from '@react-navigation/native';
 
 const AssetScreen = ({navigation, route}) => {
 
@@ -16,9 +17,48 @@ const [loading, setLoading] = useState(false);
 const [assets, setAssets] = useState([]);
 const [selectedId, setSelectedId] = useState(null);
 const [userdata, setUserData] = useState('');
-
+const [search, setSearch] = useState('');
 
 const currentUserData = useSelector(selectUserData);
+
+// const onChangeSearch = () => {
+//   setSearchQuery(query);
+// }
+
+const onChangeSearch = () => {
+  setLoading(true)
+  let dataToSend = { search: search };
+  let formBody = [];
+  for (let key in dataToSend) {
+    let encodedKey = encodeURIComponent(key);
+    let encodedValue = encodeURIComponent(dataToSend[key]);
+    formBody.push(encodedKey + '=' + encodedValue);
+  }
+  formBody = formBody.join('&');
+  fetch(global.url+'getAssets.php', {
+    method: 'POST',
+    body: formBody,
+    headers: {
+      'Content-Type':
+      'application/x-www-form-urlencoded;charset=UTF-8',
+    },
+  })
+    .then((response) => response.json())
+    .then((responseJson) => {
+      setLoading(false);
+      setAssets(responseJson.data);
+    })
+    .catch((error) => {
+      alert(error);
+      setLoading(false);
+      console.error(error);
+    });
+}
+
+const handleSearchQueryChange = (query) => {
+  setSearch(query);
+  onChangeSearch(query);
+};
 
 const getAssets = () => {
   setLoading(true)
@@ -45,25 +85,28 @@ const onRefresh = () => {
   getAssets();
 };
 
-function RowItem({ navigation, asset_code, asset_name, asset_description, original_location, id }) {
+function RowItem({ key, navigation, asset_code, asset_name, asset_description, current_location, item_id }) {
   return (
-    <Card style={{ margin: 5 }}>
-      <TouchableOpacity onPress={() => navigation.navigate("AssetDetailsScreen", id)}>
+    <Card style={{ margin: 3 }}>
+      <TouchableOpacity style={{marginBottom: 5}} onPress={() => navigation.navigate("AssetDetailsScreen", item_id)}>
         <View>
-          <View style={{ flexDirection: 'row', padding: 5 }}>
+          <View style={{ flexDirection: 'row', padding: 5, marginLeft: 3 }}>
             <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 15, fontWeight: "bold", textTransform: 'uppercase', width: '35%' }}>{asset_code}</Text>
           </View>
         </View>
         <View style={styles.item}>
-          <Text adjustsFontSizeToFit style={styles.textTitle}>ASSSET NAME: </Text>
-          <View style={{ }}>
-            <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{asset_name}</Text>
+          <View style={{flex: 1}}>
+            <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>ASSSET NAME: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{asset_name}</Text></Text>
           </View>
         </View>
         <View style={styles.item}>
-          <Text adjustsFontSizeToFit style={styles.textTitle}>DESCRIPTION: </Text>
-          <View style={{ }}>
-            <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{asset_description}</Text>
+          <View style={{flex: 1}}>
+            <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>DESCRIPTION: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{asset_description}</Text></Text>
+          </View>
+        </View>
+        <View style={styles.item}>
+          <View style={{flex: 1}}>
+            <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>LOCATION: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{current_location}</Text></Text>
           </View>
         </View>
       </TouchableOpacity>
@@ -71,10 +114,14 @@ function RowItem({ navigation, asset_code, asset_name, asset_description, origin
   );
 }
 
-useEffect(()=>{
-  getAssets();
-}, []);
-
+// useEffect(()=>{
+//   getAssets();
+// }, []);
+useFocusEffect(
+  React.useCallback(() => {
+    getAssets();
+  }, []),
+);
   return (
       <View style={{justifyContent: 'center', backgroundColor: '#f2f3f8',}}>
         <View styles={{flex: 1, padding: 6, alignSelf: 'center'}}>
@@ -82,14 +129,17 @@ useEffect(()=>{
             <View style={{flexDirection: 'row', alignItems: 'center' }}>
               <Searchbar
                 placeholder="Search"
-                // onChangeText={onChangeSearch}
-                // value={searchQuery}
+                onChangeText={handleSearchQueryChange}
+                value={search}
                 style={{ marginHorizontal: 5, flex: 6}}
               />
               <Button style={{marginHorizontal: 5, marginTop: 1, padding: 5}} labelStyle={{fontWeight: 'bold'}} icon="plus" compact="true" mode="contained" onPress={() => navigation.navigate('AddAssetScreen')}>
               </Button>
             </View>
           </Card>
+          {assets.length == 0 ? (
+            <Text style={{color: 'black', fontWeight: 'bold', textAlign: 'center'}}>No results found.</Text>
+          ): (
           <FlatList
             data={assets}
             contentContainerStyle={{paddingBottom: 20}}
@@ -99,14 +149,15 @@ useEffect(()=>{
             updateCellsBatchingPeriod={30}
             removeClippedSubviews={false}
             onEndReachedThreshold={0.1}
-            renderItem={({ item }) =>
+            renderItem={({ item, i }) =>
               <RowItem
+                key={i}
                 navigation={navigation}
                 asset_code={item.asset_code}
                 asset_name={item.asset_name}
-                original_location={item.original}
                 asset_description={item.asset_description}
-                id={item.id}
+                current_location={item.loc_name ? item.loc_name : "N/A"}
+                item_id={item.item_id}
               />
             }
             refreshControl={
@@ -116,6 +167,7 @@ useEffect(()=>{
               />
             }
           />
+          )}
         </View>
       </View>
   )
@@ -127,7 +179,8 @@ export default AssetScreen;
 const styles = StyleSheet.create({
   item: {
     flexDirection: 'row',
-    padding: 3,
+    padding: 1,
+    marginLeft: 8,
   },
   textTitle: {
     width: '30%',
