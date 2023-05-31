@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useCallback, useRef} from 'react';
 import {
   Appbar,
   DarkTheme,
@@ -15,6 +15,7 @@ import { useSelector } from 'react-redux';
 import DropDown from "react-native-paper-dropdown";
 import DateTimePicker from '@react-native-community/datetimepicker';
 
+import {Camera, useCameraDevices} from 'react-native-vision-camera';
 
 const AddAssetScreen = ({route, navigation}) => {
 	const [loading, setLoading] = useState(false);
@@ -29,6 +30,14 @@ const AddAssetScreen = ({route, navigation}) => {
 
 	const [isPickerShow, setIsPickerShow] = useState(false);
   const [date, setDate] = useState(new Date(Date.now()));
+
+  const cameraRef = useRef(Camera);
+
+  const [camView, setCamView] = useState("back");
+  const devices = useCameraDevices("dual-camera");
+  const device = camView === 'back';
+
+  
 
 	const showPicker = () => {
     setIsPickerShow(true);
@@ -95,7 +104,33 @@ const AddAssetScreen = ({route, navigation}) => {
 			});
 	}
 
+  const cameraPermission = useCallback(async () => {
+    const permission = await Camera.requestCameraPermission();
+    if(permission === 'denied'){
+      await Linking.openSettings();
+    }
+  }, [])
+
+
+  const takePhoto = async () => {
+    try {
+      if(cameraRef.current == null){
+        throw new Error('Camera ref is null');
+      }
+
+      console.log('Photo taking..');
+
+      const photo = await cameraRef.current.takePhoto({
+        qualityPrioritization: 'quality',
+      })
+      console.log(photo)
+    } catch (error){
+      console.log(error, 'error this');
+    }
+  }
+
 	useEffect(() => {
+    cameraPermission();
 		getLocationDropdown();
 	}, [])
     return (
@@ -181,6 +216,13 @@ const AddAssetScreen = ({route, navigation}) => {
 
                   </View>
                 </View>
+                <Camera
+                  // style={StyleSheet.absoluteFill}
+                  device={device}
+                  isActive={true}
+                  photo={true}
+                  ref={cameraRef}
+                />
 							<View style={{}}>
 								<Button style={{marginTop: 15}} icon="check" color='green' mode="contained" onPress={() => saveAsset()}>
 									SAVE

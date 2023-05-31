@@ -11,7 +11,6 @@ import { ScrollView } from 'react-native-gesture-handler';
 const AssetDetailsScreen = ({route, navigation}) => {
   
   const params = route.params
-  console.log(params)
   const [details, setAssetDetails] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -35,6 +34,7 @@ const AssetDetailsScreen = ({route, navigation}) => {
 		})
 		.then((response) => response.json())
 		.then((responseJson) => {
+      // alert(responseJson.data)
       console.log(responseJson.data[0])
       setAssetDetails(responseJson.data[0]);
 			setLoading(false);
@@ -53,9 +53,8 @@ const AssetDetailsScreen = ({route, navigation}) => {
 		<ScrollView style={{padding: 10}}>
     <Card>
       <Card.Cover source={{ uri: 'https://picsum.photos/700' }} />
-        <Card.Title title={details.asset_name} subtitle={"Description: " + details.asset_description}  />
+        <Card.Title title={details.asset_code +" | "+details.asset_name} subtitle={"Description: " + details.asset_description}  />
         <Card.Content>
-            <Text variant="titleLarge" style={{color: 'black'}}>Original Location: <Text style={{color: 'black', textTransform: 'uppercase', fontWeight: 'bold'}}>{details.asset_code ? details.asset_code : 'N/A'}</Text></Text>
             <Text variant="titleLarge" style={{color: 'black'}}>Original Location: <Text style={{color: 'black', textTransform: 'uppercase', fontWeight: 'bold'}}>{details.name ? details.name : 'N/A'}</Text></Text>
             <Text variant="titleLarge" style={{color: 'black'}}>Current Location: <Text style={{color: 'black', textTransform: 'uppercase', fontWeight: 'bold'}}>{details.curr_loc ? details.curr_loc : 'N/A'}</Text></Text>
             <Text variant="titleLarge" style={{color: 'black'}}>Original Price: <Text style={{color: 'black', textTransform: 'uppercase', fontWeight: 'bold'}}>{details.original_price ? details.original_price : 'N/A'}</Text></Text>
@@ -63,15 +62,16 @@ const AssetDetailsScreen = ({route, navigation}) => {
             <Text variant="titleLarge" style={{color: 'black'}}>Purchased Date: <Text style={{color: 'black', textTransform: 'uppercase', fontWeight: 'bold'}}>{details.purchase_date ? details.purchase_date : 'N/A'}</Text></Text>
             <Text variant="titleLarge" style={{color: 'black'}}>Added By: <Text style={{color: 'black', textTransform: 'uppercase', fontWeight: 'bold'}}>{details.access_level ? details.access_level : 'N/A'}</Text></Text>
             <Text variant="titleLarge" style={{color: 'black'}}>Status: <Text style={{color: 'black', textTransform: 'uppercase', fontWeight: 'bold'}}>{details.status ? details.status : 'N/A'}</Text></Text>
-            <View style={{alignSelf: 'center', marginVertical: 20}}>
+            {/* <View style={{alignSelf: 'center', marginVertical: 20}}>
             <QRCode size={200}
               value={details.asset_code}
             />
-            </View>
+            </View> */}
         </Card.Content>
         <Card.Actions style={{justifyContent: 'flex-end'}}>
-          <Button icon="pencil" mode="contained" style={{marginRight: 5}} onPress={() => navigation.navigate("UpdateAssetScreen", details.id)}>Update</Button>
-          <Button icon="delete" color="red" mode="contained">Archive</Button>
+          <Button icon="cog" color="green" mode="contained" style={{marginRight: 5}} onPress={() => navigation.navigate("AssetMaintenanceScreen", details.id)}></Button>
+          <Button icon="pencil" mode="contained" style={{marginRight: 5}} onPress={() => navigation.navigate("UpdateAssetScreen", details.id)}></Button>
+          <Button icon="delete" color="red" mode="contained"></Button>
         </Card.Actions>
     </Card>
     </ScrollView>

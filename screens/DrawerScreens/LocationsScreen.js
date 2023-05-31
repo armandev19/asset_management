@@ -65,11 +65,10 @@ const getLocations = () => {
       'application/x-www-form-urlencoded;charset=UTF-8',
     },
   })
-    .then((response) => response.text())
+    .then((response) => response.json())
     .then((responseJson) => {
-      alert(responseJson)
       setLoading(false);
-      // setLocations(responseJson.data);
+      setLocations(responseJson.data);
     })
     .catch((error) => {
       alert(error);
@@ -82,6 +81,27 @@ const onRefresh = () => {
   getLocations();
 };
 
+function RowItem({ navigation, name, address, id }) {
+  return (
+    <Card style={{ margin: 3, paddingBottom: 5 }}>
+      <TouchableOpacity 
+      onPress={() => navigation.navigate("UpdateLocationScreen", id)}
+      >
+        <View>
+          <View style={{ flexDirection: 'row', padding: 5, marginLeft: 3 }}>
+            <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 15, fontWeight: "bold", textTransform: 'uppercase'}}>{name}</Text>
+          </View>
+        </View>
+        <View style={styles.item}>
+          <View style={{flex: 1}}>
+            <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>ADDRESS: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{address}</Text></Text>
+          </View>
+        </View>
+      </TouchableOpacity>
+    </Card>
+  );
+}
+
 // useEffect(()=>{
 // }, []);
 useFocusEffect(
@@ -90,45 +110,46 @@ useFocusEffect(
   }, []),
 );
   return (
-      <View>
+    <View style={{justifyContent: 'center', backgroundColor: '#f2f3f8',}}>
+      <View styles={{flex: 1, padding: 6, alignSelf: 'center'}}>
         <Card style={{ margin: 6, padding: 6}}>
-            <View style={{flexDirection: 'row', alignItems: 'center' }}>
-              <Searchbar
-                placeholder="Search"
-                onChangeText={handleSearchQueryChange}
-                value={search}
-                style={{ marginHorizontal: 5, flex: 6}}
-              />
-              <Button style={{marginHorizontal: 5, marginTop: 1, padding: 5}} labelStyle={{fontWeight: 'bold'}} icon="plus" compact="true" mode="contained" onPress={() => navigation.navigate('AddLocationScreen')}>
-              </Button>
-            </View>
-        </Card>
-        <ScrollView styles={{flex: 1}}>
-          <View
-            style={{
-            justifyContent: 'center',
-            flex: 1
-          }}>
-            {locations.map((values, i) => (
-              <List.Item
-              key={i}
-              style={{ backgroundColor: 'white', marginTop: 1}}
-              title={values.name}
-              description={values.address}
-              left={props => <List.Icon {...props} icon="folder"
-               />}
-              onPress={()=> navigation.navigate('UpdateLocationScreen', values.id)}
-              refreshControl={
-                <RefreshControl
-                  refreshing={false}
-                  onRefresh={onRefresh}
-                />
-              }
+          <View style={{flexDirection: 'row', alignItems: 'center' }}>
+            <Searchbar
+              placeholder="Search"
+              // onChangeText={onChangeSearch}
+              // value={searchQuery}
+              style={{ marginHorizontal: 5, flex: 6}}
             />
-            ))}
+            <Button style={{marginHorizontal: 5, marginTop: 1, padding: 5}} labelStyle={{fontWeight: 'bold'}} icon="plus" compact="true" mode="contained" onPress={() => navigation.navigate('AddAssetTransferScreen')}>
+            </Button>
           </View>
-        </ScrollView>
+        </Card>
+        <FlatList
+          data={locations}
+          contentContainerStyle={{paddingBottom: 20, padding: 5}}
+          initialNumToRender={10}
+          windowSize={5}
+          maxToRenderPerBatch={5}
+          updateCellsBatchingPeriod={30}
+          removeClippedSubviews={false}
+          onEndReachedThreshold={0.1}
+          renderItem={({ item }) =>
+            <RowItem
+              navigation={navigation}
+              name={item.name}
+              address={item.address}
+              id={item.id}
+            />
+          }
+          refreshControl={
+            <RefreshControl
+              refreshing={false}
+              onRefresh={onRefresh}
+            />
+          }
+        />
       </View>
+    </View>
   )
 };
 
@@ -136,6 +157,11 @@ useFocusEffect(
 export default LocationScreen;
 
 const styles = StyleSheet.create({
+  item: {
+    flexDirection: 'row',
+    padding: 1,
+    marginLeft: 8,
+  },
   assetContainer: {
     padding: 10,
     width: '100%',

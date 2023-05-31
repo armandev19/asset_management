@@ -4,14 +4,14 @@ import {Card, Title, Paragraph, Divider, List, Button, IconButton, Searchbar} fr
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import DropDownPicker from 'react-native-dropdown-picker';
-import Loader from './../Components/loader';
+import Loader from './Components/loader';
 
-import { selectUserData, setUserData } from '../redux/navSlice';
+import { selectUserData, setUserData } from './redux/navSlice';
 import { useSelector } from 'react-redux';
 
 import { useFocusEffect } from '@react-navigation/native';
 
-const AssetScreen = ({navigation, route}) => {
+const AssetMaintenanceScreen = ({navigation, route}) => {
 
 const [loading, setLoading] = useState(false);
 const [assets, setAssets] = useState([]);
@@ -133,7 +133,7 @@ useFocusEffect(
                 value={search}
                 style={{ marginHorizontal: 5, flex: 6}}
               />
-              <Button style={{marginHorizontal: 5, marginTop: 1, padding: 5}} color="green" labelStyle={{fontWeight: 'bold'}} icon="plus" compact="true" mode="contained" onPress={() => navigation.navigate('AddAssetScreen')}>
+              <Button style={{marginHorizontal: 5, marginTop: 1, padding: 5}} labelStyle={{fontWeight: 'bold'}} icon="plus" compact="true" mode="contained" onPress={() => navigation.navigate('AddAssetScreen')}>
               </Button>
             </View>
           </Card>
@@ -142,7 +142,7 @@ useFocusEffect(
           ): (
           <FlatList
             data={assets}
-            contentContainerStyle={{paddingBottom: 20, padding: 5}}
+            contentContainerStyle={{paddingBottom: 20}}
             initialNumToRender={10}
             windowSize={5}
             maxToRenderPerBatch={5}
@@ -174,7 +174,7 @@ useFocusEffect(
 };
 
  
-export default AssetScreen;
+export default AssetMaintenanceScreen;
 
 const styles = StyleSheet.create({
   item: {

@@ -56,16 +56,13 @@ const LoginScreen = ({navigation}) => {
         'application/x-www-form-urlencoded;charset=UTF-8',
       },
     })
-      .then((response) => response.text())
+      .then((response) => response.json())
       .then((responseJson) => {
         //Hide Loader
-        alert(responseJson)
         setLoading(false);
-        console.log(responseJson);
         // If server response message same as Data Matched
         if (responseJson.status === 'success') {
           AsyncStorage.setItem('user_id', JSON.stringify(responseJson.user_data));
-          console.log(responseJson.user_data);
           dispatch(setUserData(responseJson.user_data));
           navigation.replace('DrawerNavigationRoutes');
         } else {

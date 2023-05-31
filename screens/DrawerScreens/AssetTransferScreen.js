@@ -48,28 +48,34 @@ const onRefresh = () => {
 
 function RowItem({ navigation, ref_no, asset_name, asset_description, original_location, id }) {
   return (
-    <Card style={{ margin: 5 }}>
-      <TouchableOpacity 
+    <Card style={{ margin: 3, paddingBottom: 5 }}>
+      {/* <TouchableOpacity 
       // onPress={() => navigation.navigate("UpdateAssetTransferDetailsScreen", id)}
-      >
+      > */}
         <View>
-          <View style={{ flexDirection: 'row', padding: 5 }}>
+          <View style={{ flexDirection: 'row', padding: 5, marginLeft: 3 }}>
             <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 15, fontWeight: "bold", textTransform: 'uppercase', width: '35%' }}>{ref_no}</Text>
           </View>
         </View>
         <View style={styles.item}>
-          <Text adjustsFontSizeToFit style={styles.textTitle}>ASSSET NAME: </Text>
-          <View style={{ }}>
-            <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{asset_name}</Text>
+          <View style={{flex: 1}}>
+            <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>ASSSET NAME: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{asset_name}</Text></Text>
           </View>
         </View>
         <View style={styles.item}>
-          <Text adjustsFontSizeToFit style={styles.textTitle}>DESCRIPTION: </Text>
-          <View style={{ }}>
-            <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{asset_description}</Text>
+          <View style={{flex: 1}}>
+            <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>ASSSET DESCRIPTION: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{asset_description}</Text></Text>
           </View>
         </View>
-      </TouchableOpacity>
+        <View style={styles.item}>
+          <View style={{flex: 1}}>
+            <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>FROM: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{asset_description}</Text></Text>
+          </View>
+          <View style={{flex: 1}}>
+            <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>TO: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{asset_description}</Text></Text>
+          </View>
+        </View>
+      {/* </TouchableOpacity> */}
     </Card>
   );
 }
@@ -97,7 +103,7 @@ useFocusEffect(
           </Card>
           <FlatList
             data={assets}
-            contentContainerStyle={{paddingBottom: 20}}
+            contentContainerStyle={{paddingBottom: 20, padding: 5}}
             initialNumToRender={10}
             windowSize={5}
             maxToRenderPerBatch={5}
@@ -107,7 +113,7 @@ useFocusEffect(
             renderItem={({ item }) =>
               <RowItem
                 navigation={navigation}
-                ref_no={item.ref_no}
+                ref_no={item.reference_no}
                 asset_name={item.asset_name}
                 original_location={item.original}
                 asset_description={item.asset_description}
@@ -132,7 +138,8 @@ export default AssetTransferScreen;
 const styles = StyleSheet.create({
   item: {
     flexDirection: 'row',
-    padding: 3,
+    padding: 1,
+    marginLeft: 8,
   },
   textTitle: {
     width: '30%',

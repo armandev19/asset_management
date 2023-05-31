@@ -11,6 +11,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { selectUserData, setUserData } from '../redux/navSlice';
 import { useSelector, useDispatch } from 'react-redux';
 
+import Icon from 'react-native-vector-icons/MaterialIcons';
+
 const CustomSidebarMenu = (props) => {
   const [userEmail, setUserEmail] = useState('');
   const [userPassword, setUserPassword] = useState('');
@@ -22,14 +24,15 @@ const CustomSidebarMenu = (props) => {
     <View style={stylesSidebar.sideMenuContainer}>
       <View style={stylesSidebar.profileHeader}>
         <View style={stylesSidebar.profileHeaderPicCircle}>
+          <Icon name="person" size={40}/>
         </View>
 
         {currentUserData ? (
           <Text style={stylesSidebar.profileHeaderText}>
-          {currentUserData.firstname} {currentUserData.middlename} {currentUserData.lastname}
+          {currentUserData.firstname} {currentUserData.lastname}
           {`\n`}
-          {currentUserData.access}
-        </Text>
+          <Text style={{color: 'gray', fontSize: 17, textTransform: 'uppercase', fontStyle: 'italic'}}>{currentUserData.access_level}</Text>
+          </Text>
         ) :
         (
           <Text style={stylesSidebar.profileHeaderText}>
@@ -96,7 +99,7 @@ const stylesSidebar = StyleSheet.create({
   },
   profileHeader: {
     flexDirection: 'row',
-    backgroundColor: '#348ceb',
+    backgroundColor: '#FFFFFF',
     padding: 15,
     textAlign: 'center',
   },
@@ -105,14 +108,15 @@ const stylesSidebar = StyleSheet.create({
     height: 60,
     borderRadius: 60 / 2,
     color: 'black',
-    backgroundColor: 'white',
+    backgroundColor: '#348ceb',
     textAlign: 'center',
     justifyContent: 'center',
     alignItems: 'center',
   },
   profileHeaderText: {
-    color: '#ffffff',
+    color: 'black',
     alignSelf: 'center',
+    textTransform: 'uppercase',
     paddingHorizontal: 10,
     fontWeight: 'bold',
     fontSize: 20
