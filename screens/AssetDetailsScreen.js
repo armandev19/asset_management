@@ -48,7 +48,8 @@ const AssetDetailsScreen = ({route, navigation}) => {
     getAssetDetails();
   }, [])
 
-
+  
+  console.log(details);
   return (
 		<ScrollView style={{padding: 10}}>
     <Card>

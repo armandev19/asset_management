@@ -209,7 +209,7 @@ const AddAssetScreen = ({route, navigation}) => {
                   )}
                 </View>
                 <View style={{}}>
-                  <Button style={{marginTop: 10}} icon="camera" mode="contained" onPress={() => console.log('Pressed')}>
+                  <Button style={{marginTop: 10}} icon="camera" mode="contained" onPress={() => navigation.navigate("CameraScreen")}>
                     Image
                   </Button>
                   <View style={{marginTop: 5}}>

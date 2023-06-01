@@ -25,6 +25,7 @@ import UpdateUsersScreen from './screens/UpdateUsersScreen';
 import AddUsersScreen from './screens/AddUsersScreen';
 import AddAssetTransferScreen from './screens/AddAssetTransferScreen';
 import AssetMaintenanceScreen from './screens/AssetMaintenanceScreen';
+import CameraScreen from './screens/CameraScreen';
 
 import { Provider } from 'react-redux';
 import { store } from './screens/redux/store';
@@ -60,9 +61,9 @@ const Auth = () => {
 
 
 const App = () => {
-  global.url = "http://192.168.179.127/asset_management/";
+  // global.url = "http://192.168.179.127/asset_management/";
   // global.url = "http://asset-management.epizy.com/mobile/ams/";
-  // global.url = "http://192.168.1.10/asset_management/";
+  global.url = "http://192.168.1.8/asset_management/";
   
   // global.url = "https://homeworldconstruction.com/mobile/blood_saver/";
   const appState = useRef(AppState.currentState);
@@ -220,6 +221,21 @@ const App = () => {
           component={AssetMaintenanceScreen}
           options={{
             title: "ASSET MAINTENANCE",
+            headerStyle: {
+              backgroundColor: '#348ceb', //Set Header color
+            },
+            headerTintColor: '#fff', //Set Header text color
+            headerTitleStyle: {
+              fontWeight: 'bold', //Set Header text style
+            },}}
+        />
+
+        <Stack.Screen
+          name="CameraScreen"
+          title="CAMERA"
+          component={CameraScreen}
+          options={{
+            title: "CAMERA",
             headerStyle: {
               backgroundColor: '#348ceb', //Set Header color
             },

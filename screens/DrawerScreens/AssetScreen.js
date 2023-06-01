@@ -88,7 +88,7 @@ const onRefresh = () => {
 function RowItem({ key, navigation, asset_code, asset_name, asset_description, current_location, item_id }) {
   return (
     <Card style={{ margin: 3 }}>
-      <TouchableOpacity style={{marginBottom: 5}} onPress={() => navigation.navigate("AssetDetailsScreen", item_id)}>
+      <TouchableOpacity key={key} style={{marginBottom: 5}} onPress={() => navigation.navigate("AssetDetailsScreen", item_id)}>
         <View>
           <View style={{ flexDirection: 'row', padding: 5, marginLeft: 3 }}>
             <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 15, fontWeight: "bold", textTransform: 'uppercase', width: '35%' }}>{asset_code}</Text>
@@ -120,6 +120,7 @@ function RowItem({ key, navigation, asset_code, asset_name, asset_description, c
 useFocusEffect(
   React.useCallback(() => {
     getAssets();
+    console.log(assets)
   }, []),
 );
   return (
@@ -157,7 +158,7 @@ useFocusEffect(
                 asset_name={item.asset_name}
                 asset_description={item.asset_description}
                 current_location={item.loc_name ? item.loc_name : "N/A"}
-                item_id={item.id}
+                item_id={item.item_id}
               />
             }
             refreshControl={
