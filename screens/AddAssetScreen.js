@@ -8,7 +8,7 @@ import {
   ThemeProvider,
 } from "react-native-paper";
 import {View, Text, SafeAreaView, ScrollView, KeyboardAvoidingView, StyleSheet, TouchableOpacity} from 'react-native';
-import {Card, Title, Paragraph, Divider, TextInput, Button, IconButton} from 'react-native-paper';
+import {Card, Title, Paragraph, Divider, TextInput, IconButton, Button} from 'react-native-paper';
 import Loader from './Components/loader';
 import { selectUserData, setUserData } from './redux/navSlice';
 import { useSelector } from 'react-redux';
@@ -26,86 +26,9 @@ const AddAssetScreen = ({route, navigation}) => {
   const [location, setLocation] = useState("");
 	const [locationList, setLocationList] = useState([]);
 	const currentUserData = useSelector(selectUserData);
-
 	const [isPickerShow, setIsPickerShow] = useState(false);
   const [date, setDate] = useState(new Date(Date.now()));
-
-  const [singleFile, setSingleFile] = useState([]);
-
-
-  // const uploadImage = async () => {
-  //   // Check if any file is selected or not
-  //   if (singleFile != null) {
-  //     // If file selected then create FormData
-  //     const fileToUpload = singleFile;
-  //     const data = new FormData();
-  //     data.append('name', 'Image Upload');
-  //     data.append('file_attachment', fileToUpload);
-  //     // Please change file upload URL
-  //     let res = await fetch(global.url+'upload.php', {
-  //       method: 'post',
-  //       body: data,
-  //       headers: {
-  //         'Content-Type': 'multipart/form-data; ',
-  //       },
-  //     });
-  //     let responseJson = await res.text();
-  //     if (responseJson.status == 1) {
-  //       alert('Upload Successful');
-  //     }else{
-  //       alert(responseJson)
-  //     }
-  //   } else {
-  //     // If no file selected the show alert
-  //     alert('Please Select File first');
-  //   }
-  // };
-
-  const [selectedFile, setSelectedFile] = useState(null);
-
-  const handleFilePick = async () => {
-    try {
-      const res = await DocumentPicker.pick({
-        type: [DocumentPicker.types.allFiles],
-      });
-
-      setSelectedFile(res);
-    } catch (err) {
-      if (DocumentPicker.isCancel(err)) {
-        console.log('User cancelled the picker');
-      } else {
-        console.log('Error: ', err);
-      }
-    }
-  };
-
-  const handleFileUpload = () => {
-    if (selectedFile) {
-      const formData = new FormData();
-      formData.append('file', {
-        uri: selectedFile.uri,
-        name: selectedFile.name,
-        type: selectedFile.type,
-      });
-
-      try {
-        const response = fetch(global.url+'upload.php', {
-          method: 'POST',
-          body: formData,
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
-
-        const json = response.text();
-        alert(json);
-        console.log('Upload response: ', json);
-      } catch (error) {
-        alert(error)
-        console.log('Upload error: ', error);
-      }
-    }
-  };
+  const [selectedFile, setSelectedFile] = useState('');
 
 	const showPicker = () => {
     setIsPickerShow(true);
@@ -172,6 +95,45 @@ const AddAssetScreen = ({route, navigation}) => {
 			});
 	}
 
+  const pickDocument = async () => {
+    try {
+      const res = await DocumentPicker.pick({
+        type: [DocumentPicker.types.allFiles],
+      });
+
+      
+      setSelectedFile(res[0].uri);
+      const formData = new FormData();
+      formData.append('file', {
+        uri: res[0].uri,
+        type: res[0].type,
+        name: res[0].name,
+      });
+      const response = await fetch(global.url+'upload.php', {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+  
+      if (response.ok) {
+        const responseData = await response.json();
+        console.log(responseData);
+      } else {
+        console.log('File upload failed.');
+      }
+
+
+    } catch (err) {
+      if (DocumentPicker.isCancel(err)) {
+        console.log('User canceled the picker');
+      } else {
+        console.log('Error: ' + err);
+      }
+    }
+  };
+
 
 	useEffect(() => {
 		getLocationDropdown();
@@ -181,7 +143,7 @@ const AddAssetScreen = ({route, navigation}) => {
 			<Provider theme={DefaultTheme}>
         <View style={{flex: 1, backgroundColor: 'white'}}>
           <Loader loading={loading} />
-          {/* <SafeAreaView
+          <SafeAreaView
             keyboardShouldPersistTaps="handled"
             contentContainerStyle={{
 						justifyContent: 'center',
@@ -219,10 +181,10 @@ const AddAssetScreen = ({route, navigation}) => {
 								keyboardType='numeric'
                 value={price}
                 onChangeText={price => setPrice(price)}
-							/> */}
+							/>
 
 							{/* The date picker */}
-							{/* {isPickerShow && (
+							{isPickerShow && (
                   <DateTimePicker
                     value={date}
                     mode={'date'}
@@ -253,7 +215,10 @@ const AddAssetScreen = ({route, navigation}) => {
                   )}
                 </View>
                 <View style={{}}>
-                  <Button style={{marginTop: 10}} icon="camera" mode="contained" onPress={() => navigation.navigate("CameraScreen")}>
+                <Card>
+                  <Card.Cover source={{ uri: selectedFile }} />
+                </Card>
+                  <Button style={{marginTop: 10}} icon="camera" mode="contained" onPress={pickDocument}>
                     Image
                   </Button>
                   <View style={{marginTop: 5}}>
@@ -269,17 +234,7 @@ const AddAssetScreen = ({route, navigation}) => {
 								</Button>
 							</View>
             </KeyboardAvoidingView>
-        	</SafeAreaView> */}
-          <View>
-            <Button onPress={handleFilePick}>asdasdas</Button>
-            {selectedFile && (
-              <View>
-                <Text style={{color: 'black'}}>Selected File:</Text>
-                <Text style={{color: 'black'}}>{selectedFile.name}</Text>
-                <Button onPress={handleFileUpload} >uplaod</Button>
-              </View>
-            )}
-          </View>
+        	</SafeAreaView>
             {/* end upload */}
 					</View>
 					</Provider>
