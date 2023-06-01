@@ -7,15 +7,14 @@ import {
   Surface,
   ThemeProvider,
 } from "react-native-paper";
-import {View, Text, SafeAreaView, ScrollView, KeyboardAvoidingView, StyleSheet} from 'react-native';
+import {View, Text, SafeAreaView, ScrollView, KeyboardAvoidingView, StyleSheet, TouchableOpacity} from 'react-native';
 import {Card, Title, Paragraph, Divider, TextInput, Button, IconButton} from 'react-native-paper';
 import Loader from './Components/loader';
 import { selectUserData, setUserData } from './redux/navSlice';
 import { useSelector } from 'react-redux';
 import DropDown from "react-native-paper-dropdown";
 import DateTimePicker from '@react-native-community/datetimepicker';
-
-import {Camera, useCameraDevices} from 'react-native-vision-camera';
+import DocumentPicker from 'react-native-document-picker';
 
 const AddAssetScreen = ({route, navigation}) => {
 	const [loading, setLoading] = useState(false);
@@ -31,13 +30,82 @@ const AddAssetScreen = ({route, navigation}) => {
 	const [isPickerShow, setIsPickerShow] = useState(false);
   const [date, setDate] = useState(new Date(Date.now()));
 
-  const cameraRef = useRef(Camera);
+  const [singleFile, setSingleFile] = useState([]);
 
-  const [camView, setCamView] = useState("back");
-  const devices = useCameraDevices("dual-camera");
-  const device = camView === 'back';
 
-  
+  // const uploadImage = async () => {
+  //   // Check if any file is selected or not
+  //   if (singleFile != null) {
+  //     // If file selected then create FormData
+  //     const fileToUpload = singleFile;
+  //     const data = new FormData();
+  //     data.append('name', 'Image Upload');
+  //     data.append('file_attachment', fileToUpload);
+  //     // Please change file upload URL
+  //     let res = await fetch(global.url+'upload.php', {
+  //       method: 'post',
+  //       body: data,
+  //       headers: {
+  //         'Content-Type': 'multipart/form-data; ',
+  //       },
+  //     });
+  //     let responseJson = await res.text();
+  //     if (responseJson.status == 1) {
+  //       alert('Upload Successful');
+  //     }else{
+  //       alert(responseJson)
+  //     }
+  //   } else {
+  //     // If no file selected the show alert
+  //     alert('Please Select File first');
+  //   }
+  // };
+
+  const [selectedFile, setSelectedFile] = useState(null);
+
+  const handleFilePick = async () => {
+    try {
+      const res = await DocumentPicker.pick({
+        type: [DocumentPicker.types.allFiles],
+      });
+
+      setSelectedFile(res);
+    } catch (err) {
+      if (DocumentPicker.isCancel(err)) {
+        console.log('User cancelled the picker');
+      } else {
+        console.log('Error: ', err);
+      }
+    }
+  };
+
+  const handleFileUpload = () => {
+    if (selectedFile) {
+      const formData = new FormData();
+      formData.append('file', {
+        uri: selectedFile.uri,
+        name: selectedFile.name,
+        type: selectedFile.type,
+      });
+
+      try {
+        const response = fetch(global.url+'upload.php', {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+
+        const json = response.text();
+        alert(json);
+        console.log('Upload response: ', json);
+      } catch (error) {
+        alert(error)
+        console.log('Upload error: ', error);
+      }
+    }
+  };
 
 	const showPicker = () => {
     setIsPickerShow(true);
@@ -104,40 +172,16 @@ const AddAssetScreen = ({route, navigation}) => {
 			});
 	}
 
-  const cameraPermission = useCallback(async () => {
-    const permission = await Camera.requestCameraPermission();
-    if(permission === 'denied'){
-      await Linking.openSettings();
-    }
-  }, [])
-
-
-  const takePhoto = async () => {
-    try {
-      if(cameraRef.current == null){
-        throw new Error('Camera ref is null');
-      }
-
-      console.log('Photo taking..');
-
-      const photo = await cameraRef.current.takePhoto({
-        qualityPrioritization: 'quality',
-      })
-      console.log(photo)
-    } catch (error){
-      console.log(error, 'error this');
-    }
-  }
 
 	useEffect(() => {
-    cameraPermission();
 		getLocationDropdown();
 	}, [])
+
     return (
 			<Provider theme={DefaultTheme}>
         <View style={{flex: 1, backgroundColor: 'white'}}>
           <Loader loading={loading} />
-          <SafeAreaView
+          {/* <SafeAreaView
             keyboardShouldPersistTaps="handled"
             contentContainerStyle={{
 						justifyContent: 'center',
@@ -175,10 +219,10 @@ const AddAssetScreen = ({route, navigation}) => {
 								keyboardType='numeric'
                 value={price}
                 onChangeText={price => setPrice(price)}
-							/>
+							/> */}
 
 							{/* The date picker */}
-							{isPickerShow && (
+							{/* {isPickerShow && (
                   <DateTimePicker
                     value={date}
                     mode={'date'}
@@ -216,13 +260,6 @@ const AddAssetScreen = ({route, navigation}) => {
 
                   </View>
                 </View>
-                <Camera
-                  // style={StyleSheet.absoluteFill}
-                  device={device}
-                  isActive={true}
-                  photo={true}
-                  ref={cameraRef}
-                />
 							<View style={{}}>
 								<Button style={{marginTop: 15}} icon="check" color='green' mode="contained" onPress={() => saveAsset()}>
 									SAVE
@@ -232,7 +269,18 @@ const AddAssetScreen = ({route, navigation}) => {
 								</Button>
 							</View>
             </KeyboardAvoidingView>
-        	</SafeAreaView>
+        	</SafeAreaView> */}
+          <View>
+            <Button onPress={handleFilePick}>asdasdas</Button>
+            {selectedFile && (
+              <View>
+                <Text style={{color: 'black'}}>Selected File:</Text>
+                <Text style={{color: 'black'}}>{selectedFile.name}</Text>
+                <Button onPress={handleFileUpload} >uplaod</Button>
+              </View>
+            )}
+          </View>
+            {/* end upload */}
 					</View>
 					</Provider>
     )
@@ -304,5 +352,36 @@ const styles = StyleSheet.create({
       color: '#000000',
       fontSize: 13,
       alignSelf: 'center'
-    }
+    },
+    mainBody: {
+      flex: 1,
+      justifyContent: 'center',
+      padding: 20,
+    },
+    buttonStyle: {
+      backgroundColor: '#307ecc',
+      borderWidth: 0,
+      color: '#FFFFFF',
+      borderColor: '#307ecc',
+      height: 40,
+      alignItems: 'center',
+      borderRadius: 30,
+      marginLeft: 35,
+      marginRight: 35,
+      marginTop: 15,
+    },
+    buttonTextStyle: {
+      color: '#FFFFFF',
+      paddingVertical: 10,
+      fontSize: 16,
+    },
+    textStyle: {
+      backgroundColor: '#fff',
+      fontSize: 15,
+      marginTop: 16,
+      marginLeft: 35,
+      marginRight: 35,
+      textAlign: 'center',
+      color: 'black'
+    },
   });
