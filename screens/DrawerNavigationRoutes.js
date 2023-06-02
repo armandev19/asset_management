@@ -261,11 +261,11 @@ const DrawerNavigatorRoutes = ({navgiation, route}) => {
         options={{drawerLabel: 'USERS', drawerLabelStyle: {color: '#348ceb'}, drawerIcon: (({focused}) => <Icon name="person" size={30} color="#348ceb" />)}}
         component={UsersStack}
       />
-      {/* <Drawer.Screen
+      <Drawer.Screen
         name="TrackerScreen"
         options={{drawerLabel: 'TRACK ASSET', drawerLabelStyle: {color: '#348ceb'}, drawerIcon: (({focused}) => <Icon name="qrcode" size={30} color="#348ceb" />)}}
         component={TrackerStack}
-      /> */}
+      />
 
      {/* {(() => {
         if (user_data.access == 'Admin') {

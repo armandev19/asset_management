@@ -8,9 +8,9 @@ import { useSelector } from 'react-redux';
 import Moment from 'moment';
 import { ScrollView } from 'react-native-gesture-handler';
 
-const AssetDetailsScreen = ({route, navigation}) => {
+const AssetDetailsScreen = ({navigation, route}) => {
   
-  const params = route.params
+  const params = route.params;
   const [details, setAssetDetails] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -34,8 +34,6 @@ const AssetDetailsScreen = ({route, navigation}) => {
 		})
 		.then((response) => response.json())
 		.then((responseJson) => {
-      // alert(responseJson.data)
-      console.log(responseJson.data[0])
       setAssetDetails(responseJson.data[0]);
 			setLoading(false);
 		})

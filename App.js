@@ -61,9 +61,9 @@ const Auth = () => {
 
 
 const App = () => {
-  // global.url = "http://192.168.179.127/asset_management/";
+  global.url = "http://192.168.83.230/asset_management/";
   // global.url = "http://asset-management.epizy.com/mobile/ams/";
-  global.url = "http://192.168.1.8/asset_management/";
+  // global.url = "http://192.168.1.8/asset_management/";
   
   // global.url = "https://homeworldconstruction.com/mobile/blood_saver/";
   const appState = useRef(AppState.currentState);

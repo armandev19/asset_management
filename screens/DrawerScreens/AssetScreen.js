@@ -120,7 +120,6 @@ function RowItem({ key, navigation, asset_code, asset_name, asset_description, c
 useFocusEffect(
   React.useCallback(() => {
     getAssets();
-    console.log(assets)
   }, []),
 );
   return (
@@ -158,7 +157,7 @@ useFocusEffect(
                 asset_name={item.asset_name}
                 asset_description={item.asset_description}
                 current_location={item.loc_name ? item.loc_name : "N/A"}
-                item_id={item.item_id}
+                item_id={item.id}
               />
             }
             refreshControl={

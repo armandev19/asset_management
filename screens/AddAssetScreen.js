@@ -28,7 +28,7 @@ const AddAssetScreen = ({route, navigation}) => {
 	const currentUserData = useSelector(selectUserData);
 	const [isPickerShow, setIsPickerShow] = useState(false);
   const [date, setDate] = useState(new Date(Date.now()));
-  const [selectedFile, setSelectedFile] = useState('');
+  const [selectedFile, setSelectedFile] = useState([]);
 
 	const showPicker = () => {
     setIsPickerShow(true);
@@ -43,18 +43,28 @@ const AddAssetScreen = ({route, navigation}) => {
 		setLoading(true);
 		let dataToSend = { name: name, description : description, price: price, purchaseDate: date, location: location, created_by: currentUserData.id };
 		let formBody = [];
+
+    // const formData = new FormData();
+    
+
 		for (let key in dataToSend) {
 			let encodedKey = encodeURIComponent(key);
 			let encodedValue = encodeURIComponent(dataToSend[key]);
 			formBody.push(encodedKey + '=' + encodedValue);
 		}
+
+    formBody.append('file', {
+      uri: selectedFile[0].uri,
+      type: selectedFile[0].type,
+      name: selectedFile[0].name,
+    });
+
 		formBody = formBody.join('&');
 		fetch(global.url+'saveAsset.php', {
 			method: 'POST',
 			body: formBody,
 			headers: {
-				'Content-Type':
-				'application/x-www-form-urlencoded;charset=UTF-8',
+        'Content-Type': 'multipart/form-data',
 			},
 		})
 		.then((response) => response.json())
@@ -101,30 +111,9 @@ const AddAssetScreen = ({route, navigation}) => {
         type: [DocumentPicker.types.allFiles],
       });
 
-      
-      setSelectedFile(res[0].uri);
-      const formData = new FormData();
-      formData.append('file', {
-        uri: res[0].uri,
-        type: res[0].type,
-        name: res[0].name,
-      });
-      const response = await fetch(global.url+'upload.php', {
-        method: 'POST',
-        body: formData,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-  
-      if (response.ok) {
-        const responseData = await response.json();
-        console.log(responseData);
-      } else {
-        console.log('File upload failed.');
+      if(res){
+        setSelectedFile(res);
       }
-
-
     } catch (err) {
       if (DocumentPicker.isCancel(err)) {
         console.log('User canceled the picker');
@@ -133,6 +122,30 @@ const AddAssetScreen = ({route, navigation}) => {
       }
     }
   };
+
+  const upload = async () => {
+    const formData = new FormData();
+    formData.append('file', {
+      uri: res[0].uri,
+      type: res[0].type,
+      name: res[0].name,
+    });
+    const response = await fetch(global.url+'upload.php', {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    if (response.ok) {
+      const responseData = await response.json();
+      console.log(responseData);
+    } else {
+      console.log('File upload failed.');
+    }
+
+  }
 
 
 	useEffect(() => {
@@ -214,10 +227,15 @@ const AddAssetScreen = ({route, navigation}) => {
                     </View>
                   )}
                 </View>
-                <View style={{}}>
-                <Card>
-                  <Card.Cover source={{ uri: selectedFile }} />
-                </Card>
+                <View>
+                {selectedFile.length > 0 ? (
+                    <Text style={{color: 'black'}}>adasd</Text>
+                  // <Card>
+                  //     <Card.Cover source={{ uri: selectedFile }} />
+                  // </Card>
+                  ):(
+                    <Text style={{color: 'black'}}>No image</Text>
+                  )}
                   <Button style={{marginTop: 10}} icon="camera" mode="contained" onPress={pickDocument}>
                     Image
                   </Button>
