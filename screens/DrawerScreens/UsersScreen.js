@@ -46,23 +46,38 @@ function RowItem({ navigation, firstname, lastname, id, access_level, address })
   return (
     <Card style={{ margin: 5 }}>
       <TouchableOpacity onPress={() => navigation.navigate("UpdateUsersScreen", id)}>
-        <View>
+      <View>
+          <View style={{ flexDirection: 'row', padding: 5, marginLeft: 3 }}>
+            <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 15, fontWeight: "bold", textTransform: 'uppercase'}}>{firstname+" "+lastname}</Text>
+          </View>
+        </View>
+        <View style={styles.item}>
+          <View style={{flex: 1}}>
+            <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>ACCESS: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{access_level}</Text></Text>
+          </View>
+        </View>
+        <View style={styles.item}>
+          <View style={{flex: 1}}>
+            <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>ADDRES: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{address}</Text></Text>
+          </View>
+        </View>
+        {/* <View>
           <View style={{ flexDirection: 'row', padding: 5 }}>
             <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 15, fontWeight: "bold", textTransform: 'uppercase', width: '35%' }}>{firstname+" "+lastname}</Text>
           </View>
         </View>
         <View style={styles.item}>
-          <Text adjustsFontSizeToFit style={styles.textTitle}>ACCESS: </Text>
+          <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 15, fontWeight: "bold", textTransform: 'uppercase'}}>ACCESS: </Text>
           <View style={{ }}>
             <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{access_level}</Text>
           </View>
         </View>
         <View style={styles.item}>
-          <Text adjustsFontSizeToFit style={styles.textTitle}>ADDRESS: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{address}</Text></Text>
+          <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 15, fontWeight: "bold", textTransform: 'uppercase'}}>ADDRESS: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{address}</Text></Text>
           <View style={{ }}>
             
           </View>
-        </View>
+        </View> */}
       </TouchableOpacity>
     </Card>
   );
@@ -91,13 +106,13 @@ useFocusEffect(
               // value={searchQuery}
               style={{ marginHorizontal: 5, flex: 6}}
             />
-            <Button style={{marginHorizontal: 5, marginTop: 1, padding: 5}} labelStyle={{fontWeight: 'bold'}} icon="plus" compact="true" mode="contained" onPress={() => navigation.navigate('AddUsersScreen')}>
+            <Button style={{marginHorizontal: 5, marginTop: 1, padding: 5}} labelStyle={{fontWeight: 'bold'}} icon="plus" compact="true" mode="contained" onPress={() => navigation.navigate('AddAssetTransferScreen')}>
             </Button>
           </View>
         </Card>
         <FlatList
           data={users}
-          contentContainerStyle={{paddingBottom: 20}}
+          contentContainerStyle={{paddingBottom: 20, padding: 5}}
           initialNumToRender={10}
           windowSize={5}
           maxToRenderPerBatch={5}
@@ -106,12 +121,11 @@ useFocusEffect(
           onEndReachedThreshold={0.1}
           renderItem={({ item }) =>
             <RowItem
-              navigation={navigation}
-              firstname={item.firstname}
-              lastname={item.lastname}
-              id={item.id}
-              access_level={item.access_level}
-              address={item.address}
+            firstname={item.firstname}
+            lastname={item.lastname}
+            id={item.id}
+            access_level={item.access_level}
+            address={item.address}
             />
           }
           refreshControl={
@@ -123,6 +137,48 @@ useFocusEffect(
         />
       </View>
     </View>
+    // <View style={{justifyContent: 'center', backgroundColor: '#f2f3f8',}}>
+    //   <View styles={{flex: 1, padding: 6, alignSelf: 'center'}}>
+    //     <Card style={{ margin: 6, padding: 6}}>
+    //       <View style={{flexDirection: 'row', alignItems: 'center' }}>
+    //         <Searchbar
+    //           placeholder="Search"
+    //           // onChangeText={onChangeSearch}
+    //           // value={searchQuery}
+    //           style={{ marginHorizontal: 5, flex: 6}}
+    //         />
+    //         <Button style={{marginHorizontal: 5, marginTop: 1, padding: 5}} labelStyle={{fontWeight: 'bold'}} icon="plus" compact="true" mode="contained" onPress={() => navigation.navigate('AddUsersScreen')}>
+    //         </Button>
+    //       </View>
+    //     </Card>
+    //     <FlatList
+    //       data={users}
+    //       contentContainerStyle={{paddingBottom: 20}}
+    //       initialNumToRender={10}
+    //       windowSize={5}
+    //       maxToRenderPerBatch={5}
+    //       updateCellsBatchingPeriod={30}
+    //       removeClippedSubviews={false}
+    //       onEndReachedThreshold={0.1}
+    //       renderItem={({ item }) =>
+    //         <RowItem
+    //           navigation={navigation}
+    //           firstname={item.firstname}
+    //           lastname={item.lastname}
+    //           id={item.id}
+    //           access_level={item.access_level}
+    //           address={item.address}
+    //         />
+    //       }
+    //       refreshControl={
+    //         <RefreshControl
+    //           refreshing={false}
+    //           onRefresh={onRefresh}
+    //         />
+    //       }
+    //     />
+    //   </View>
+    // </View>
   )
 };
 
@@ -132,22 +188,8 @@ export default UsersScreen;
 const styles = StyleSheet.create({
   item: {
     flexDirection: 'row',
-    padding: 3,
-  },
-  textTitle: {
-    width: '30%',
-    color: '#3d3d3d',
-    fontWeight: "bold",
-    fontSize: 12,
-    textTransform: 'uppercase'
-  },
-  textChild: {
-    width: '70%',
-    color: '#404040',
-    flex: 1,
-    fontSize: 12,
-    marginLeft: 6,
-    textTransform: 'uppercase'
+    padding: 1,
+    marginLeft: 8,
   },
   assetContainer: {
     padding: 10,

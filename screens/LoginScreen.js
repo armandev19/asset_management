@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
 } from 'react-native';
- 
+import LinearGradient from 'react-native-linear-gradient';
 import {Card, Title, Paragraph, Divider, TextInput, Button} from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { setUserData } from './redux/navSlice';
@@ -78,6 +78,12 @@ const LoginScreen = ({navigation}) => {
  
   return (
     <View style={styles.mainBody}>
+      <LinearGradient
+          colors={['#348ceb', 'white' ]}
+          style={styles.mainBody}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 2 }}
+        >
       <Loader loading={loading} />
       <ScrollView
         keyboardShouldPersistTaps="handled"
@@ -139,6 +145,7 @@ const LoginScreen = ({navigation}) => {
           </KeyboardAvoidingView>
         </View>
       </ScrollView>
+      </LinearGradient>
     </View>
   );
 };
@@ -205,5 +212,12 @@ const styles = StyleSheet.create({
     color: 'red',
     textAlign: 'center',
     fontSize: 14,
+  },
+  linearGradient: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 5,
+    height: 200,
+    width: 350,
   },
 });
