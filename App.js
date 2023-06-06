@@ -122,22 +122,10 @@ const App = () => {
           options={{title: "Request Details"}}
         />
         <Stack.Screen
-          name="DonationDetailsScreen"
-          title="Donation Details"
-          component={DonationDetailsScreen}
-          options={{title: "Donation Details"}}
-        />
-        <Stack.Screen
           name="EditProfileScreen"
           title="Edit Profile"
           component={EditProfileScreen}
           options={{title: "Edit Profile"}}
-        />
-        <Stack.Screen
-          name="UserDetailsScreen"
-          title="User Details"
-          component={UserDetailsScreen}
-          options={{title: "User Details"}}
         />
         <Stack.Screen
           name="AddAssetScreen"
@@ -279,6 +267,21 @@ const App = () => {
           component={UpdateUsersScreen}
           options={{
             title: "UPDATE USER",
+            headerStyle: {
+              backgroundColor: '#348ceb', //Set Header color
+            },
+            headerTintColor: '#fff', //Set Header text color
+            headerTitleStyle: {
+              fontWeight: 'bold', //Set Header text style
+            },}}
+        />
+        
+        <Stack.Screen
+          name="UserDetailsScreen"
+          title="User Details"
+          component={UserDetailsScreen}
+          options={{
+            title: "USER DETAILS",
             headerStyle: {
               backgroundColor: '#348ceb', //Set Header color
             },

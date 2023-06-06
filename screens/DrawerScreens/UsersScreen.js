@@ -42,13 +42,22 @@ const getUsers = () => {
     });
 }
 
-function RowItem({ navigation, firstname, lastname, id, access_level, address }) {
+function RowItem({ navigation, firstname, lastname, id, access_level, address, status }) {
   return (
-    <Card style={{ margin: 5 }}>
-      <TouchableOpacity onPress={() => navigation.navigate("UpdateUsersScreen", id)}>
-      <View>
+    <Card style={{ margin: 2, paddingBottom: 5 }}>
+      <TouchableOpacity onPress={() => navigation.navigate("UserDetailsScreen", id)}>
+        <View>
           <View style={{ flexDirection: 'row', padding: 5, marginLeft: 3 }}>
-            <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 15, fontWeight: "bold", textTransform: 'uppercase'}}>{firstname+" "+lastname}</Text>
+            <View style={{ flex: 1 }}>
+              <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 15, fontWeight: "bold", textTransform: 'uppercase'}}>{firstname+" "+lastname}</Text>
+            </View>
+            <View style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'flex-end'}}>
+            {status == 'Active' ? (
+              <Text adjustsFontSizeToFit style={{ color: 'green', fontSize: 12, fontWeight: "bold", textTransform: 'uppercase', marginRight: 2}}>{status}</Text>
+            ) : (
+              <Text adjustsFontSizeToFit style={{ color: 'red', fontSize: 12, fontWeight: "bold", textTransform: 'uppercase', marginRight: 2}}>{status}</Text>
+            )}
+            </View>
           </View>
         </View>
         <View style={styles.item}>
@@ -61,23 +70,6 @@ function RowItem({ navigation, firstname, lastname, id, access_level, address })
             <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>ADDRES: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{address}</Text></Text>
           </View>
         </View>
-        {/* <View>
-          <View style={{ flexDirection: 'row', padding: 5 }}>
-            <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 15, fontWeight: "bold", textTransform: 'uppercase', width: '35%' }}>{firstname+" "+lastname}</Text>
-          </View>
-        </View>
-        <View style={styles.item}>
-          <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 15, fontWeight: "bold", textTransform: 'uppercase'}}>ACCESS: </Text>
-          <View style={{ }}>
-            <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{access_level}</Text>
-          </View>
-        </View>
-        <View style={styles.item}>
-          <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 15, fontWeight: "bold", textTransform: 'uppercase'}}>ADDRESS: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{address}</Text></Text>
-          <View style={{ }}>
-            
-          </View>
-        </View> */}
       </TouchableOpacity>
     </Card>
   );
@@ -106,7 +98,7 @@ useFocusEffect(
               // value={searchQuery}
               style={{ marginHorizontal: 5, flex: 6}}
             />
-            <Button style={{marginHorizontal: 5, marginTop: 1, padding: 5}} labelStyle={{fontWeight: 'bold'}} icon="plus" compact="true" mode="contained" onPress={() => navigation.navigate('AddAssetTransferScreen')}>
+            <Button style={{marginHorizontal: 5, marginTop: 1, padding: 5}} labelStyle={{fontWeight: 'bold'}} icon="plus" compact="true" mode="contained">
             </Button>
           </View>
         </Card>
@@ -121,11 +113,13 @@ useFocusEffect(
           onEndReachedThreshold={0.1}
           renderItem={({ item }) =>
             <RowItem
+            navigation={navigation}
             firstname={item.firstname}
             lastname={item.lastname}
             id={item.id}
             access_level={item.access_level}
             address={item.address}
+            status={item.status}
             />
           }
           refreshControl={

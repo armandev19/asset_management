@@ -171,7 +171,7 @@ const UsersStack = ({navigation}) => {
   return (
     <Stack.Navigator initialRouteName="UsersScreen">
       <Stack.Screen
-        name="Logs"
+        name="USERS"
         component={UsersScreen}
         options={{
           title: 'USERS', //Set Header Title
