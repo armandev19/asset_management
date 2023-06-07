@@ -13,7 +13,6 @@ import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import DrawerNavigationRoutes from './screens/DrawerNavigationRoutes';
 import DetailScreen from './screens/DetailScreen';
-import DonationDetailsScreen from './screens/DonationDetailsScreen';
 import EditProfileScreen from './screens/EditProfileScreen';
 import UserDetailsScreen from './screens/UserDetailsScreen';
 import AssetDetailsScreen from './screens/AssetDetailsScreen';
