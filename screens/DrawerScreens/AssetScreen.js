@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {View, Text, SafeAreaView, FlatList, StyleSheet, TouchableOpacity, Modal, ToastAndroid, Alert, TextInput, RefreshControl} from 'react-native';
-import {Card, Title, Paragraph, Divider, List, Button, IconButton, Searchbar} from 'react-native-paper';
+import {Card, Title, Paragraph, Divider, List, Button, IconButton, Searchbar, Chip } from 'react-native-paper';
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -84,14 +84,36 @@ const getAssets = () => {
 const onRefresh = () => {
   getAssets();
 };
-
+// 00cc44 green operational
+// ffcc00 orange in repair
+// e62e00 red disposed
 function RowItem({ key, navigation, asset_code, asset_name, asset_description, current_location, item_id }) {
   return (
     <Card style={{ margin: 3 }}>
       <TouchableOpacity key={key} style={{marginBottom: 5}} onPress={() => navigation.navigate("AssetDetailsScreen", item_id)}>
         <View>
           <View style={{ flexDirection: 'row', padding: 5, marginLeft: 3 }}>
-            <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 15, fontWeight: "bold", textTransform: 'uppercase', width: '35%' }}>{asset_code}</Text>
+            <View style={{flex: 3}}>
+              <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 15, fontWeight: "bold", textTransform: 'uppercase', width: '35%' }}>{asset_code}</Text>
+            </View>
+            <View style={{ flex: 1, alignItems: 'flex-end'}}>
+              <View style={{ padding: 3, backgroundColor: '#2eb82e', flexDirection: 'row', borderRadius: 5}}>
+                <Icon name='check-circle' size={13} color={'#ffffff'} ></Icon>
+                <Text adjustsFontSizeToFit style={{ color: '#ffffff', fontSize: 13, fontWeight: "bold", textTransform: 'uppercase', marginRight: 2}}> OPERATIONAL</Text>
+              </View>
+              {/* <View style={{ padding: 3, backgroundColor: '#ff9900', flexDirection: 'row', borderRadius: 5}}>
+                <Icon name='report-problem' size={13} color={'#ffffff'} ></Icon>
+                <Text adjustsFontSizeToFit style={{ color: '#ffffff', fontSize: 13, fontWeight: "bold", textTransform: 'uppercase', marginRight: 2}}> IN REPAIR</Text>
+              </View>
+              <View style={{ padding: 3, backgroundColor: '#e62e00', flexDirection: 'row', borderRadius: 5}}>
+                <Icon name='delete' size={13} color={'#ffffff'} ></Icon>
+                <Text adjustsFontSizeToFit style={{ color: '#ffffff', fontSize: 13, fontWeight: "bold", textTransform: 'uppercase', marginRight: 2}}> DISPOSED</Text>
+              </View> */}
+            {/* {status == 'Active' ? ( */}
+             {/* ) : ( */}
+             {/* <Text adjustsFontSizeToFit style={{ color: 'red', fontSize: 12, fontWeight: "bold", textTransform: 'uppercase', marginRight: 2}}>{asset_code}</Text> */}
+             {/* )} */}
+            </View>
           </View>
         </View>
         <View style={styles.item}>
@@ -133,7 +155,7 @@ useFocusEffect(
                 value={search}
                 style={{ marginHorizontal: 5, flex: 6}}
               />
-              <Button style={{marginHorizontal: 5, marginTop: 1, padding: 5}} color="green" labelStyle={{fontWeight: 'bold'}} icon="plus" compact="true" mode="contained" onPress={() => navigation.navigate('AddAssetScreen')}>
+              <Button style={{marginHorizontal: 5, marginTop: 1, padding: 5, backgroundColor: '#2eb82e'}} labelStyle={{fontWeight: 'bold'}} icon="plus-circle" compact="true" mode="contained" onPress={() => navigation.navigate('AddAssetScreen')}>
               </Button>
             </View>
           </Card>
