@@ -8,6 +8,7 @@ import { useSelector } from 'react-redux';
 import Moment from 'moment';
 import { ScrollView } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { useFocusEffect } from '@react-navigation/native';
 
 const AssetDetailsScreen = ({navigation, route}) => {
   
@@ -43,10 +44,14 @@ const AssetDetailsScreen = ({navigation, route}) => {
 		});
 	}
 
-  useEffect(()=>{
-    getAssetDetails();
-  }, [])
-
+  // useEffect(()=>{
+  //   getAssetDetails();
+  // }, [])
+  useFocusEffect(
+    React.useCallback(() => {
+      getAssetDetails();
+    }, []),
+  );
   
   console.log(details);
   return (

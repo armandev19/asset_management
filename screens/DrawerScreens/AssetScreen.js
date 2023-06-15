@@ -1,14 +1,11 @@
 import React, {useState, useEffect} from 'react';
 import {View, Text, SafeAreaView, FlatList, StyleSheet, TouchableOpacity, Modal, ToastAndroid, Alert, TextInput, RefreshControl} from 'react-native';
 import {Card, Title, Paragraph, Divider, List, Button, IconButton, Searchbar, Chip } from 'react-native-paper';
-
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Loader from './../Components/loader';
-
 import { selectUserData, setUserData } from '../redux/navSlice';
 import { useSelector } from 'react-redux';
-
 import { useFocusEffect } from '@react-navigation/native';
 
 const AssetScreen = ({navigation, route}) => {
@@ -136,9 +133,6 @@ function RowItem({ key, navigation, asset_code, asset_name, asset_description, c
   );
 }
 
-// useEffect(()=>{
-//   getAssets();
-// }, []);
 useFocusEffect(
   React.useCallback(() => {
     getAssets();
@@ -180,7 +174,7 @@ useFocusEffect(
                 asset_description={item.asset_description}
                 current_location={item.loc_name ? item.loc_name : "N/A"}
                 original_location={item.original_location}
-                item_id={item.id}
+                item_id={item.item_id}
               />
             }
             refreshControl={

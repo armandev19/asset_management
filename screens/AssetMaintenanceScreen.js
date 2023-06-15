@@ -12,7 +12,7 @@ import { useSelector } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/native';
 
 const AssetMaintenanceScreen = ({navigation, route}) => {
-console.log(route.params)
+const params = route.params;
 const [loading, setLoading] = useState(false);
 const [assets, setAssets] = useState([]);
 const [selectedId, setSelectedId] = useState(null);
@@ -28,10 +28,7 @@ const [estimatedCost, setEstimatedCost] = useState('');
 const [schedule, setSchedule] = useState('');
 const [startDate, setStartDate] = useState('');
 const [endDate, setEndDate] = useState('');
-
-// const onChangeSearch = () => {
-//   setSearchQuery(query);
-// }
+const [technician, setTechnician] = useState('');
 
 const onChangeSearch = () => {
   setLoading(true)
@@ -43,7 +40,7 @@ const onChangeSearch = () => {
     formBody.push(encodedKey + '=' + encodedValue);
   }
   formBody = formBody.join('&');
-  fetch(global.url+'getAssets.php', {
+  fetch(global.url+'getAssetMaintenance.php', {
     method: 'POST',
     body: formBody,
     headers: {
@@ -68,10 +65,19 @@ const handleSearchQueryChange = (query) => {
   onChangeSearch(query);
 };
 
-const getAssets = () => {
-  setLoading(true)
-  fetch(global.url+'getAssets.php', {
+const getAssetsMaintenance = () => {
+  setLoading(true);
+  let dataToSend = { asset_id: params };
+  let formBody = [];
+  for (let key in dataToSend) {
+    let encodedKey = encodeURIComponent(key);
+    let encodedValue = encodeURIComponent(dataToSend[key]);
+    formBody.push(encodedKey + '=' + encodedValue);
+  }
+  formBody = formBody.join('&');
+  fetch(global.url+'getAssetMaintenance.php', {
     method: 'POST',
+    body: formBody,
     headers: {
       'Content-Type':
       'application/x-www-form-urlencoded;charset=UTF-8',
@@ -79,8 +85,10 @@ const getAssets = () => {
   })
     .then((response) => response.json())
     .then((responseJson) => {
+      // alert(responseJson)
       setLoading(false);
       setAssets(responseJson.data);
+      console.log(assets)
     })
     .catch((error) => {
       alert(error);
@@ -90,7 +98,17 @@ const getAssets = () => {
 }
 
 const saveMaintenance = () => {
-  let dataToSend = { search: search };
+  let dataToSend = {
+    asset_id: params,
+    description: description,
+    cost : estimatedCost,
+    schedule : schedule,
+    start_date : startDate,
+    end_date : endDate,
+    technician : technician,
+    created_by : currentUserData.id
+  };
+
   let formBody = [];
   for (let key in dataToSend) {
     let encodedKey = encodeURIComponent(key);
@@ -98,7 +116,7 @@ const saveMaintenance = () => {
     formBody.push(encodedKey + '=' + encodedValue);
   }
   formBody = formBody.join('&');
-  fetch(global.url+'getAssets.php', {
+  fetch(global.url+'saveMaintenance.php', {
     method: 'POST',
     body: formBody,
     headers: {
@@ -109,7 +127,9 @@ const saveMaintenance = () => {
   .then((response) => response.json())
   .then((responseJson) => {
     setLoading(false);
-    setAssets(responseJson.data);
+    getAssetsMaintenance();
+    setModalVisible(false);
+    // setAssets(responseJson.data);
   })
   .catch((error) => {
     alert(error);
@@ -119,42 +139,61 @@ const saveMaintenance = () => {
 }
 
 const onRefresh = () => {
-  getAssets();
+  getAssetsMaintenance();
 };
 
-function RowItem({ key, navigation, asset_code, asset_name, asset_description, current_location, item_id }) {
+function RowItem({ key, navigation, description, cost, schedule, status}) {
   return (
     <Card style={{ margin: 3 }}>
-      <TouchableOpacity style={{marginBottom: 5}} onPress={() => navigation.navigate("AssetDetailsScreen", item_id)}>
+      <View style={{marginBottom: 5}}>
         <View>
           <View style={{ flexDirection: 'row', padding: 5, marginLeft: 3 }}>
-            <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 15, fontWeight: "bold", textTransform: 'uppercase', width: '35%' }}>{asset_code}</Text>
+            <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 15, fontWeight: "bold", textTransform: 'uppercase', width: '35%' }}>{description}</Text>
           </View>
         </View>
         <View style={styles.item}>
           <View style={{flex: 1}}>
-            <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>ASSSET NAME: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{asset_name}</Text></Text>
+            <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>COST: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{cost}</Text></Text>
           </View>
         </View>
         <View style={styles.item}>
           <View style={{flex: 1}}>
-            <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>DESCRIPTION: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{asset_description}</Text></Text>
+            <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>SCHEDULE: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{schedule}</Text></Text>
           </View>
         </View>
         <View style={styles.item}>
           <View style={{flex: 1}}>
-            <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>LOCATION: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{current_location}</Text></Text>
+            <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>Start: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{schedule}</Text></Text>
+          </View>
+          <View style={{flex: 1}}>
+            <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>End: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{schedule}</Text></Text>
           </View>
         </View>
-      </TouchableOpacity>
+        <View style={styles.item}>
+          <View style={{flex: 1}}>
+            <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>Status: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{status}</Text></Text>
+          </View>
+          <View style={{flex: 1}}>
+            <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>Technician: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{status}</Text></Text>
+          </View>
+        </View>
+        <View style={{flexDirection: 'row', justifyContent: 'flex-end'}}>
+          <Button style={{marginHorizontal: 2, marginTop: 1}} labelStyle={{fontWeight: 'bold'}} icon="pencil" compact="true" mode="contained" onPress={()=>setModalVisible(true)}>
+          </Button>
+          <Button style={{marginHorizontal: 2, marginTop: 1, backgroundColor: '#e62e00'}} labelStyle={{fontWeight: 'bold'}} icon="delete" compact="true" mode="contained" onPress={()=>setModalVisible(true)}>
+          </Button>
+        </View>
+      </View>
     </Card>
   );
 }
-
+// 00cc44 green operational
+// ffcc00 orange in repair
+// e62e00 red disposed
 
 useFocusEffect(
   React.useCallback(() => {
-    getAssets();
+    getAssetsMaintenance();
   }, []),
 );
   return (
@@ -168,8 +207,13 @@ useFocusEffect(
                 value={search}
                 style={{ marginHorizontal: 5, flex: 6}}
               />
-              <Button style={{marginHorizontal: 5, marginTop: 1, padding: 5}} labelStyle={{fontWeight: 'bold'}} icon="plus" compact="true" mode="contained" onPress={()=>setModalVisible(true)}>
+              <Button style={{marginHorizontal: 5, marginTop: 1, padding: 5, backgroundColor: '#00cc44'}} labelStyle={{fontWeight: 'bold'}} icon="plus" compact="true" mode="contained" onPress={()=>setModalVisible(true)}>
               </Button>
+            </View>
+          </Card>
+          <Card style={{ marginHorizontal: 8}}>
+            <View style={{justifyContent: 'center', alignItems: "flex-start", padding: 5}}>
+              <Text style={{color: 'black', fontWeight: 'bold', fontSize: 20}}>ASSET: {params}</Text>
             </View>
           </Card>
           {assets.length == 0 ? (
@@ -188,11 +232,10 @@ useFocusEffect(
               <RowItem
                 key={i}
                 navigation={navigation}
-                asset_code={item.asset_code}
-                asset_name={item.asset_name}
-                asset_description={item.asset_description}
-                current_location={item.loc_name ? item.loc_name : "N/A"}
-                item_id={item.id}
+                description={item.maintenance_description}
+                cost={item.estimated_cost}
+                schedule={item.schedule}
+                status={item.status}
               />
             }
             refreshControl={
@@ -225,6 +268,8 @@ useFocusEffect(
 								mode="outlined"
                 label="Description"
 								activeOutlineColor='#348ceb'
+                value={description}
+                onChangeText={description => setDescription(description)}
 							/>
               <TextInput
                 style={{width: '100%'}}
@@ -232,12 +277,16 @@ useFocusEffect(
                 label="Cost"
 								activeOutlineColor='#348ceb'
                 keyboardType='numeric'
+                value={estimatedCost}
+                onChangeText={estimatedCost => setEstimatedCost(estimatedCost)}
 							/>
               <TextInput
                 style={{width: '100%'}}
 								mode="outlined"
                 label="Schedule"
 								activeOutlineColor='#348ceb'
+                value={schedule}
+                onChangeText={schedule => setSchedule(schedule)}
 							/>
               <TextInput
                 style={{width: '100%'}}
@@ -256,6 +305,8 @@ useFocusEffect(
 								mode="outlined"
                 label="Technician"
 								activeOutlineColor='#348ceb'
+                value={technician}
+                onChangeText={technician => setTechnician(technician)}
 							/>
               {/* <View style={{}}>
                 <Button style={{marginTop: 10}} icon="camera" mode="contained" onPress={() => console.log('Pressed')}>
@@ -266,7 +317,7 @@ useFocusEffect(
                 </View>
               </View> */}
 							<View style={{flexDirection: 'row', justifyContent: 'center', marginTop: 10}}>
-								<Button style={{margin: 5}} icon="check" color='green' mode="contained" onPress={() => saveUser()}>
+								<Button style={{margin: 5}} icon="check" color='green' mode="contained" onPress={() => saveMaintenance()}>
 									SAVE
 								</Button>
                 <Button style={{margin: 5}} icon="close" color='red' mode="contained" onPress={()=>setModalVisible(!modalVisible)}>
