@@ -87,14 +87,14 @@ const onRefresh = () => {
 // 00cc44 green operational
 // ffcc00 orange in repair
 // e62e00 red disposed
-function RowItem({ key, navigation, asset_code, asset_name, asset_description, current_location, item_id }) {
+function RowItem({ key, navigation, asset_code, asset_name, asset_description, current_location, original_location, item_id }) {
   return (
     <Card style={{ margin: 3 }}>
       <TouchableOpacity key={key} style={{marginBottom: 5}} onPress={() => navigation.navigate("AssetDetailsScreen", item_id)}>
         <View>
-          <View style={{ flexDirection: 'row', padding: 5, marginLeft: 3 }}>
-            <View style={{flex: 3}}>
-              <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 15, fontWeight: "bold", textTransform: 'uppercase', width: '35%' }}>{asset_code}</Text>
+          <View style={{ flexDirection: 'row', padding: 5, margin: 3, borderBottomColor: 'lightgray', borderBottomWidth: 1 }}>
+            <View style={{flex: 1}}>
+              <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 15, fontWeight: "bold", textTransform: 'uppercase' }}>{asset_code}</Text>
             </View>
             <View style={{ flex: 1, alignItems: 'flex-end'}}>
               <View style={{ padding: 3, backgroundColor: '#2eb82e', flexDirection: 'row', borderRadius: 5}}>
@@ -128,7 +128,7 @@ function RowItem({ key, navigation, asset_code, asset_name, asset_description, c
         </View>
         <View style={styles.item}>
           <View style={{flex: 1}}>
-            <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>LOCATION: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{current_location}</Text></Text>
+            <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>LOCATION: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{current_location == null ?(original_location):(current_location)}</Text></Text>
           </View>
         </View>
       </TouchableOpacity>
@@ -147,8 +147,8 @@ useFocusEffect(
   return (
       <View style={{justifyContent: 'center', backgroundColor: '#f2f3f8',}}>
         <View styles={{flex: 1, padding: 6, alignSelf: 'center'}}>
-          <Card style={{ margin: 6, padding: 6}}>
-            <View style={{flexDirection: 'row', alignItems: 'center' }}>
+          <Card style={{ margin: 6, padding: 6, backgroundColor: '#f2f3f8', borderWidth: 0}}>
+            <View style={{flexDirection: 'row', alignItems: 'center', backgroundColor: 'transparent' }}>
               <Searchbar
                 placeholder="Search"
                 onChangeText={handleSearchQueryChange}
@@ -179,6 +179,7 @@ useFocusEffect(
                 asset_name={item.asset_name}
                 asset_description={item.asset_description}
                 current_location={item.loc_name ? item.loc_name : "N/A"}
+                original_location={item.original_location}
                 item_id={item.id}
               />
             }

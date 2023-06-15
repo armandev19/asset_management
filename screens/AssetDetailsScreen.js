@@ -7,6 +7,7 @@ import { selectUserData, setUserData } from './redux/navSlice';
 import { useSelector } from 'react-redux';
 import Moment from 'moment';
 import { ScrollView } from 'react-native-gesture-handler';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const AssetDetailsScreen = ({navigation, route}) => {
   
@@ -52,15 +53,22 @@ const AssetDetailsScreen = ({navigation, route}) => {
 		<ScrollView style={{padding: 10}}>
     <Card>
       <Card.Cover source={{ uri: 'https://picsum.photos/700' }} />
-        <Card.Title title={details.asset_code +" | "+details.asset_name} subtitle={"Description: " + details.asset_description}  />
+        <Card.Title titleStyle={{textTransform: 'uppercase'}} title={details.asset_code +" | "+details.asset_name} subtitle={"Description: " + details.asset_description}  />
         <Card.Content>
+            <View style={{flexDirection: 'row'}}>
+              <View style={{flex: 2}}></View>
+              <View style={{flex: 1, padding: 3, backgroundColor: '#2eb82e', flexDirection: 'row', borderRadius: 5, justifyContent: 'center'}}>
+                <Icon name='check-circle' size={13} color={'#ffffff'} ></Icon>
+                <Text adjustsFontSizeToFit style={{ color: '#ffffff', fontSize: 13, fontWeight: "bold", textTransform: 'uppercase', marginRight: 2}}> OPERATIONAL</Text>
+              </View>
+            </View>
             <Text variant="titleLarge" style={{color: 'black'}}>Original Location: <Text style={{color: 'black', textTransform: 'uppercase', fontWeight: 'bold'}}>{details.name ? details.name : 'N/A'}</Text></Text>
             <Text variant="titleLarge" style={{color: 'black'}}>Current Location: <Text style={{color: 'black', textTransform: 'uppercase', fontWeight: 'bold'}}>{details.curr_loc ? details.curr_loc : 'N/A'}</Text></Text>
             <Text variant="titleLarge" style={{color: 'black'}}>Original Price: <Text style={{color: 'black', textTransform: 'uppercase', fontWeight: 'bold'}}>{details.original_price ? details.original_price : 'N/A'}</Text></Text>
             <Text variant="titleLarge" style={{color: 'black'}}>Current Price: <Text style={{color: 'black', textTransform: 'uppercase', fontWeight: 'bold'}}>{details.current_price ? details.current_price : 'N/A'}</Text></Text>
             <Text variant="titleLarge" style={{color: 'black'}}>Purchased Date: <Text style={{color: 'black', textTransform: 'uppercase', fontWeight: 'bold'}}>{details.purchase_date ? details.purchase_date : 'N/A'}</Text></Text>
             <Text variant="titleLarge" style={{color: 'black'}}>Added By: <Text style={{color: 'black', textTransform: 'uppercase', fontWeight: 'bold'}}>{details.access_level ? details.access_level : 'N/A'}</Text></Text>
-            <Text variant="titleLarge" style={{color: 'black'}}>Status: <Text style={{color: 'black', textTransform: 'uppercase', fontWeight: 'bold'}}>{details.status ? details.status : 'N/A'}</Text></Text>
+            
             {/* <View style={{alignSelf: 'center', marginVertical: 20}}>
             <QRCode size={200}
               value={details.asset_code}
@@ -68,7 +76,7 @@ const AssetDetailsScreen = ({navigation, route}) => {
             </View> */}
         </Card.Content>
         <Card.Actions style={{justifyContent: 'flex-end'}}>
-          <Button icon="cog" color="green" mode="contained" style={{marginRight: 5}} onPress={() => navigation.navigate("AssetMaintenanceScreen", details.id)}></Button>
+          <Button icon="cog" color="#348ceb" mode="contained" style={{marginRight: 5}} onPress={() => navigation.navigate("AssetMaintenanceScreen", details.id)}></Button>
           <Button icon="pencil" mode="contained" style={{marginRight: 5}} onPress={() => navigation.navigate("UpdateAssetScreen", details.id)}></Button>
           <Button icon="delete" color="red" mode="contained"></Button>
         </Card.Actions>
