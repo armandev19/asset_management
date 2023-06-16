@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, View, Alert } from 'react-native';
-import { Camera, useCameraDevices } from 'react-native-vision-camera';
+// import { Camera, useCameraDevices } from 'react-native-vision-camera';
 
 const CameraScreen = () => {
   const { devices, selectDevice } = useCameraDevices();
@@ -25,7 +25,7 @@ const CameraScreen = () => {
 
   return (
     <View style={styles.container}>
-      {isCameraReady ? (
+      {/* {isCameraReady ? (
         <Camera
           ref={cameraRef}
           style={styles.camera}
@@ -36,7 +36,7 @@ const CameraScreen = () => {
         />
       ) : (
         <View style={styles.emptyCamera} />
-      )}
+      )} */}
     </View>
   );
 };

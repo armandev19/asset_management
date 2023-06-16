@@ -39,6 +39,12 @@ const AddAssetScreen = ({route, navigation}) => {
     setIsPickerShow(false);
   };
 	
+  const statusList = [
+    {id:"Operational", value: "Operational"},
+    {id:"In Repair", value: "In Repair"},
+    {id:"Disposed", value: "Disposed"}
+  ]
+
 	const saveAsset = () => {
 		setLoading(true);
 		let dataToSend = { name: name, description : description, price: price, purchaseDate: date, location: location, created_by: currentUserData.id };
@@ -177,16 +183,19 @@ const AddAssetScreen = ({route, navigation}) => {
                 value={description}
                 onChangeText={description => setDescription(description)}
 							/>
-							<DropDown
-								label={"Location"}
-								mode={"outlined"}
-								visible={showDropDown}
-								showDropDown={() => setShowDropDown(true)}
-								onDismiss={() => setShowDropDown(false)}
-								value={location}
-								setValue={setLocation}
-								list={locationList}
-							/>
+              <View style={{ zIndex: 9999 }}>
+                <DropDown
+                contentContainerStyle={{zIndex: 9999}}
+                  label={"Location"}
+                  mode={"outlined"}
+                  visible={showDropDown}
+                  showDropDown={() => setShowDropDown(true)}
+                  onDismiss={() => setShowDropDown(false)}
+                  value={location}
+                  setValue={setLocation}
+                  list={locationList}
+                />
+              </View>
 							<TextInput
 								mode="outlined"
                 label="Price"
@@ -212,21 +221,31 @@ const AddAssetScreen = ({route, navigation}) => {
                   alignItems: "center",
                   heigt: 100
                 }}>
-								<TextInput
-									mode="outlined"
-									label="Purchase Date"
-									activeOutlineColor='#348ceb'
-									value={date.toDateString()} editable={false}
-									style={{flex: 1}}
-									// value={text}
-									// onChangeText={text => setText(text)}
-								/>
-                  {!isPickerShow && (
-                    <View style={{padding: 5}}>
-                      <IconButton icon="calendar" color='green' mode="contained" onPress={showPicker} />
-                    </View>
-                  )}
+                  <TextInput
+                    mode="outlined"
+                    label="Purchase Date"
+                    activeOutlineColor='#348ceb'
+                    value={date.toDateString()} editable={false}
+                    style={{flex: 1}}
+                    // value={text}
+                    // onChangeText={text => setText(text)}
+                  />
+                    {!isPickerShow && (
+                      <View style={{padding: 5}}>
+                        <IconButton icon="calendar" color='green' mode="contained" onPress={showPicker} />
+                      </View>
+                    )}
                 </View>
+                <DropDown
+                  label={"Location"}
+                  mode={"outlined"}
+                  visible={showDropDown}
+                  showDropDown={() => setShowDropDown(true)}
+                  onDismiss={() => setShowDropDown(false)}
+                  value={location}
+                  setValue={setLocation}
+                  list={statusList}
+                />
                 <View>
                 {selectedFile.length > 0 ? (
                     <Text style={{color: 'black'}}>adasd</Text>

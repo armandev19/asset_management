@@ -174,7 +174,7 @@ useFocusEffect(
                 asset_description={item.asset_description}
                 current_location={item.loc_name ? item.loc_name : "N/A"}
                 original_location={item.original_location}
-                item_id={item.item_id}
+                item_id={item.id}
               />
             }
             refreshControl={

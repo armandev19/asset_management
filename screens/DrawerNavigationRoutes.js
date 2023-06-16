@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 // Import Navigators from React Navigation
 import {createStackNavigator} from '@react-navigation/stack';
 import {createDrawerNavigator} from '@react-navigation/drawer';
@@ -233,37 +233,37 @@ const DrawerNavigatorRoutes = ({navgiation, route}) => {
       />
       <Drawer.Screen
         name="AssetScreen"
-        options={{drawerLabel: 'ASSETS', drawerLabelStyle: {color: '#348ceb'}, drawerIcon: (({focused}) => <Icon name="settings" size={30} color="#348ceb" />)}}
+        options={{drawerLabel: 'ASSETS', drawerLabelStyle: {color: '#348ceb'}, drawerIcon: (({focused}) => <Icon name="format-list-checkbox" size={30} color="#348ceb" />)}}
         component={AssetStack}
       />
       <Drawer.Screen
         name="LocationsScreen"
-        options={{drawerLabel: 'LOCATIONS', drawerLabelStyle: {color: '#348ceb'}, drawerIcon: (({focused}) => <Icon name="location-on" size={30} color="#348ceb" />)}}
+        options={{drawerLabel: 'LOCATIONS', drawerLabelStyle: {color: '#348ceb'}, drawerIcon: (({focused}) => <Icon name="map-marker-radius" size={30} color="#348ceb" />)}}
         component={LocationsStack}
       />
       <Drawer.Screen
         name="AssetTransferScreen"
-        options={{drawerLabel: 'ASSET TRANSFER', drawerLabelStyle: {color: '#348ceb'}, drawerIcon: (({focused}) => <Icon name="send" size={30} color="#348ceb" />)}}
+        options={{drawerLabel: 'ASSET TRANSFER', drawerLabelStyle: {color: '#348ceb'}, drawerIcon: (({focused}) => <Icon name="truck-fast" size={30} color="#348ceb" />)}}
         component={AssetTransferStack}
       />
       <Drawer.Screen
         name="ReportScreen"
-        options={{drawerLabel: 'REPORTS', drawerLabelStyle: {color: '#348ceb'}, drawerIcon: (({focused}) => <Icon name="list" size={30} color="#348ceb" />)}}
+        options={{drawerLabel: 'REPORTS', drawerLabelStyle: {color: '#348ceb'}, drawerIcon: (({focused}) => <Icon name="clipboard-check" size={30} color="#348ceb" />)}}
         component={ReportStack}
       />
       <Drawer.Screen
         name="LogsSreen"
-        options={{drawerLabel: 'LOGS', drawerLabelStyle: {color: '#348ceb'}, drawerIcon: (({focused}) => <Icon name="info" size={30} color="#348ceb" />)}}
+        options={{drawerLabel: 'LOGS', drawerLabelStyle: {color: '#348ceb'}, drawerIcon: (({focused}) => <Icon name="alert-octagon" size={30} color="#348ceb" />)}}
         component={LogsStack}
       />
       <Drawer.Screen
         name="UsersScreen"
-        options={{drawerLabel: 'USERS', drawerLabelStyle: {color: '#348ceb'}, drawerIcon: (({focused}) => <Icon name="person" size={30} color="#348ceb" />)}}
+        options={{drawerLabel: 'USERS', drawerLabelStyle: {color: '#348ceb'}, drawerIcon: (({focused}) => <Icon name="account-multiple" size={30} color="#348ceb" />)}}
         component={UsersStack}
       />
       <Drawer.Screen
         name="TrackerScreen"
-        options={{drawerLabel: 'TRACK ASSET', drawerLabelStyle: {color: '#348ceb'}, drawerIcon: (({focused}) => <Icon name="qrcode" size={30} color="#348ceb" />)}}
+        options={{drawerLabel: 'TRACK ASSET', drawerLabelStyle: {color: '#348ceb'}, drawerIcon: (({focused}) => <Icon name="qrcode-scan" size={30} color="#348ceb" />)}}
         component={TrackerStack}
       />
 

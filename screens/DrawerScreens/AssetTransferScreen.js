@@ -46,12 +46,12 @@ const onRefresh = () => {
   getAssets();
 };
 
-function RowItem({ navigation, ref_no, asset_name, asset_description, original_location, id }) {
+function RowItem({ key, navigation, ref_no, asset_name, asset_description, original_location, item_id }) {
   return (
     <Card style={{ margin: 3, paddingBottom: 5 }}>
-      {/* <TouchableOpacity 
+      <TouchableOpacity key={key}
       // onPress={() => navigation.navigate("UpdateAssetTransferDetailsScreen", id)}
-      > */}
+      >
         <View>
           <View style={{ flexDirection: 'row', padding: 5, marginLeft: 3 }}>
             <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 15, fontWeight: "bold", textTransform: 'uppercase', width: '35%' }}>{ref_no}</Text>
@@ -75,7 +75,7 @@ function RowItem({ navigation, ref_no, asset_name, asset_description, original_l
             <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>TO: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{asset_description}</Text></Text>
           </View>
         </View>
-      {/* </TouchableOpacity> */}
+      </TouchableOpacity>
     </Card>
   );
 }
@@ -110,14 +110,15 @@ useFocusEffect(
             updateCellsBatchingPeriod={30}
             removeClippedSubviews={false}
             onEndReachedThreshold={0.1}
-            renderItem={({ item }) =>
+            renderItem={({ item, i }) =>
               <RowItem
+                key={i}
                 navigation={navigation}
                 ref_no={item.reference_no}
                 asset_name={item.asset_name}
                 original_location={item.original}
                 asset_description={item.asset_description}
-                id={item.id}
+                item_id={item.id}
               />
             }
             refreshControl={

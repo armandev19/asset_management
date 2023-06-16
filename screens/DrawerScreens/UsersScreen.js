@@ -42,10 +42,10 @@ const getUsers = () => {
     });
 }
 
-function RowItem({ navigation, firstname, lastname, id, access_level, address, status }) {
+function RowItem({key, navigation, firstname, lastname, id, access_level, address, status }) {
   return (
     <Card style={{ margin: 2, paddingBottom: 5 }}>
-      <TouchableOpacity onPress={() => navigation.navigate("UserDetailsScreen", id)}>
+      <TouchableOpacity key={key} onPress={() => navigation.navigate("UserDetailsScreen", id)}>
         <View>
           <View style={{ flexDirection: 'row', padding: 5, marginLeft: 3 }}>
             <View style={{ flex: 1 }}>
@@ -111,8 +111,9 @@ useFocusEffect(
           updateCellsBatchingPeriod={30}
           removeClippedSubviews={false}
           onEndReachedThreshold={0.1}
-          renderItem={({ item }) =>
+          renderItem={({ item, i }) =>
             <RowItem
+            key={i}
             navigation={navigation}
             firstname={item.firstname}
             lastname={item.lastname}
