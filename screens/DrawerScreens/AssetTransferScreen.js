@@ -48,11 +48,11 @@ const onRefresh = () => {
 
 function RowItem({ key, navigation, ref_no, asset_name, asset_description, original_location, item_id }) {
   return (
-    <Card style={{ margin: 3, paddingBottom: 5 }}>
+    <Card style={{ margin: 3, paddingBottom: 5, elevation: 3 }}>
       <TouchableOpacity key={key}
       // onPress={() => navigation.navigate("UpdateAssetTransferDetailsScreen", id)}
       >
-        <View>
+        <View style={{borderBottomColor: 'lightgray', borderBottomWidth: 1 }}>
           <View style={{ flexDirection: 'row', padding: 5, marginLeft: 3 }}>
             <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 15, fontWeight: "bold", textTransform: 'uppercase', width: '35%' }}>{ref_no}</Text>
           </View>

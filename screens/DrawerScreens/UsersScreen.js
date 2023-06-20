@@ -44,10 +44,10 @@ const getUsers = () => {
 
 function RowItem({key, navigation, firstname, lastname, id, access_level, address, status }) {
   return (
-    <Card style={{ margin: 2, paddingBottom: 5 }}>
+    <Card style={{ margin: 3, padding: 10, elevation: 3 }}>
       <TouchableOpacity key={key} onPress={() => navigation.navigate("UserDetailsScreen", id)}>
         <View>
-          <View style={{ flexDirection: 'row', padding: 5, marginLeft: 3 }}>
+          <View style={{ flexDirection: 'row', padding: 2, marginLeft: 3 }}>
             <View style={{ flex: 1 }}>
               <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 15, fontWeight: "bold", textTransform: 'uppercase'}}>{firstname+" "+lastname}</Text>
             </View>

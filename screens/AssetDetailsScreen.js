@@ -44,19 +44,14 @@ const AssetDetailsScreen = ({navigation, route}) => {
 		});
 	}
 
-  // useEffect(()=>{
-  //   getAssetDetails();
-  // }, [])
   useFocusEffect(
     React.useCallback(() => {
       getAssetDetails();
     }, []),
   );
-  
-  console.log(details);
   return (
-		<ScrollView style={{padding: 10}}>
-    <Card>
+		<ScrollView style={{padding: 5}}>
+    <Card style={{ margin: 2, padding: 5, elevation: 3 }}>
       <Card.Cover source={{ uri: 'https://picsum.photos/700' }} />
         <Card.Title titleStyle={{textTransform: 'uppercase'}} title={details.asset_code +" | "+details.asset_name} subtitle={"Description: " + details.asset_description}  />
         <Card.Content>
@@ -80,10 +75,10 @@ const AssetDetailsScreen = ({navigation, route}) => {
             />
             </View> */}
         </Card.Content>
-        <Card.Actions style={{justifyContent: 'flex-end'}}>
-          <Button icon="cog" color="#348ceb" mode="contained" style={{marginRight: 5}} onPress={() => navigation.navigate("AssetMaintenanceScreen", details.id)}></Button>
-          <Button icon="pencil" mode="contained" style={{marginRight: 5}} onPress={() => navigation.navigate("UpdateAssetScreen", details.id)}></Button>
-          <Button icon="delete" color="red" mode="contained"></Button>
+        <Card.Actions style={{justifyContent: 'flex-end', marginTop: 20}}>
+          <Button icon="cog" color="#348ceb" mode="contained" style={{marginRight: 5}} onPress={() => navigation.navigate("AssetMaintenanceScreen", details.id)}>Maintenance</Button>
+          <Button icon="pencil" mode="contained" style={{marginRight: 5}} onPress={() => navigation.navigate("UpdateAssetScreen", details.id)}>Update</Button>
+          <Button icon="delete" color="red" mode="contained">Delete</Button>
         </Card.Actions>
     </Card>
     </ScrollView>

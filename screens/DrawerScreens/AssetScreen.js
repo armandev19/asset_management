@@ -86,7 +86,7 @@ const onRefresh = () => {
 // e62e00 red disposed
 function RowItem({ key, navigation, asset_code, asset_name, asset_description, current_location, original_location, item_id }) {
   return (
-    <Card style={{ margin: 3 }}>
+    <Card style={{ margin: 3, elevation: 3 }}>
       <TouchableOpacity key={key} style={{marginBottom: 5}} onPress={() => navigation.navigate("AssetDetailsScreen", item_id)}>
         <View>
           <View style={{ flexDirection: 'row', padding: 5, margin: 3, borderBottomColor: 'lightgray', borderBottomWidth: 1 }}>

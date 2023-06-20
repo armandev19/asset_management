@@ -217,7 +217,7 @@ useFocusEffect(
             </View>
           </Card>
           {assets.length == 0 ? (
-            <Text style={{color: 'black', fontWeight: 'bold', textAlign: 'center'}}>No results found.</Text>
+            <Text style={{color: 'black', fontSize: 20, textAlign: 'center', marginTop: 5}}>NO DATA FOUND.</Text>
           ): (
           <FlatList
             data={assets}

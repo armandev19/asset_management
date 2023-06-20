@@ -185,7 +185,6 @@ const AddAssetScreen = ({route, navigation}) => {
 							/>
               <View style={{ zIndex: 9999 }}>
                 <DropDown
-                contentContainerStyle={{zIndex: 9999}}
                   label={"Location"}
                   mode={"outlined"}
                   visible={showDropDown}

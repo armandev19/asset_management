@@ -83,7 +83,7 @@ const onRefresh = () => {
 
 function RowItem({ navigation, name, address, id }) {
   return (
-    <Card style={{ margin: 3, paddingBottom: 5 }}>
+    <Card style={{ margin: 3, paddingBottom: 5, elevation: 3 }}>
       <TouchableOpacity 
       onPress={() => navigation.navigate("UpdateLocationScreen", id)}
       >
