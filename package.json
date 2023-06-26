@@ -25,6 +25,7 @@
     "react": "18.1.0",
     "react-native": "0.70.5",
     "react-native-awesome-alerts": "^2.0.0",
+    "react-native-camera-kit": "^13.0.0",
     "react-native-datepicker": "^1.7.2",
     "react-native-document-picker": "^9.0.1",
     "react-native-dropdown-picker": "^5.4.2",

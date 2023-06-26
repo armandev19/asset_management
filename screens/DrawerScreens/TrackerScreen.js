@@ -1,78 +1,37 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
-// import QRCodeScanner from 'react-native-qrcode-scanner';
-// import { RNCamera } from 'react-native-camera';
-// import { ViewPropTypes } from 'deprecated-react-native-prop-types';
-const QRCodeScannerScreen = () => {
-    // const AppCameraRef = useRef();
+import { CameraScreen, CameraType } from 'react-native-camera-kit';
 
-    // const onBarCodeRead = (e) => {
-    //     onBarCodeDetect({ qrcode: e.data });
-    // }
+const QRCodeScannerScreen = ({navigation, routes}) => {
 
-  // useEffect(() => {
-  //   const handleBarcodeScanned = ({ data }) => {
-  //     if (!scanned) {
-  //       setScanned(true);
-  //       console.log('Scanned QR code:', data);
-  //       // Perform any action with the scanned data
 
-  //       // Reset the scanned state after a short delay
-  //       setTimeout(() => {
-  //         setScanned(false);
-  //       }, 2000);
-  //     }
-  //   };
-
-  //   const unsubscribe = navigation.addListener('focus', () => {
-  //     setScanned(false); // Reset the scanned state when the screen is focused
-  //   });
-
-  //   return unsubscribe;
-  // }, []);
-
-  // const onBarCodeScanned = ({ data }) => {
-  //   if (!scanned) {
-  //     setScanned(true);
-  //     console.log('Scanned QR code:', data);
-  //     // Perform any action with the scanned data
-
-  //     // Reset the scanned state after a short delay
-  //     setTimeout(() => {
-  //       setScanned(false);
-  //     }, 2000);
-  //   }
-  // };
-
-    // return (
-    //   <RNCamera
-    //         ref={AppCameraRef}
-    //         style={styles.preview}
-    //         captureAudio={false}
-    //         ratio={'16:9'}
-    //         type={RNCamera.Constants.Type.back}
-    //         flashMode={RNCamera.Constants.FlashMode.off}
-    //         onBarCodeRead={onBarCodeRead}
-    //         rectOfInterest={{
-    //             x: scanAreaX,
-    //             y: scanAreaY,
-    //             width: scanAreaWidth,
-    //             height: scanAreaHeight,
-    //         }}
-    //         cameraViewDimensions={{
-    //             width: CAM_VIEW_WIDTH,
-    //             height: CAM_VIEW_HEIGHT,
-    //         }}
-    //     >
-    //         <View style={styles.header}>
-                
-    //         </View>
-            
-    //         <View style={styles.footer}>
-                
-    //         </View>
-    //   </RNCamera>
-    // );
+    return (
+      <View>
+        <CameraScreen
+          actions={{ rightButtonText: 'Done', leftButtonText: 'Cancel' }}
+          onBottomButtonPressed={(event) => this.onBottomButtonPressed(event)}
+          // flashImages={{
+          //   // optional, images for flash state
+          //   on: require('path/to/image'),
+          //   off: require('path/to/image'),
+          //   auto: require('path/to/image'),
+          // }}
+          cameraType={CameraType.Front}
+          scanBarcode={true}
+          onReadCode={(event) => alert(event.nativeEvent.codeStringValue)}
+          showFrame={true} // (default false) optional, show frame with transparent layer (qr code or barcode will be read on this area ONLY), start animation for scanner,that stoped when find any code. Frame always at center of the screen
+          laserColor='green' // (default red) optional, color of laser in scanner frame
+          frameColor='white'
+          focusMode='on'
+          // cameraFlipImage={require('path/to/image')} // optional, image for flipping camera button
+          // captureButtonImage={require('path/to/image')} // optional, image capture button
+          // torchOnImage={require('path/to/image')} // optional, image for toggling on flash light
+          // torchOffImage={require('path/to/image')} // optional, image for toggling off flash light
+          hideControls={false} // (default false) optional, hides camera controls
+          showCapturedImageCount={false} // (default false) optional, show count for photos taken during that capture session
+        />
+      </View>
+    );
   
 };
 
