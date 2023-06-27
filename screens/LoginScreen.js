@@ -95,32 +95,27 @@ const LoginScreen = ({navigation}) => {
         <Icon style={{fontSize: 200, color: 'green', textAlign: 'center', color: '#FFFFFF', marginTop: -150}} name="devices"></Icon>
         <Text style={{textAlign: 'center', fontSize: 30, fontWeight: 'bold', marginBottom: 10, color: '#FFFFFF'}}>ASSET MANAGEMENT</Text>
         <View style={{
-          backgroundColor: 'white', 
+          backgroundColor: 'transparent', 
           marginLeft: 20,
           marginRight: 20,
           height: 300,
           justifyContent: 'center',
-          borderRadius: 15
         }}>
           <KeyboardAvoidingView enabled>
             <View style={styles.SectionStyle}>
               <TextInput
-                style={{width: '100%'}}
-                theme={{ roundness: 20 }}
-								mode="outlined"
+                style={{width: '100%', backgroundColor: 'white', color: 'red'}}
+                theme={{ roundness: 5 }}
                 label="Username"
-								activeOutlineColor='#348ceb'
                 value={userEmail}
                 onChangeText={userEmail => setUserEmail(userEmail)}
 							/>
             </View>
             <View style={styles.SectionStyle}>
               <TextInput
-                style={{width: '100%'}}
-                theme={{ roundness: 20 }}
-                mode="outlined"
+                style={{width: '100%', backgroundColor: 'white'}}
+                theme={{ roundness: 5 }}
                 label="Password"
-                activeOutlineColor='#348ceb'
                 value={userPassword}
                 onChangeText={userPassword => setUserPassword(userPassword)}
                 secureTextEntry={true}
@@ -132,7 +127,7 @@ const LoginScreen = ({navigation}) => {
               </Text>
             ) : null}
             <View style={styles.SectionStyle}>
-            <Button style={{padding: 5, flex: 1, borderRadius: 15}} labelStyle={{fontWeight: 'bold'}} compact="true" mode="contained" onPress={() => handleSubmitPress()}>
+            <Button style={{padding: 5, flex: 1, borderRadius: 5}} labelStyle={{fontWeight: 'bold', fontSize: 20}} compact="true" mode="contained" onPress={() => handleSubmitPress()}>
               LOGIN
             </Button>
             {/* <TouchableOpacity
