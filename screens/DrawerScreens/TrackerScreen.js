@@ -1,35 +1,39 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View, Text, Button } from 'react-native';
 import { CameraScreen, CameraType } from 'react-native-camera-kit';
 
 const QRCodeScannerScreen = ({navigation, routes}) => {
 
 
     return (
-      <View>
-        <CameraScreen
-          actions={{ rightButtonText: 'Done', leftButtonText: 'Cancel' }}
-          onBottomButtonPressed={(event) => this.onBottomButtonPressed(event)}
-          // flashImages={{
-          //   // optional, images for flash state
-          //   on: require('path/to/image'),
-          //   off: require('path/to/image'),
-          //   auto: require('path/to/image'),
-          // }}
-          cameraType={CameraType.Front}
-          scanBarcode={true}
-          onReadCode={(event) => alert(event.nativeEvent.codeStringValue)}
-          showFrame={true} // (default false) optional, show frame with transparent layer (qr code or barcode will be read on this area ONLY), start animation for scanner,that stoped when find any code. Frame always at center of the screen
-          laserColor='green' // (default red) optional, color of laser in scanner frame
-          frameColor='white'
-          focusMode='on'
-          // cameraFlipImage={require('path/to/image')} // optional, image for flipping camera button
-          // captureButtonImage={require('path/to/image')} // optional, image capture button
-          // torchOnImage={require('path/to/image')} // optional, image for toggling on flash light
-          // torchOffImage={require('path/to/image')} // optional, image for toggling off flash light
-          hideControls={false} // (default false) optional, hides camera controls
-          showCapturedImageCount={false} // (default false) optional, show count for photos taken during that capture session
-        />
+      <View style={{padding: 5}}>
+        <View style={{height: '50%'}}>
+          <CameraScreen
+            style={{height: 200, width: 200}}
+            actions={{ rightButtonText: 'Done', leftButtonText: 'Cancel' }}
+            onBottomButtonPressed={(event) => this.onBottomButtonPressed(event)}
+            // flashImages={{
+            //   // optional, images for flash state
+            //   on: require('path/to/image'),
+            //   off: require('path/to/image'),
+            //   auto: require('path/to/image'),
+            // }}
+            cameraType={CameraType.Front}
+            scanBarcode={true}
+            onReadCode={(event) => alert(event.nativeEvent.codeStringValue)}
+            showFrame={true} // (default false) optional, show frame with transparent layer (qr code or barcode will be read on this area ONLY), start animation for scanner,that stoped when find any code. Frame always at center of the screen
+            laserColor='green' // (default red) optional, color of laser in scanner frame
+            frameColor='white'
+            focusMode='on'
+            // cameraFlipImage={require('path/to/image')} // optional, image for flipping camera button
+            // captureButtonImage={require('path/to/image')} // optional, image capture button
+            // torchOnImage={require('path/to/image')} // optional, image for toggling on flash light
+            // torchOffImage={require('path/to/image')} // optional, image for toggling off flash light
+            hideControls={false} // (default false) optional, hides camera controls
+            showCapturedImageCount={false} // (default false) optional, show count for photos taken during that capture session
+          />
+        </View>
+        <Button title="Scan QR" style={{ marginHorizontal: 50}}></Button>
       </View>
     );
   

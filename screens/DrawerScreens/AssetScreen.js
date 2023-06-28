@@ -85,9 +85,10 @@ const onRefresh = () => {
 // ffcc00 orange in repair
 // e62e00 red disposed
 function RowItem({ key, navigation, asset_code, asset_name, asset_description, current_location, original_location, item_id }) {
+  console.log(key)
   return (
     <Card style={{ margin: 3, elevation: 3 }}>
-      <TouchableOpacity key={key} style={{marginBottom: 5}} onPress={() => navigation.navigate("AssetDetailsScreen", item_id)}>
+      <TouchableOpacity key={item_id} style={{marginBottom: 5}} onPress={() => navigation.navigate("AssetDetailsScreen", asset_code)}>
         <View>
           <View style={{ flexDirection: 'row', padding: 5, margin: 3, borderBottomColor: 'lightgray', borderBottomWidth: 1 }}>
             <View style={{flex: 1}}>
@@ -98,18 +99,6 @@ function RowItem({ key, navigation, asset_code, asset_name, asset_description, c
                 <Icon name='check-circle' size={13} color={'#ffffff'} ></Icon>
                 <Text adjustsFontSizeToFit style={{ color: '#ffffff', fontSize: 13, fontWeight: "bold", textTransform: 'uppercase', marginRight: 2}}> OPERATIONAL</Text>
               </View>
-              {/* <View style={{ padding: 3, backgroundColor: '#ff9900', flexDirection: 'row', borderRadius: 5}}>
-                <Icon name='report-problem' size={13} color={'#ffffff'} ></Icon>
-                <Text adjustsFontSizeToFit style={{ color: '#ffffff', fontSize: 13, fontWeight: "bold", textTransform: 'uppercase', marginRight: 2}}> IN REPAIR</Text>
-              </View>
-              <View style={{ padding: 3, backgroundColor: '#e62e00', flexDirection: 'row', borderRadius: 5}}>
-                <Icon name='delete' size={13} color={'#ffffff'} ></Icon>
-                <Text adjustsFontSizeToFit style={{ color: '#ffffff', fontSize: 13, fontWeight: "bold", textTransform: 'uppercase', marginRight: 2}}> DISPOSED</Text>
-              </View> */}
-            {/* {status == 'Active' ? ( */}
-             {/* ) : ( */}
-             {/* <Text adjustsFontSizeToFit style={{ color: 'red', fontSize: 12, fontWeight: "bold", textTransform: 'uppercase', marginRight: 2}}>{asset_code}</Text> */}
-             {/* )} */}
             </View>
           </View>
         </View>
@@ -165,9 +154,9 @@ useFocusEffect(
             updateCellsBatchingPeriod={30}
             removeClippedSubviews={false}
             onEndReachedThreshold={0.1}
-            renderItem={({ item, i }) =>
+            renderItem={({ item, index }) =>
               <RowItem
-                key={i}
+                key={item.id}
                 navigation={navigation}
                 asset_code={item.asset_code}
                 asset_name={item.asset_name}
