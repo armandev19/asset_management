@@ -45,14 +45,6 @@ const AssetDetailsScreen = ({navigation, route}) => {
 		});
 	}
 
-  const ModalQr = () => {
-    return (
-      <Modal>
-        
-      </Modal>
-    )
-  }
-
   useFocusEffect(
     React.useCallback(() => {
       getAssetDetails();
@@ -106,29 +98,31 @@ const AssetDetailsScreen = ({navigation, route}) => {
         </Card.Actions> */}
     </Card>
 
-    <Modal
-          animationType="slide"
-          transparent={true}
-          centeredView={true}
-          visible={modalVisible}
-          onRequestClose={() => {
-            Alert.alert('Modal has been closed.');
-            setModalVisible(!modalVisible);
-          }}>
-          <View style={styles.centeredView}>
-            <KeyboardAvoidingView enabled style={styles.modalView}>
-              <View style={{padding: 20}}>
-                <View style={{flexDirection: 'row', justifyContent: 'center'}}>
-                  <Icon name='qrcode' size={25} color={'#404040'} ></Icon>
-                  <Text style={{color: '#404040', fontSize: 20, fontWeight: 'bold'}}>QR CODE</Text>
-                </View>
-                <View style={{flexDirection: 'row', justifyContent: 'center', marginTop: 10}}>
-                  <Text style={{color: 'black'}}>asdasdasdasdasdasd</Text>
-                </View>
+      <Modal
+        animationType="fade"
+        transparent={true}
+        centeredView={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          Alert.alert('Modal has been closed.');
+          setModalVisible(!modalVisible);
+        }}>
+        <View style={styles.centeredView}>
+          <KeyboardAvoidingView enabled style={styles.modalView}>
+            <View style={{padding: 10}}>
+              <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+                <Text style={{color: '#404040', fontSize: 20, fontWeight: 'bold'}}>{details.asset_code}</Text>
               </View>
-            </KeyboardAvoidingView>
-          </View>
-        </Modal>
+              <View style={{alignSelf: 'center', marginTop: 10}}>
+                <QRCode size={300}
+                  value={details.asset_code}
+                />
+              </View>
+            </View>
+            <Button icon="close" compact="true" mode="contained" style={{marginTop: 10}} onPress={() => setModalVisible(false)}><Text>Close</Text></Button>
+          </KeyboardAvoidingView>
+        </View>
+      </Modal>
     </ScrollView>
   )
 };
@@ -139,15 +133,14 @@ const styles = StyleSheet.create({
   centeredView: {
     flex: 1,
     justifyContent: 'center',
-    // alignItems: 'center',
-    marginTop: 22,
+    // marginTop: 22,
   },
   modalView: {
     margin: 20,
-    height: 400,
+    height: 450,
     backgroundColor: 'white',
     borderRadius: 5,
-    padding: 5,
+    padding: 10,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
