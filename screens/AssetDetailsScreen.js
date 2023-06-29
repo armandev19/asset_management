@@ -1,13 +1,13 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, SafeAreaView, TextInput, Dimensions} from 'react-native';
-import {Card, Title, Paragraph, Divider, Button} from 'react-native-paper';
+import {View, Text, StyleSheet, KeyboardAvoidingView} from 'react-native';
+import {Card, Title, Paragraph, Divider, Button, Modal} from 'react-native-paper';
 import QRCode from 'react-native-qrcode-svg';
 import Loader from './Components/loader';
 import { selectUserData, setUserData } from './redux/navSlice';
 import { useSelector } from 'react-redux';
 import Moment from 'moment';
 import { ScrollView } from 'react-native-gesture-handler';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useFocusEffect } from '@react-navigation/native';
 
 const AssetDetailsScreen = ({navigation, route}) => {
@@ -15,7 +15,8 @@ const AssetDetailsScreen = ({navigation, route}) => {
   const params = route.params;
   const [details, setAssetDetails] = useState([]);
   const [loading, setLoading] = useState(false);
-
+  
+  const [modalVisible, setModalVisible] = useState(false);
   const getAssetDetails = () => {
     setLoading(true);
 		let dataToSend = { id: params };
@@ -43,6 +44,14 @@ const AssetDetailsScreen = ({navigation, route}) => {
 			setLoading(false);
 		});
 	}
+
+  const ModalQr = () => {
+    return (
+      <Modal>
+        
+      </Modal>
+    )
+  }
 
   useFocusEffect(
     React.useCallback(() => {
@@ -84,7 +93,7 @@ const AssetDetailsScreen = ({navigation, route}) => {
               <Text style={{color: '#5c5c5c', width: '45%', fontSize: 17, fontWeight: 'bold'}}>ADDED BY </Text><Text style={{color: '#5c5c5c', textTransform: 'uppercase', fontSize: 17, width: '55%', textAlign: 'right'}}>{details.access_level ? details.access_level : 'N/A'}</Text>
             </View>
           <View>
-            <Button icon="qrcode" color="#348ceb" mode="contained" style={{marginTop: 60}} onPress={() => navigation.navigate("AssetMaintenanceScreen", details.id)}>QR Code</Button>
+            <Button icon="qrcode" color="#348ceb" mode="contained" style={{marginTop: 60}} onPress={() => setModalVisible(true)}>QR Code</Button>
             <Button icon="cog" color="#348ceb" mode="contained" style={{marginTop: 10}} onPress={() => navigation.navigate("AssetMaintenanceScreen", details.id)}>Maintenance</Button>
             <Button icon="pencil" mode="contained" style={{marginTop: 10}} onPress={() => navigation.navigate("UpdateAssetScreen", details.id)}>Update</Button>
             <Button icon="delete" color="red" mode="contained"style={{marginTop: 10}} >Delete</Button>
@@ -96,8 +105,56 @@ const AssetDetailsScreen = ({navigation, route}) => {
           <Button icon="delete" color="red" mode="contained">Delete</Button>
         </Card.Actions> */}
     </Card>
+
+    <Modal
+          animationType="slide"
+          transparent={true}
+          centeredView={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            Alert.alert('Modal has been closed.');
+            setModalVisible(!modalVisible);
+          }}>
+          <View style={styles.centeredView}>
+            <KeyboardAvoidingView enabled style={styles.modalView}>
+              <View style={{padding: 20}}>
+                <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+                  <Icon name='qrcode' size={25} color={'#404040'} ></Icon>
+                  <Text style={{color: '#404040', fontSize: 20, fontWeight: 'bold'}}>QR CODE</Text>
+                </View>
+                <View style={{flexDirection: 'row', justifyContent: 'center', marginTop: 10}}>
+                  <Text style={{color: 'black'}}>asdasdasdasdasdasd</Text>
+                </View>
+              </View>
+            </KeyboardAvoidingView>
+          </View>
+        </Modal>
     </ScrollView>
   )
 };
  
 export default AssetDetailsScreen;
+
+const styles = StyleSheet.create({
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    // alignItems: 'center',
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    height: 400,
+    backgroundColor: 'white',
+    borderRadius: 5,
+    padding: 5,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  }
+});
