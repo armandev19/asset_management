@@ -23,23 +23,44 @@ const currentUserData = useSelector(selectUserData);
 
 const getAssets = () => {
   setLoading(true)
-  fetch(global.url+'getAssetsTransfer.php', {
-    method: 'POST',
-    headers: {
-      'Content-Type':
-      'application/x-www-form-urlencoded;charset=UTF-8',
-    },
+//   fetch('http://192.168.1.6:5000/api/asset-transfer', {
+//     method: 'POST',
+//     headers: {
+//       'Content-Type':
+//       'application/x-www-form-urlencoded;charset=UTF-8',
+//     },
+//   })
+//   .then((response) => response.json())
+//   .then((responseJson) => {
+//     setLoading(false);
+//     setAssets(responseJson);
+//     console.log(responseJson);
+//   })
+//   .catch((error) => {
+//     alert(error);
+//     setLoading(false);
+//     console.error(error);
+//   });
+// }
+fetch(global.url+'getAssetsTransfer.php', {
+  method: 'POST',
+  // body: formBody,
+  headers: {
+    'Content-Type':
+    'application/x-www-form-urlencoded;charset=UTF-8',
+  },
+})
+  .then((response) => response.json())
+  .then((responseJson) => {
+    // alert(responseJson)
+    setLoading(false);
+    setAssets(responseJson.data);
   })
-    .then((response) => response.json())
-    .then((responseJson) => {
-      setLoading(false);
-      setAssets(responseJson.data);
-    })
-    .catch((error) => {
-      alert(error);
-      setLoading(false);
-      console.error(error);
-    });
+  .catch((error) => {
+    alert(error);
+    setLoading(false);
+    console.error(error);
+  });
 }
 
 const onRefresh = () => {

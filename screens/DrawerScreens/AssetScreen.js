@@ -24,32 +24,24 @@ const currentUserData = useSelector(selectUserData);
 
 const onChangeSearch = () => {
   setLoading(true)
-  let dataToSend = { search: search };
-  let formBody = [];
-  for (let key in dataToSend) {
-    let encodedKey = encodeURIComponent(key);
-    let encodedValue = encodeURIComponent(dataToSend[key]);
-    formBody.push(encodedKey + '=' + encodedValue);
-  }
-  formBody = formBody.join('&');
-  fetch(global.url+'getAssets.php', {
+  fetch('http://192.168.1.6:5000/api/assets', {
     method: 'POST',
-    body: formBody,
     headers: {
       'Content-Type':
       'application/x-www-form-urlencoded;charset=UTF-8',
     },
   })
-    .then((response) => response.json())
-    .then((responseJson) => {
-      setLoading(false);
-      setAssets(responseJson.data);
-    })
-    .catch((error) => {
-      alert(error);
-      setLoading(false);
-      console.error(error);
-    });
+  .then((response) => response.json())
+  .then((responseJson) => {
+    setLoading(false);
+    setAssets(responseJson);
+    console.log(responseJson);
+  })
+  .catch((error) => {
+    alert(error);
+    setLoading(false);
+    console.error(error);
+  });
 }
 
 const handleSearchQueryChange = (query) => {
@@ -61,6 +53,7 @@ const getAssets = () => {
   setLoading(true)
   fetch(global.url+'getAssets.php', {
     method: 'POST',
+    // body: formBody,
     headers: {
       'Content-Type':
       'application/x-www-form-urlencoded;charset=UTF-8',
@@ -68,6 +61,7 @@ const getAssets = () => {
   })
     .then((response) => response.json())
     .then((responseJson) => {
+      // alert(responseJson)
       setLoading(false);
       setAssets(responseJson.data);
     })
@@ -76,7 +70,7 @@ const getAssets = () => {
       setLoading(false);
       console.error(error);
     });
-}
+  }
 
 const onRefresh = () => {
   getAssets();
@@ -84,21 +78,32 @@ const onRefresh = () => {
 // 00cc44 green operational
 // ffcc00 orange in repair
 // e62e00 red disposed
-function RowItem({ key, navigation, asset_code, asset_name, asset_description, current_location, original_location, item_id }) {
-  console.log(key)
+function RowItem({ key, navigation, asset_code, asset_name, asset_description, current_location, original_location, item_id, status }) {
   return (
     <Card style={{ margin: 3, elevation: 3 }}>
-      <TouchableOpacity key={item_id} style={{marginBottom: 5}} onPress={() => navigation.navigate("AssetDetailsScreen", asset_code)}>
+      <TouchableOpacity key={asset_code} style={{marginBottom: 5}} onPress={() => navigation.navigate("AssetDetailsScreen", asset_code)}>
         <View>
           <View style={{ flexDirection: 'row', padding: 5, margin: 3, borderBottomColor: 'lightgray', borderBottomWidth: 1 }}>
             <View style={{flex: 1}}>
               <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 15, fontWeight: "bold", textTransform: 'uppercase' }}>{asset_code}</Text>
             </View>
             <View style={{ flex: 1, alignItems: 'flex-end'}}>
-              <View style={{ padding: 3, backgroundColor: '#2eb82e', flexDirection: 'row', borderRadius: 5}}>
-                <Icon name='check-circle' size={13} color={'#ffffff'} ></Icon>
-                <Text adjustsFontSizeToFit style={{ color: '#ffffff', fontSize: 13, fontWeight: "bold", textTransform: 'uppercase', marginRight: 2}}> OPERATIONAL</Text>
-              </View>
+              {status === 'Operational' ? 
+                 <View style={{ padding: 3, backgroundColor: '#2eb82e', flexDirection: 'row', borderRadius: 5}}>
+                  <Icon name='check-circle' size={13} color={'#ffffff'} ></Icon>
+                  <Text adjustsFontSizeToFit style={{ color: '#ffffff', fontSize: 13, fontWeight: "bold", textTransform: 'uppercase', marginRight: 2}}> {status}</Text>
+                </View>
+                : status === 'Under Repair' ? 
+                <View style={{ padding: 3, backgroundColor: '#ffcc00', flexDirection: 'row', borderRadius: 5}}>
+                  <Icon name='check-circle' size={13} color={'#ffffff'} ></Icon>
+                  <Text adjustsFontSizeToFit style={{ color: '#ffffff', fontSize: 13, fontWeight: "bold", textTransform: 'uppercase', marginRight: 2}}> {status}</Text>
+                </View>
+                :  
+                <View style={{ padding: 3, backgroundColor: '#fc4747', flexDirection: 'row', borderRadius: 5}}>
+                  <Icon name='check-circle' size={13} color={'#ffffff'} ></Icon>
+                  <Text adjustsFontSizeToFit style={{ color: '#ffffff', fontSize: 13, fontWeight: "bold", textTransform: 'uppercase', marginRight: 2}}> {status}</Text>
+                </View>
+              }
             </View>
           </View>
         </View>
@@ -114,21 +119,23 @@ function RowItem({ key, navigation, asset_code, asset_name, asset_description, c
         </View>
         <View style={styles.item}>
           <View style={{flex: 1}}>
-            <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>LOCATION: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{current_location == null ?(original_location):(current_location)}</Text></Text>
+            <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>LOCATION: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{current_location == null ? original_location : current_location }</Text></Text>
           </View>
         </View>
       </TouchableOpacity>
     </Card>
   );
 }
-
-useFocusEffect(
-  React.useCallback(() => {
-    getAssets();
-  }, []),
-);
+useEffect(()=>{
+  getAssets();
+}, [])
+// useFocusEffect(
+//   React.useCallback(() => {
+//     getAssets();
+//   }, []),
+// );
   return (
-      <View style={{justifyContent: 'center', backgroundColor: '#f2f3f8',}}>
+      <View style={{justifyContent: 'center', backgroundColor: '#f2f3f8', marginTop: 40}}>
         <View styles={{flex: 1, padding: 6, alignSelf: 'center'}}>
           <Card style={{ margin: 6, padding: 6, backgroundColor: '#f2f3f8', borderWidth: 0}}>
             <View style={{flexDirection: 'row', alignItems: 'center', backgroundColor: 'transparent' }}>
@@ -147,7 +154,7 @@ useFocusEffect(
           ): (
           <FlatList
             data={assets}
-            contentContainerStyle={{paddingBottom: 20, padding: 5}}
+            contentContainerStyle={{paddingBottom: 80, paddingHorizontal: 5, marginBottom: 20}}
             initialNumToRender={10}
             windowSize={5}
             maxToRenderPerBatch={5}
@@ -164,6 +171,7 @@ useFocusEffect(
                 current_location={item.loc_name ? item.loc_name : "N/A"}
                 original_location={item.original_location}
                 item_id={item.id}
+                status={item.status}
               />
             }
             refreshControl={

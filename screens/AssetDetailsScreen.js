@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, StyleSheet, KeyboardAvoidingView} from 'react-native';
+import {View, Text, StyleSheet, KeyboardAvoidingView, TouchableOpacity} from 'react-native';
 import {Card, Title, Paragraph, Divider, Button, Modal} from 'react-native-paper';
 import QRCode from 'react-native-qrcode-svg';
 import Loader from './Components/loader';
@@ -39,56 +39,160 @@ const AssetDetailsScreen = ({navigation, route}) => {
 		.then((responseJson) => {
       setAssetDetails(responseJson.data[0]);
 			setLoading(false);
+      console.log('details', route.params)
 		})
 		.catch((error) => {
 			setLoading(false);
 		});
 	}
 
+  // useEffect(()=>{
+  //   getAssetDetails();
+  // }, [])
   useFocusEffect(
     React.useCallback(() => {
       getAssetDetails();
     }, []),
   );
+
+
+  //danger #fc4747
+  //primary #
+  //secondary #348ceb
+  //success #41e85a
   return (
-		<ScrollView style={{padding: 10}}>
-    <Card style={{ margin: 2, padding: 5, marginBottom: 10, elevation: 3, height: 730, borderRadius: 10 }}>
+		<ScrollView style={{ paddingBottom: 20}}>
+    <Card style={{ marginHorizontal: 10, marginVertical: 10, padding: 5, marginBottom: 10, elevation: 3, height: '100%', borderRadius: 10, elevation: 5 }}>
       <Card.Cover style={{marginTop: 3}} source={{ uri: 'https://picsum.photos/700' }} />
         <Card.Title titleStyle={{textTransform: 'uppercase'}} title={details.asset_name}/>
-        <Card.Content>
+        <Card.Content style={{backgroundColor: 'white'}}>
             <View style={{flexDirection: 'row', marginBottom: 3}}>
-              <Text style={{color: '#5c5c5c', width: '45%',fontSize: 17, fontWeight: 'bold'}}>CODE </Text><Text style={{color: '#5c5c5c', textTransform: 'uppercase', fontSize: 17, width: '55%', textAlign: 'right'}}>{details.asset_code ? details.asset_code : 'N/A'}</Text>
+              <Text style={styles.col_title}>Asset Code </Text>
+              <Text style={styles.col_content}>{details.asset_code ? details.asset_code : 'N/A'}</Text>
             </View>
             <View style={{flexDirection: 'row', marginBottom: 3}}>
-              <Text style={{color: '#5c5c5c', width: '45%',fontSize: 17, fontWeight: 'bold'}}>ORIGINAL LOCATION </Text><Text style={{color: '#5c5c5c', textTransform: 'uppercase', fontSize: 17, width: '55%', textAlign: 'right'}}>{details.name ? details.name : 'N/A'}</Text>
+              <Text style={styles.col_title}>Description </Text>
+              <Text style={styles.col_content}>{details.asset_description ? details.asset_description : 'N/A'}</Text>
             </View>
             <View style={{flexDirection: 'row', marginBottom: 3}}>
-              <Text style={{color: '#5c5c5c', width: '45%',fontSize: 17, fontWeight: 'bold'}}>CURRENT LOCATION </Text><Text style={{color: '#5c5c5c', textTransform: 'uppercase', fontSize: 17, width: '55%', textAlign: 'right'}}>{details.name ? details.name : 'N/A'}</Text>
+              <Text style={styles.col_title}>Original Location </Text>
+              <Text style={styles.col_content}>{details.name ? details.name : 'N/A'}</Text>
             </View>
             <View style={{flexDirection: 'row', marginBottom: 3}}>
-              <Text style={{color: '#5c5c5c', width: '45%', fontSize: 17, fontWeight: 'bold'}}>ORIGINAL PRICE </Text><Text style={{color: '#5c5c5c', textTransform: 'uppercase', fontSize: 17, width: '55%', textAlign: 'right'}}>{details.curr_loc ? details.curr_loc : 'N/A'}</Text>
+              <Text style={styles.col_title}>Current Location </Text>
+              <Text style={styles.col_content}>{details.name ? details.name : 'N/A'}</Text>
             </View>
             <View style={{flexDirection: 'row', marginBottom: 3}}>
-              <Text style={{color: '#5c5c5c', width: '45%', fontSize: 17, fontWeight: 'bold'}}>CURRENT PRICE </Text><Text style={{color: '#5c5c5c', textTransform: 'uppercase', fontSize: 17, width: '55%', textAlign: 'right'}}>{details.original_price ? details.original_price : 'N/A'}</Text>
+              <Text style={styles.col_title}>Original Price </Text>
+              <Text style={styles.col_content}>{details.original_price ? details.original_price : 'N/A'}</Text>
             </View>
             <View style={{flexDirection: 'row', marginBottom: 3}}>
-              <Text style={{color: '#5c5c5c', width: '60%', fontSize: 17, fontWeight: 'bold'}}>STATUS </Text>
-              <View style={{flex: 1, padding: 3, backgroundColor: '#2eb82e', flexDirection: 'row', borderRadius: 5, justifyContent: 'center', width: '40%',}}>
-                <Icon name='check-circle' size={13} color={'#ffffff'} ></Icon>
-                <Text adjustsFontSizeToFit style={{ color: '#ffffff', fontSize: 13, fontWeight: "bold", textTransform: 'uppercase', marginRight: 2}}> OPERATIONAL</Text>
+              <Text style={styles.col_title}>Current Price </Text>
+              <Text style={styles.col_content}>{details.current_price ? details.original_price : 'N/A'}</Text>
+            </View>
+            <View style={{flexDirection: 'row', marginBottom: 3}}>
+              <Text style={styles.col_title}>Status </Text>
+                <View style={{flex: 1, alignItems: "flex-end"}}>
+                {details.status === 'Operational' ? 
+                 <View 
+                 style={{flex: 1, padding: 3, backgroundColor: '#2eb82e', flexDirection: 'row', borderRadius: 5, justifyContent: 'center'}}>
+                    <Icon name='check-circle' size={13} color={'#ffffff'} ></Icon>
+                    <Text adjustsFontSizeToFit style={{ color: '#ffffff', fontSize: 13, fontWeight: "bold", textTransform: 'uppercase', marginRight: 2}}> {details.status ? details.status : 'N/A'}</Text>
+                  </View>
+                : details.status === 'Under Repair' ? 
+                <View 
+                style={{flex: 1, padding: 3, backgroundColor: '#ffcc00', flexDirection: 'row', borderRadius: 5, justifyContent: 'center'}}>
+                    <Icon name='check-circle' size={13} color={'#ffffff'} ></Icon>
+                    <Text adjustsFontSizeToFit style={{ color: '#ffffff', fontSize: 13, fontWeight: "bold", textTransform: 'uppercase', marginRight: 2}}> {details.status ? details.status : 'N/A'}</Text>
+                  </View>
+                :  
+                <View 
+                 style={{flex: 1, padding: 3, backgroundColor: '#fc4747', flexDirection: 'row', borderRadius: 5, justifyContent: 'center'}}>
+                  <Icon name='check-circle' size={13} color={'#ffffff'} ></Icon>
+                  <Text adjustsFontSizeToFit style={{ color: '#ffffff', fontSize: 13, fontWeight: "bold", textTransform: 'uppercase', marginRight: 2}}> {details.status ? details.status : 'N/A'}</Text>
+                </View>
+              }
+                
               </View>
             </View>
             <View style={{flexDirection: 'row', marginBottom: 3}}>
-              <Text style={{color: '#5c5c5c', width: '45%', fontSize: 17, fontWeight: 'bold'}}>PURCHASED DATE </Text><Text style={{color: '#5c5c5c', textTransform: 'uppercase', fontSize: 17, width: '55%', textAlign: 'right'}}>{details.purchase_date ? details.purchase_date : 'N/A'}</Text>
+              <Text style={styles.col_title}>Purchased Date </Text>
+              <Text style={styles.col_content}>{details.purchase_date ? details.purchase_date : 'N/A'}</Text>
             </View>
             <View style={{flexDirection: 'row', marginBottom: 3}}>
-              <Text style={{color: '#5c5c5c', width: '45%', fontSize: 17, fontWeight: 'bold'}}>ADDED BY </Text><Text style={{color: '#5c5c5c', textTransform: 'uppercase', fontSize: 17, width: '55%', textAlign: 'right'}}>{details.access_level ? details.access_level : 'N/A'}</Text>
+              <Text style={styles.col_title}>Added by</Text>
+              <Text style={styles.col_content}>{details.access_level ? details.access_level : 'N/A'}</Text>
             </View>
-          <View>
-            <Button icon="qrcode" color="#348ceb" mode="contained" style={{marginTop: 60}} onPress={() => setModalVisible(true)}>QR Code</Button>
-            <Button icon="cog" color="#348ceb" mode="contained" style={{marginTop: 10}} onPress={() => navigation.navigate("AssetMaintenanceScreen", details.id)}>Maintenance</Button>
-            <Button icon="pencil" mode="contained" style={{marginTop: 10}} onPress={() => navigation.navigate("UpdateAssetScreen", details.id)}>Update</Button>
-            <Button icon="delete" color="red" mode="contained"style={{marginTop: 10}} >Delete</Button>
+          <View style={{marginTop: 40, justifyContent: 'center'}}>
+            <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                <TouchableOpacity 
+                  style={{
+                    backgroundColor: '#348ceb',
+                    width: '45%',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: 35,
+                    borderRadius: 10,
+                    elevation: 5
+                  }}
+                  onPress={() => setModalVisible(true)}
+                >
+                  <Text style={{color: "#fff", fontSize: 16, fontWeight: '500'}}>
+                    <Icon name='qrcode' size={18} color={'#ffffff'} ></Icon> QR CODE
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                  style={{
+                    backgroundColor: '#348ceb',
+                    width: '45%',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: 35,
+                    borderRadius: 10,
+                    elevation: 5
+                  }}
+                  onPress={() => navigation.navigate("AssetMaintenanceScreen", details)}
+                >
+                  <Text style={{color: "#fff", fontSize: 16, fontWeight: '500'}}>
+                    <Icon name='cog' size={18} color={'#ffffff'} ></Icon> MAINTENANCE
+                  </Text>
+                </TouchableOpacity>
+            </View>
+            <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 10}}>
+                <TouchableOpacity 
+                  style={{
+                    backgroundColor: '#53d769',
+                    width: '45%',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: 35,
+                    borderRadius: 10,
+                    elevation: 5
+                  }}
+                  onPress={() => navigation.navigate("UpdateAssetScreen", details)}
+                >
+                  <Text style={{color: "#fff", fontSize: 16, fontWeight: '500'}}>
+                    <Icon name='refresh' size={18} color={'#ffffff'} ></Icon> UPDATE</Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                  style={{
+                    backgroundColor: '#fc3d39',
+                    width: '45%',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: 35,
+                    borderRadius: 10,
+                    elevation: 5
+                  }}
+                  onPress={() => navigation.navigate("AssetMaintenanceScreen", details.id)}
+                >
+                  <Text style={{color: "#fff", fontSize: 16, fontWeight: '500'}}>
+                    <Icon name='delete' size={18} color={'#ffffff'} ></Icon> DELETE
+                  </Text>
+                </TouchableOpacity>
+            </View>
+            
+            
           </View>
         </Card.Content>
         {/* <Card.Actions style={{justifyContent: 'flex-end', marginTop: 100}}>
@@ -149,5 +253,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
-  }
+  },
+  col_title: {color: '#000000', width: '45%', fontSize: 16, fontWeight: '400', fontFamily: 'Roboto'},
+  col_content: {color: '#000', textTransform: 'uppercase', fontSize: 16, width: '55%', textAlign: 'right', fontFamily: 'Roboto'}
 });

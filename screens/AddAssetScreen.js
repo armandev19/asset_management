@@ -35,8 +35,8 @@ const AddAssetScreen = ({route, navigation}) => {
   };
 
   const onChange = (event, value) => {
-    setDate(value);
     setIsPickerShow(false);
+    setDate(value);
   };
 	
   const statusList = [
@@ -50,43 +50,42 @@ const AddAssetScreen = ({route, navigation}) => {
 		let dataToSend = { name: name, description : description, price: price, purchaseDate: date, location: location, created_by: currentUserData.id };
 		let formBody = [];
 
-    // const formData = new FormData();
-    
-
 		for (let key in dataToSend) {
 			let encodedKey = encodeURIComponent(key);
 			let encodedValue = encodeURIComponent(dataToSend[key]);
 			formBody.push(encodedKey + '=' + encodedValue);
 		}
 
-    formBody.append('file', {
-      uri: selectedFile[0].uri,
-      type: selectedFile[0].type,
-      name: selectedFile[0].name,
-    });
+    // formBody.append('file', {
+    //   uri: selectedFile[0].uri,
+    //   type: selectedFile[0].type,
+    //   name: selectedFile[0].name,
+    // });
 
 		formBody = formBody.join('&');
 		fetch(global.url+'saveAsset.php', {
 			method: 'POST',
 			body: formBody,
 			headers: {
-        'Content-Type': 'multipart/form-data',
+        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
 			},
 		})
 		.then((response) => response.json())
 		.then((responseJson) => {
+      console.log(responseJson)
 			if(responseJson.status == 'success'){
 				alert('Success!');
 			}else{
 				alert('Failed!');
 			}
 			setTimeout(function(){
-				navigation.replace('AssetScreen');
+				navigation.goBack();
 			}, 1500)
 			setLoading(false);
 		})
 		.catch((error) => {
 			setLoading(false);
+      console.log(error)
 		});
 	}
   
@@ -168,7 +167,7 @@ const AddAssetScreen = ({route, navigation}) => {
 						justifyContent: 'center',
 						alignContent: 'center',
 					}}>
-            <KeyboardAvoidingView enabled style={{padding: 5}}>
+            <KeyboardAvoidingView enabled style={{padding: 10, marginHorizontal: 10}}>
               <TextInput
 								mode="outlined"
                 label="Name"
@@ -205,7 +204,7 @@ const AddAssetScreen = ({route, navigation}) => {
 							/>
 
 							{/* The date picker */}
-							{isPickerShow && (
+							  {isPickerShow && (
                   <DateTimePicker
                     value={date}
                     mode={'date'}
@@ -228,23 +227,9 @@ const AddAssetScreen = ({route, navigation}) => {
                     style={{flex: 1}}
                     // value={text}
                     // onChangeText={text => setText(text)}
+                    right={<TextInput.Icon name="calendar" onPress={showPicker} />}
                   />
-                    {!isPickerShow && (
-                      <View style={{padding: 5}}>
-                        <IconButton icon="calendar" color='green' mode="contained" onPress={showPicker} />
-                      </View>
-                    )}
                 </View>
-                <DropDown
-                  label={"Location"}
-                  mode={"outlined"}
-                  visible={showDropDown}
-                  showDropDown={() => setShowDropDown(true)}
-                  onDismiss={() => setShowDropDown(false)}
-                  value={location}
-                  setValue={setLocation}
-                  list={statusList}
-                />
                 <View>
                 {selectedFile.length > 0 ? (
                     <Text style={{color: 'black'}}>adasd</Text>

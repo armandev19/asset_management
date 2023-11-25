@@ -20,11 +20,11 @@ const [userdata, setUserData] = useState('');
 
 
 const currentUserData = useSelector(selectUserData);
-
 const getUsers = () => {
   setLoading(true)
   fetch(global.url+'getUsers.php', {
     method: 'POST',
+    // body: formBody,
     headers: {
       'Content-Type':
       'application/x-www-form-urlencoded;charset=UTF-8',
@@ -32,6 +32,7 @@ const getUsers = () => {
   })
     .then((response) => response.json())
     .then((responseJson) => {
+      // alert(responseJson)
       setLoading(false);
       setUsers(responseJson.data);
     })

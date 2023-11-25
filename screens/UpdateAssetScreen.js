@@ -15,6 +15,7 @@ import { selectUserData, setUserData } from './redux/navSlice';
 import { useSelector } from 'react-redux';
 import Moment from 'moment';
 import { set } from 'react-native-reanimated';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 const UpdateAssetScreen = ({route, navigation}) => {
   
@@ -22,7 +23,9 @@ const UpdateAssetScreen = ({route, navigation}) => {
   const [details, setAssetDetails] = useState([]);
   const [loading, setLoading] = useState(false);
 	
+	const currentUserData = useSelector(selectUserData);
   const [showDropDown, setShowDropDown] = useState(false);
+	const [showDropDownStatus, setShowDropDownStatus] = useState(false);
 	const [name, setName] = useState('');
 	const [description, setDescription] = useState('');
 	const [location, setLocation] = useState('');
@@ -37,13 +40,13 @@ const UpdateAssetScreen = ({route, navigation}) => {
   };
 
   const onChange = (event, value) => {
-    setDate(value);
     setIsPickerShow(false);
+    setDate(value);
   };
 
 	const updateAsset = () => {
 		setLoading(true);
-		let dataToSend = { name: name, description : description, price: price, purchaseDate: date, location: location, id: params, status: status };
+		let dataToSend = { name: name, description : description, price: price, purchaseDate: date, location: location, id: params.id, status: status, created_by: currentUserData.id };
 		let formBody = [];
 		for (let key in dataToSend) {
 			let encodedKey = encodeURIComponent(key);
@@ -67,13 +70,23 @@ const UpdateAssetScreen = ({route, navigation}) => {
 				alert('Failed!');
 			}
 			setLoading(false);
+			setTimeout(function(){
+				navigation.goBack();
+			}, 1500)
 		})
 		.catch((error) => {
 			setLoading(false);
 		});
 	}
 
+	const dropdownStatus = [
+		{ value: "Operational", label: "Operational" },
+		{ value: "Under Repair", label: "Under Repair" },
+		{ value: "Retired/Disposed", label: "Retired/Disposed" },
+	]
+
   const getAssetDetails = () => {
+		console.log("params", params)
     setLoading(true);
 		let dataToSend = { id: params };
 		let formBody = [];
@@ -95,13 +108,15 @@ const UpdateAssetScreen = ({route, navigation}) => {
 		.then((responseJson) => {
 			setLoading(false);
       setAssetDetails(responseJson.data[0]);
-			setName(responseJson.data[0].asset_name);
-			setDescription(responseJson.data[0].asset_description);
-			setPrice(responseJson.data[0].original_price);
-			setStatus(responseJson.data[0].status);
-			setLocation(responseJson.data[0].loc_name)
+			setName(params.asset_name);
+			setDescription(params.asset_description);
+			setPrice(params.original_price);
+			setStatus(params.status);
+			setLocation(params.loc_name)
+			console.log("test", params.asset_name)
 		})
 		.catch((error) => {
+			console.log("test", error)
 			setLoading(false);
 		});
 	}
@@ -144,6 +159,7 @@ const UpdateAssetScreen = ({route, navigation}) => {
 					mode="outlined"
 					label="Name"
 					activeOutlineColor='#348ceb'
+					defaultValue={name}
 					value={name}
 					onChangeText={name => setName(name)}
 				/>
@@ -177,14 +193,16 @@ const UpdateAssetScreen = ({route, navigation}) => {
 					keyboardType='numeric'
 					onChangeText={price => setPrice(price)}
 				/>
-				<TextInput
-					style={{width: '100%'}}
-					// theme={{ roundness: 20 }}
-					mode="outlined"
-					label="Status"
-					activeOutlineColor='#348ceb'
+				<DropDown
+					dropDownStyle={{borderRadius: 5}}
+					label={"Status"}
+					mode={"outlined"}
+					visible={showDropDownStatus}
+					showDropDown={() => setShowDropDownStatus(true)}
+					onDismiss={() => setShowDropDownStatus(false)}
 					value={status}
-					onChangeText={status => setStatus(status)}
+					setValue={setStatus}
+					list={dropdownStatus}
 				/>
 				{/* The date picker */}
 				{isPickerShow && (
@@ -192,7 +210,7 @@ const UpdateAssetScreen = ({route, navigation}) => {
 							value={date}
 							mode={'date'}
 							onChange={onChange}
-							style={styles.datePicker}
+							// style={styles.datePicker}
 							format='MM DD YYYY'
 						/>
 					)}
@@ -211,12 +229,13 @@ const UpdateAssetScreen = ({route, navigation}) => {
 						style={{flex: 1}}
 						// value={text}
 						// onChangeText={text => setText(text)}
+						right={<TextInput.Icon name="calendar" onPress={showPicker} />}
 					/>
-						{!isPickerShow && (
+						{/* {!isPickerShow && (
 							<View style={{padding: 5}}>
 								<IconButton icon="calendar" color='green' mode="contained" onPress={showPicker} />
 							</View>
-						)}
+						)} */}
 					</View>
       </Card.Content>
       

@@ -58,8 +58,17 @@ const handleSearchQueryChange = (query) => {
 
 const getLocations = () => {
   setLoading(true)
+  // let dataToSend = { asset_id: params.id };
+  // let formBody = [];
+  // for (let key in dataToSend) {
+  //   let encodedKey = encodeURIComponent(key);
+  //   let encodedValue = encodeURIComponent(dataToSend[key]);
+  //   formBody.push(encodedKey + '=' + encodedValue);
+  // }
+  // formBody = formBody.join('&');
   fetch(global.url+'getLocations.php', {
     method: 'POST',
+    // body: formBody,
     headers: {
       'Content-Type':
       'application/x-www-form-urlencoded;charset=UTF-8',
@@ -67,8 +76,10 @@ const getLocations = () => {
   })
     .then((response) => response.json())
     .then((responseJson) => {
+      // alert(responseJson)
       setLoading(false);
       setLocations(responseJson.data);
+      console.log(locations)
     })
     .catch((error) => {
       alert(error);

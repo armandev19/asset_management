@@ -30,9 +30,11 @@ const UserDetailsScreen = ({route, navigation}) => {
 		.then((responseJson) => {
       setUserDetails(responseJson.data[0]);
 			setLoading(false);
+      console.log("rawr", responseJson);
 		})
 		.catch((error) => {
 			setLoading(false);
+      console.log("rawr");
 		});
 	}
   useFocusEffect(

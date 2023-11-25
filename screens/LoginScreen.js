@@ -8,9 +8,10 @@ import {
   Keyboard,
   TouchableOpacity,
   KeyboardAvoidingView,
+  TextInput
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import {Card, Title, Paragraph, Divider, TextInput, Button} from 'react-native-paper';
+import {Card, Title, Paragraph, Divider, Button} from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { setUserData } from './redux/navSlice';
 import { useDispatch } from 'react-redux';
@@ -92,30 +93,46 @@ const LoginScreen = ({navigation}) => {
           justifyContent: 'center',
           alignContent: 'center',
         }}>
-        <Icon style={{fontSize: 200, color: 'green', textAlign: 'center', color: '#FFFFFF', marginTop: -150}} name="devices"></Icon>
-        <Text style={{textAlign: 'center', fontSize: 30, fontWeight: 'bold', marginBottom: 10, color: '#FFFFFF'}}>ASSET MANAGEMENT</Text>
+        <Icon style={{fontSize: 100, color: 'green', textAlign: 'center', color: '#FFFFFF'}} name="devices"></Icon>
+        <Text style={{textAlign: 'center', fontSize: 25, fontWeight: 'bold', marginBottom: 10, color: '#FFFFFF'}}>ASSET MANAGEMENT</Text>
         <View style={{
           backgroundColor: 'transparent', 
           marginLeft: 20,
           marginRight: 20,
-          height: 300,
+          height: 200,
           justifyContent: 'center',
         }}>
           <KeyboardAvoidingView enabled>
             <View style={styles.SectionStyle}>
               <TextInput
-                style={{width: '100%', backgroundColor: 'white', color: 'red'}}
-                theme={{ roundness: 5 }}
-                label="Username"
+                style={{
+                  width: '70%', 
+                  backgroundColor: 'white', 
+                  color: '#000',
+                  borderRadius: 20,
+                  paddingLeft: 20,
+                  fontSize: 18,
+                  elevation: 5
+                }}
+                placeholder="Username"
+                placeholderTextColor={"gray"}
                 value={userEmail}
                 onChangeText={userEmail => setUserEmail(userEmail)}
 							/>
             </View>
             <View style={styles.SectionStyle}>
               <TextInput
-                style={{width: '100%', backgroundColor: 'white'}}
-                theme={{ roundness: 5 }}
-                label="Password"
+                style={{
+                  width: '70%', 
+                  backgroundColor: 'white', 
+                  color: '#000',
+                  borderRadius: 20,
+                  paddingLeft: 20,
+                  fontSize: 18,
+                  elevation: 5
+                }}
+                placeholder="Password"
+                placeholderTextColor={"gray"}
                 value={userPassword}
                 onChangeText={userPassword => setUserPassword(userPassword)}
                 secureTextEntry={true}
@@ -126,16 +143,24 @@ const LoginScreen = ({navigation}) => {
                 {errortext}
               </Text>
             ) : null}
-            <View style={styles.SectionStyle}>
-            <Button style={{padding: 5, flex: 1, borderRadius: 5}} labelStyle={{fontWeight: 'bold', fontSize: 20}} compact="true" mode="contained" onPress={() => handleSubmitPress()}>
-              LOGIN
-            </Button>
-            {/* <TouchableOpacity
-              style={styles.buttonStyle}
-              activeOpacity={0.5}
-              onPress={handleSubmitPress}>
-              <Text style={styles.buttonTextStyle}>LOGIN</Text>
-            </TouchableOpacity> */}
+            <View style={[styles.SectionStyle, {
+                alignSelf: 'center',
+                width: '50%',
+            }]}>
+              <TouchableOpacity style={{
+                padding: 5, 
+                flex: 1, 
+                borderRadius: 5,
+                backgroundColor: '#4988e6',
+                height: 38,
+                borderRadius: 20,
+                alignItems: 'center',
+                justifyContent: 'center',
+                elevation: 5
+                }} 
+                onPress={() => handleSubmitPress()}>
+                <Text style={{justifyContent: 'center', color: "#fff", fontWeight: '700', fontSize: 18}}>LOGIN</Text>
+              </TouchableOpacity>
             </View>
           </KeyboardAvoidingView>
         </View>
@@ -155,9 +180,7 @@ const styles = StyleSheet.create({
   },
   SectionStyle: {
     flexDirection: 'row',
-    // height: 50,
-    // marginLeft: 25,
-    // marginRight: 25,
+    justifyContent: 'center',
     margin: 10,
   },
   buttonStyle: {

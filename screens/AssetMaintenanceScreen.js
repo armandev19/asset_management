@@ -9,6 +9,7 @@ import Loader from './Components/loader';
 import { selectUserData, setUserData } from './redux/navSlice';
 import { useSelector } from 'react-redux';
 
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { useFocusEffect } from '@react-navigation/native';
 
 const AssetMaintenanceScreen = ({navigation, route}) => {
@@ -21,7 +22,7 @@ const [search, setSearch] = useState('');
 
 const currentUserData = useSelector(selectUserData);
 const [modalVisible, setModalVisible] = useState(false);
-
+const [modalEditVisible, setModalEditVisible] = useState(false);
 const [assetId, setAssetId] = useState('');
 const [description, setDescription] = useState('');
 const [estimatedCost, setEstimatedCost] = useState('');
@@ -29,6 +30,37 @@ const [schedule, setSchedule] = useState('');
 const [startDate, setStartDate] = useState('');
 const [endDate, setEndDate] = useState('');
 const [technician, setTechnician] = useState('');
+
+
+const [schedDate, setSchedDate] = useState(new Date(Date.now()));
+const [dateStart, setDateStart] = useState(new Date(Date.now()));
+const [dateEnd, setDateEnd] = useState(new Date(Date.now()));
+
+const [isPickerShow, setIsPickerShow] = useState(false);
+const [isPickerShowStart, setIsPickerShowStart] = useState(false);
+const [isPickerShowEnd, setIsPickerShowEnd] = useState(false);
+const showPicker = () => {
+  setIsPickerShow(true);
+};
+
+const showPickerStart = () => {
+  setIsPickerShowStart(true);
+};
+const showPickerEnd = () => {
+  setIsPickerShowEnd(true);
+};
+const onChangeSchedDate = (event, value) => {
+  setIsPickerShow(false);
+  setDate(value);
+};
+const onChangeSchedStartDate = (event, value) => {
+  setIsPickerShowStart(false);
+  setDateStart(value);
+};
+const onChangeSchedEndDate = (event, value) => {
+  setIsPickerShowEnd(false);
+  setDateEnd(value);
+};
 
 const onChangeSearch = () => {
   setLoading(true)
@@ -67,7 +99,7 @@ const handleSearchQueryChange = (query) => {
 
 const getAssetsMaintenance = () => {
   setLoading(true);
-  let dataToSend = { asset_id: params };
+  let dataToSend = { asset_id: params.id };
   let formBody = [];
   for (let key in dataToSend) {
     let encodedKey = encodeURIComponent(key);
@@ -99,7 +131,7 @@ const getAssetsMaintenance = () => {
 
 const saveMaintenance = () => {
   let dataToSend = {
-    asset_id: params,
+    asset_id: params.id,
     description: description,
     cost : estimatedCost,
     schedule : schedule,
@@ -138,11 +170,21 @@ const saveMaintenance = () => {
   });
 }
 
+const updateMaintenance = (description, cost, schedule, start_date, end_date, status, technician) => {
+  setDescription(description);
+  setEstimatedCost(cost);
+  setSchedule(schedule);
+  setStartDate(start_date);
+  setEndDate(end_date);
+  setTechnician(technician)
+  setModalEditVisible(true);
+}
+
 const onRefresh = () => {
   getAssetsMaintenance();
 };
 
-function RowItem({ key, navigation, description, cost, schedule, status}) {
+function RowItem({ key, navigation, description, cost, schedule, status, start_date, end_date, technician}) {
   return (
     <Card style={{ margin: 3 }}>
       <View style={{marginBottom: 5}}>
@@ -163,10 +205,10 @@ function RowItem({ key, navigation, description, cost, schedule, status}) {
         </View>
         <View style={styles.item}>
           <View style={{flex: 1}}>
-            <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>Start: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{schedule}</Text></Text>
+            <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>Start: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{start_date}</Text></Text>
           </View>
           <View style={{flex: 1}}>
-            <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>End: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{schedule}</Text></Text>
+            <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>End: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{end_date}</Text></Text>
           </View>
         </View>
         <View style={styles.item}>
@@ -174,11 +216,11 @@ function RowItem({ key, navigation, description, cost, schedule, status}) {
             <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>Status: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{status}</Text></Text>
           </View>
           <View style={{flex: 1}}>
-            <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>Technician: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{status}</Text></Text>
+            <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>Technician: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{technician}</Text></Text>
           </View>
         </View>
-        <View style={{flexDirection: 'row', justifyContent: 'flex-end'}}>
-          <Button style={{marginHorizontal: 2, marginTop: 1}} labelStyle={{fontWeight: 'bold'}} icon="pencil" compact="true" mode="contained" onPress={()=>setModalVisible(true)}>
+        <View style={{flexDirection: 'row', justifyContent: 'flex-end', paddingRight: 10}}>
+          <Button style={{marginHorizontal: 2, marginTop: 1}} labelStyle={{fontWeight: 'bold'}} icon="pencil" compact="true" mode="contained" onPress={()=>updateMaintenance(description, cost, schedule, start_date, end_date, status, technician)}>
           </Button>
           <Button style={{marginHorizontal: 2, marginTop: 1, backgroundColor: '#e62e00'}} labelStyle={{fontWeight: 'bold'}} icon="delete" compact="true" mode="contained" onPress={()=>setModalVisible(true)}>
           </Button>
@@ -213,7 +255,8 @@ useFocusEffect(
           </Card>
           <Card style={{ marginHorizontal: 8}}>
             <View style={{justifyContent: 'center', alignItems: "flex-start", padding: 5}}>
-              <Text style={{color: 'black', fontWeight: 'bold', fontSize: 20}}>ASSET: {params}</Text>
+              <Text style={{color: 'black', fontWeight: 'bold', fontSize: 18}}>Asset: {params.asset_name}</Text>
+              <Text style={{color: 'black', fontWeight: 'bold', fontSize: 18}}>Code: {params.asset_code}</Text>
             </View>
           </Card>
           {assets.length == 0 ? (
@@ -236,6 +279,9 @@ useFocusEffect(
                 cost={item.estimated_cost}
                 schedule={item.schedule}
                 status={item.status}
+                start={item.start_date}
+                end={item.end_date}
+                technician={item.technician}
               />
             }
             refreshControl={
@@ -247,6 +293,33 @@ useFocusEffect(
           />
           )}
         </View>
+        {isPickerShow && (
+          <DateTimePicker
+            value={schedDate}
+            mode={'date'}
+            onChange={onChangeSchedDate}
+            style={styles.datePicker}
+            format='MM DD YYYY'
+          />
+        )}
+        {isPickerShowStart && (
+          <DateTimePicker
+            value={dateStart}
+            mode={'date'}
+            onChange={onChangeSchedStartDate}
+            style={styles.datePicker}
+            format='MM DD YYYY'
+          />
+        )}
+        {isPickerShowEnd && (
+          <DateTimePicker
+            value={dateEnd}
+            mode={'date'}
+            onChange={onChangeSchedEndDate}
+            style={styles.datePicker}
+            format='MM DD YYYY'
+          />
+        )}
         <Modal
           animationType="slide"
           transparent={true}
@@ -287,6 +360,7 @@ useFocusEffect(
 								activeOutlineColor='#348ceb'
                 value={schedule}
                 onChangeText={schedule => setSchedule(schedule)}
+                right={<TextInput.Icon name="calendar" onPress={showPicker} />}
 							/>
               <TextInput
                 style={{width: '100%'}}
@@ -321,6 +395,90 @@ useFocusEffect(
 									SAVE
 								</Button>
                 <Button style={{margin: 5}} icon="close" color='red' mode="contained" onPress={()=>setModalVisible(!modalVisible)}>
+									Cancel
+								</Button>
+							</View>
+            </View>
+            </KeyboardAvoidingView>
+          </View>
+        </Modal>
+
+        <Modal
+          animationType="slide"
+          transparent={true}
+          centeredView={true}
+          visible={modalEditVisible}
+          onRequestClose={() => {
+            Alert.alert('Modal has been closed.');
+            setModalVisible(!modalEditVisible);
+          }}>
+          <View style={styles.centeredView}>
+          <KeyboardAvoidingView enabled style={styles.modalView}>
+            <View style={{padding: 20}}>
+              <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+                <Icon name='report' size={25} color={'#404040'} ></Icon>
+                <Text style={{color: '#404040', fontSize: 20, fontWeight: 'bold'}}>EDIT ASSET MAINTENANCE</Text>
+              </View>
+              <TextInput
+                style={{width: '100%'}}
+								mode="outlined"
+                label="Description"
+								activeOutlineColor='#348ceb'
+                value={description}
+                onChangeText={description => setDescription(description)}
+							/>
+              <TextInput
+                style={{width: '100%'}}
+								mode="outlined"
+                label="Cost"
+								activeOutlineColor='#348ceb'
+                keyboardType='numeric'
+                value={estimatedCost}
+                onChangeText={estimatedCost => setEstimatedCost(estimatedCost)}
+							/>
+              <TextInput
+                style={{width: '100%'}}
+								mode="outlined"
+                label="Schedule"
+								activeOutlineColor='#348ceb'
+                value={schedule}
+                onChangeText={schedule => setSchedule(schedule)}
+							/>
+              <TextInput
+                style={{width: '100%'}}
+								mode="outlined"
+                label="Start Date"
+								activeOutlineColor='#348ceb'
+                right={<TextInput.Icon name="calendar" onPress={showPicker} />}
+							/>
+              <TextInput
+                style={{width: '100%'}}
+								mode="outlined"
+                label="End Date"
+								activeOutlineColor='#348ceb'
+                right={<TextInput.Icon name="calendar" onPress={showPicker} />}
+							/>
+              <TextInput
+                style={{width: '100%'}}
+								mode="outlined"
+                label="Technician"
+								activeOutlineColor='#348ceb'
+                value={technician}
+                onChangeText={technician => setTechnician(technician)}
+							/>
+              {/* <View style={{}}>
+                <Button style={{marginTop: 10}} icon="camera" mode="contained" onPress={() => console.log('Pressed')}>
+                  Image
+                </Button>
+                <View style={{marginTop: 5}}>
+
+                </View>
+              </View> */}
+							<View style={{flexDirection: 'row', justifyContent: 'center', marginTop: 10}}>
+								<Button style={{margin: 5}} icon="check" color='green' mode="contained" onPress={() => updateMaintenance()}>
+									SAVE
+								</Button>
+                <Button style={{margin: 5}} icon="close" color='red' mode="contained" onPress={()=>setModalEditVisible(!modalEditVisible)}>
 									Cancel
 								</Button>
 							</View>
