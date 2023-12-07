@@ -48,7 +48,7 @@ function RowItem({key, navigation, firstname, lastname, id, access_level, addres
     <Card style={{ margin: 3, padding: 10, elevation: 3 }}>
       <TouchableOpacity key={key} onPress={() => navigation.navigate("UserDetailsScreen", id)}>
         <View>
-          <View style={{ flexDirection: 'row', padding: 2, marginLeft: 3 }}>
+          <View style={{ flexDirection: 'row', padding: 2 }}>
             <View style={{ flex: 1 }}>
               <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 15, fontWeight: "bold", textTransform: 'uppercase'}}>{firstname+" "+lastname}</Text>
             </View>
@@ -99,8 +99,7 @@ useFocusEffect(
               // value={searchQuery}
               style={{ marginHorizontal: 5, flex: 6}}
             />
-            <Button style={{marginHorizontal: 5, marginTop: 1, padding: 5}} labelStyle={{fontWeight: 'bold'}} icon="plus" compact="true" mode="contained">
-            </Button>
+            <Button onPress={()=>navigation.navigate('AddUsersScreen')} style={{marginHorizontal: 5, marginTop: 1, padding: 5}} labelStyle={{fontWeight: 'bold'}} icon="plus" compact="true" mode="contained"/>
           </View>
         </Card>
         <FlatList
@@ -185,7 +184,6 @@ const styles = StyleSheet.create({
   item: {
     flexDirection: 'row',
     padding: 1,
-    marginLeft: 8,
   },
   assetContainer: {
     padding: 10,

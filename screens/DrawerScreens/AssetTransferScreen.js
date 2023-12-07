@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, SafeAreaView, FlatList, StyleSheet, TouchableOpacity, Modal, ToastAndroid, Alert, TextInput, RefreshControl} from 'react-native';
+import {View, Text, SafeAreaView, FlatList, StyleSheet, TouchableOpacity, Modal, ToastAndroid, Alert, TextInput, RefreshControl, KeyboardAvoidingView} from 'react-native';
 import {Card, Title, Paragraph, Divider, List, Button, IconButton, Searchbar} from 'react-native-paper';
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -17,7 +17,8 @@ const [loading, setLoading] = useState(false);
 const [assets, setAssets] = useState([]);
 const [selectedId, setSelectedId] = useState(null);
 const [userdata, setUserData] = useState('');
-
+const [modalVisible, setModalVisible] = useState(false);
+const [selectedReference, setSelectedReference] = useState('');
 
 const currentUserData = useSelector(selectUserData);
 
@@ -44,7 +45,6 @@ const getAssets = () => {
 // }
 fetch(global.url+'getAssetsTransfer.php', {
   method: 'POST',
-  // body: formBody,
   headers: {
     'Content-Type':
     'application/x-www-form-urlencoded;charset=UTF-8',
@@ -63,19 +63,78 @@ fetch(global.url+'getAssetsTransfer.php', {
   });
 }
 
+console.log(assets)
+
 const onRefresh = () => {
   getAssets();
 };
 
-function RowItem({ key, navigation, ref_no, asset_name, asset_description, original_location, item_id }) {
+const updateTransferStatus = (id) => {
+  setSelectedReference(id)
+  setModalVisible(true)
+}
+
+const updateStatus = () => {
+  setLoading(true);
+		let dataToSend = { selectedReference: selectedReference};
+		let formBody = [];
+		for (let key in dataToSend) {
+			let encodedKey = encodeURIComponent(key);
+			let encodedValue = encodeURIComponent(dataToSend[key]);
+			formBody.push(encodedKey + '=' + encodedValue);
+		}
+		formBody = formBody.join('&');
+		fetch(global.url+'updateTransferStatus.php', {
+			method: 'POST',
+			body: formBody,
+			headers: {
+				'Content-Type':
+				'application/x-www-form-urlencoded;charset=UTF-8',
+			},
+		})
+		.then((response) => response.json())
+		.then((responseJson) => {
+			if(responseJson.status == 'success'){
+				alert('Success!');
+        setModalVisible(false);
+			}else{
+				alert('Failed!');
+        setModalVisible(false);
+			}
+		  setLoading(false);
+      getAssets();
+		})
+		.catch((error) => {
+      
+      console.log(error);
+			setLoading(false);
+		});
+}
+
+function RowItem({ key_id, navigation, ref_no, asset_name, remarks, original_location, from, to, transfer_status }) {
+  console.log(key_id)
   return (
-    <Card style={{ margin: 3, paddingBottom: 5, elevation: 3 }}>
-      <TouchableOpacity key={key}
-      // onPress={() => navigation.navigate("UpdateAssetTransferDetailsScreen", id)}
+    <View key={key_id}>
+    <Card style={{ margin: 3, paddingBottom: 5, elevation: 3 }} >
+      <TouchableOpacity
+      onPress={() => updateTransferStatus(key_id)}
       >
         <View style={{borderBottomColor: 'lightgray', borderBottomWidth: 1 }}>
           <View style={{ flexDirection: 'row', padding: 5, marginLeft: 3 }}>
             <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 15, fontWeight: "bold", textTransform: 'uppercase', width: '35%' }}>{ref_no}</Text>
+            <View style={{ flex: 1, alignItems: 'flex-end'}}>
+              {transfer_status === 'DELIVERED' ? 
+                 <View style={{ padding: 3, backgroundColor: '#2eb82e', flexDirection: 'row', borderRadius: 5}}>
+                  <Icon name='check-circle' size={13} color={'#ffffff'} ></Icon>
+                  <Text adjustsFontSizeToFit style={{ color: '#ffffff', fontSize: 13, fontWeight: "bold", textTransform: 'uppercase', marginRight: 2}}> {transfer_status}</Text>
+                </View>
+                :
+                <View style={{ padding: 3, backgroundColor: '#ffcc00', flexDirection: 'row', borderRadius: 5}}>
+                  <Icon name='check-circle' size={13} color={'#ffffff'} ></Icon>
+                  <Text adjustsFontSizeToFit style={{ color: '#ffffff', fontSize: 13, fontWeight: "bold", textTransform: 'uppercase', marginRight: 2}}> {transfer_status}</Text>
+                </View>
+              }
+            </View>
           </View>
         </View>
         <View style={styles.item}>
@@ -85,19 +144,20 @@ function RowItem({ key, navigation, ref_no, asset_name, asset_description, origi
         </View>
         <View style={styles.item}>
           <View style={{flex: 1}}>
-            <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>ASSSET DESCRIPTION: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{asset_description}</Text></Text>
+            <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>REMARKS: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{remarks}</Text></Text>
           </View>
         </View>
         <View style={styles.item}>
           <View style={{flex: 1}}>
-            <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>FROM: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{asset_description}</Text></Text>
+            <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>FROM: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{from}</Text></Text>
           </View>
           <View style={{flex: 1}}>
-            <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>TO: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{asset_description}</Text></Text>
+            <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>TO: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{to}</Text></Text>
           </View>
         </View>
       </TouchableOpacity>
     </Card>
+    </View>
   );
 }
 
@@ -133,13 +193,15 @@ useFocusEffect(
             onEndReachedThreshold={0.1}
             renderItem={({ item, i }) =>
               <RowItem
-                key={i}
+                key_id={item.reference_no}
                 navigation={navigation}
                 ref_no={item.reference_no}
                 asset_name={item.asset_name}
                 original_location={item.original}
-                asset_description={item.asset_description}
-                item_id={item.id}
+                remarks={item.remarks}
+                from={item.from}
+                to={item.to}
+                transfer_status={item.transfer_status}
               />
             }
             refreshControl={
@@ -150,6 +212,29 @@ useFocusEffect(
             }
           />
         </View>
+        <Modal
+          animationType="fade"
+          transparent={true}
+          centeredView={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            Alert.alert('Modal has been closed.');
+            setModalVisible(!modalVisible);
+          }}>
+          <View style={styles.centeredView}>
+            <KeyboardAvoidingView enabled style={styles.modalView}>
+              <View style={{padding: 10}}>
+                <View style={{alignSelf: 'center', marginTop: 10}}>
+                  <Text style={{color: 'black', fontSize: 20, textAlign: 'center'}}>Do you want to update transfer status to Delivered?</Text>
+                </View>
+              </View>
+              <View style={{flexDirection: 'row', justifyContent: 'space-evenly'}}>
+                <Button icon="check" compact="true" mode="contained" color={"#2eb82e"} style={{marginTop: 10}} onPress={() => updateStatus()}><Text>Yes</Text></Button>
+                <Button icon="close" compact="true" mode="contained" color={"#fc4747"} style={{marginTop: 10}} onPress={() => setModalVisible(false)}><Text>Cancel</Text></Button>
+              </View>
+            </KeyboardAvoidingView>
+          </View>
+        </Modal>
       </View>
   )
 };
@@ -212,5 +297,27 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.5,
     shadowRadius: 5,
     elevation: 10,
-  }
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    // marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    height: 150,
+    backgroundColor: 'white',
+    borderRadius: 5,
+    borderColor: '#D0D0D0',
+    borderWidth: 1,
+    padding: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.9,
+    shadowRadius: 20,
+    elevation: 20,
+  },
 });

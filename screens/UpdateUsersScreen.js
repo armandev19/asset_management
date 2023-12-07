@@ -17,30 +17,39 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 
 
 const UpdateUsersScreen = ({route, navigation}) => {
+  const details = route.params;
+  console.log(details)
 	const [loading, setLoading] = useState(false);
   const [showDropDown, setShowDropDown] = useState(false);
-	const [firstname, setFirstname] = useState("");
-	const [middlename, setMiddlename] = useState("");
-	const [lastname, setLastname] = useState("");
-	const [age, setAge] = useState("");
-	const [address, setAddress] = useState("");
-	const [contact_num, setContactNum] = useState("");
-	const [username, setUsername] = useState("");
-	const [password, setPassword] = useState("");
-	const [access_level, setAccessLevel] = useState("");
+  const [showDropDownStatus, setShowDropDownStatus] = useState(false);
+	const [firstname, setFirstname] = useState(details.firstname);
+	const [middlename, setMiddlename] = useState(details.middlename);
+	const [lastname, setLastname] = useState(details.lastname);
+	const [age, setAge] = useState(details.age);
+	const [address, setAddress] = useState(details.address);
+	const [contact_num, setContactNum] = useState(details.contact_num);
+	const [username, setUsername] = useState(details.username);
+	const [password, setPassword] = useState(details.password);
+	const [access_level, setAccessLevel] = useState(details.access_level);
+  const [status, setStatus] = useState(details.status);
   // const [status, setStatus] = useState("");
 
 	const currentUserData = useSelector(selectUserData);
 
   const access = [
     {label: "Asset Tracker", value: 'Asset Tracker'},
-    {label: "B", value: 'B'},
+    {label: "Admin", value: 'Admin'},
     {label: "AB", value: 'AB'},
+  ];
+
+  const status_list = [
+    {label: "Active", value: 'Active'},
+    {label: "Inactive", value: 'Inactive'},
   ];
 
 	const saveUser = () => {
 		setLoading(true);
-		let dataToSend = { firstname: firstname, middlename : middlename, lastname: lastname, age: age, address: address, contact_num: contact_num, username: username, password: password, access_level: access_level};
+		let dataToSend = { firstname: firstname, middlename : middlename, lastname: lastname, age: age, address: address, contact_num: contact_num, username: username, password: password, access_level: access_level, id: details.id, status: status};
 		let formBody = [];
 		for (let key in dataToSend) {
 			let encodedKey = encodeURIComponent(key);
@@ -48,7 +57,7 @@ const UpdateUsersScreen = ({route, navigation}) => {
 			formBody.push(encodedKey + '=' + encodedValue);
 		}
 		formBody = formBody.join('&');
-		fetch(global.url+'saveUser.php', {
+		fetch(global.url+'updateUser.php', {
 			method: 'POST',
 			body: formBody,
 			headers: {
@@ -59,6 +68,9 @@ const UpdateUsersScreen = ({route, navigation}) => {
 		.then((response) => response.json())
 		.then((responseJson) => {
 			if(responseJson.status == 'success'){
+        setTimeout(()=>{
+          navigation.goBack();
+        }, 1500)
 				alert('Success!');
 			}else{
 				alert('Failed!');
@@ -66,6 +78,8 @@ const UpdateUsersScreen = ({route, navigation}) => {
 		  setLoading(false);
 		})
 		.catch((error) => {
+      
+      console.log(error);
 			setLoading(false);
 		});
 	}
@@ -83,7 +97,29 @@ const UpdateUsersScreen = ({route, navigation}) => {
 						justifyContent: 'center',
 						alignContent: 'center',
 					}}>
-            <KeyboardAvoidingView enabled style={{padding: 5}}>
+            <KeyboardAvoidingView enabled style={{padding: 10}}>
+              <DropDown
+                dropDownStyle={{borderRadius: 5, marginTop: 20}}
+								label={"Access"}
+								mode={"outlined"}
+								visible={showDropDown}
+								showDropDown={() => setShowDropDown(true)}
+								onDismiss={() => setShowDropDown(false)}
+								value={access_level}
+								setValue={setAccessLevel}
+								list={access}
+							/>
+              <DropDown
+                dropDownStyle={{borderRadius: 5, marginTop: 20}}
+								label={"Status"}
+								mode={"outlined"}
+								visible={showDropDownStatus}
+								showDropDown={() => setShowDropDownStatus(true)}
+								onDismiss={() => setShowDropDownStatus(false)}
+								value={status}
+								setValue={setStatus}
+								list={status_list}
+							/>
               <TextInput
 								mode="outlined"
                 label="Firstname"
@@ -141,16 +177,6 @@ const UpdateUsersScreen = ({route, navigation}) => {
 								activeOutlineColor='#348ceb'
                 value={password}
                 onChangeText={password => setPassword(password)}
-							/>
-							<DropDown
-								label={"Access"}
-								mode={"outlined"}
-								visible={showDropDown}
-								showDropDown={() => setShowDropDown(true)}
-								onDismiss={() => setShowDropDown(false)}
-								value={access_level}
-								setValue={setAccessLevel}
-								list={access}
 							/>
               {/* <View style={{}}>
                 <Button style={{marginTop: 10}} icon="camera" mode="contained" onPress={() => console.log('Pressed')}>

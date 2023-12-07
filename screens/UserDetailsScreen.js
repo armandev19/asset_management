@@ -46,7 +46,6 @@ const UserDetailsScreen = ({route, navigation}) => {
     return (
       <ScrollView style={{padding: 5}}>
         <Card style={{ margin: 2, padding: 5, elevation: 3 }}>
-          <Card.Cover source={{ uri: 'https://picsum.photos/700' }} />
           <Card.Title titleStyle={{textTransform: 'uppercase'}} title={details.firstname+" "+details.middlename+" "+details.lastname}/>
             <Card.Content>
               <Text variant="titleLarge" style={{color: 'black', fontSize: 15}}>ADDRESS: 
@@ -54,11 +53,12 @@ const UserDetailsScreen = ({route, navigation}) => {
               </Text>
               <Text variant="titleLarge" style={{color: 'black', fontSize: 15}}>AGE: <Text style={{color: 'black', textTransform: 'uppercase', fontWeight: 'bold'}}> {details.age}</Text></Text>
               <Text variant="titleLarge" style={{color: 'black', fontSize: 15}}>ACCESS: <Text style={{color: 'black', textTransform: 'uppercase', fontWeight: 'bold'}}> {details.access_level}</Text></Text>
+              <Text variant="titleLarge" style={{color: 'black', fontSize: 15}}>CONTACT #: <Text style={{color: 'black', textTransform: 'uppercase', fontWeight: 'bold'}}> {details.contact_number}</Text></Text>
               <Text variant="titleLarge" style={{color: 'black', fontSize: 15}}>ADDED BY: <Text style={{color: 'black', textTransform: 'uppercase', fontWeight: 'bold'}}> {details.created_by}</Text></Text>
               <Text variant="titleLarge" style={{color: 'black', fontSize: 15}}>STATUS: <Text style={{color: 'black', textTransform: 'uppercase', fontWeight: 'bold'}}> {details.status}</Text></Text>
             </Card.Content>
             <Card.Actions style={{justifyContent: 'flex-end', marginTop: 10}}>
-              <Button icon="pencil" mode="contained" style={{marginRight: 5}} onPress={() => navigation.navigate("UpdateAssetScreen")}>Update</Button>
+              <Button icon="pencil" mode="contained" style={{marginRight: 5}} onPress={() => navigation.navigate("UpdateUsersScreen", details)}>Update</Button>
               <Button icon="delete" color="red" mode="contained">Delete</Button>
             </Card.Actions>
         </Card>

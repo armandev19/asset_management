@@ -24,23 +24,48 @@ const HomeScreen = ({navigation, props}) => {
   const screenWidth = Dimensions.get("window").width;
 
   const chartConfig = {
-    // backgroundGradientFrom: "#08130D",
+    backgroundColor: '#ffffff',
+    // backgroundGradientFrom: "#1E2923",
     // backgroundGradientFromOpacity: 0,
     // backgroundGradientTo: "#08130D",
     // backgroundGradientToOpacity: 0.5,
-    color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
+    color: (opacity = 1) => `white`,
     strokeWidth: 2, // optional, default 3
     barPercentage: 0.5,
     useShadowColorFromDataset: false // optional
   };
 
+  const pieData = [
+    {
+      name: "Operational",
+      population: 21500000,
+      color: "rgba(131, 167, 234, 1)",
+      legendFontColor: "#7F7F7F",
+      legendFontSize: 15
+    },
+    {
+      name: "Destroyed",
+      population: 2800000,
+      color: "#F00",
+      legendFontColor: "#7F7F7F",
+      legendFontSize: 15
+    },
+    {
+      name: "Under Maintenance",
+      population: 527612,
+      color: "red",
+      legendFontColor: "#7F7F7F",
+      legendFontSize: 15
+    },
+  ];
+
   const data = {
-    labels: ["January", "February", "March", "April", "May", "June"],
+    labels: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
     datasets: [
       {
         data: [20, 45, 28, 80, 99, 43],
-        color: (opacity = 1) => `rgba(134, 65, 244, ${opacity})`, // optional
-        strokeWidth: 2 // optional
+        color: (opacity = 1) => `white`, // optional
+        strokeWidth: 1 // optional
       }
     ],
     legend: ["Rainy Days"] // optional
@@ -99,13 +124,35 @@ const HomeScreen = ({navigation, props}) => {
               textTransform: 'uppercase'
             }}>
           </Text>
-          <View style={{alignItems: 'center', alignSelf: 'center'}}>
+          <View style={{alignItems: 'center', alignSelf: 'center', paddingHorizontal: 10}}>
             <LineChart
               data={data}
-              width={screenWidth}
+              width={360}
               height={220}
-              chartConfig={chartConfig}
-              backgroundColor={'green'}
+              chartConfig={{
+                backgroundGradientFrom: '#fff', // specify the background color
+                backgroundGradientTo: '#fff',   // specify the background color
+                color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+              }}
+            />
+          </View>
+          <View style={{alignItems: 'center', alignSelf: 'center', paddingHorizontal: 10}}>
+            <PieChart
+              data={pieData}
+              width={360}
+              height={220}
+              chartConfig={{
+                backgroundGradientFrom: '#fff', // specify the background color
+                backgroundGradientTo: '#fff',   // specify the background color
+                color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+              }}
+              accessor={"population"}
+              // backgroundColor={"transparent"}
+              paddingLeft={"15"}
+              center={[10, 50]}
+              absolute
             />
           </View>
         </View>

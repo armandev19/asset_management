@@ -148,11 +148,11 @@ const AddAssetTransferScreen = ({route, navigation}) => {
                 value={remarks}
                 onChangeText={remarks => setRemarks(remarks)}
 							/>
-							<View style={{marginTop: 5}}>
-								<Button style={{margin: 1}} icon="check" color='green' mode="contained" onPress={() => saveAssetTransfer()}>
+							<View style={{marginTop: 5, padding: 10, flexDirection: 'row', justifyContent: 'space-evenly'}}>
+								<Button style={{margin: 1, width: '45%'}} icon="check" color={"#2eb82e"} mode="contained" onPress={() => saveAssetTransfer()}>
 									SAVE
 								</Button>
-								<Button style={{margin: 1}} icon="close" color='red' mode="contained" onPress={() => console.log('Pressed')}>
+								<Button style={{margin: 1, width: '45%'}} icon="close" color='red' mode="contained" onPress={() => navigation.goBack()}>
 									CANCEL
 								</Button>
 							</View>

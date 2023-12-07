@@ -19,6 +19,8 @@ import CustomSidebarMenu from './Components/CustomSidebarMenu';
 import NavigationDrawerHeader from './Components/NavigationDrawerHead';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { color } from 'react-native-reanimated';
+import { selectUserData, setUserData } from './redux/navSlice';
+import { useSelector } from 'react-redux';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -268,13 +270,12 @@ const DrawerNavigatorRoutes = ({navgiation, route}) => {
       />
 
      {/* {(() => {
-        if (user_data.access == 'Admin') {
+        if (currentUserData.access_level == 'Admin') {
             return (
             <Drawer.Screen
-              name="UsersScreenStack"
-              options={{drawerLabel: 'Users', drawerIcon: (({focused}) => <Icon name="people" size={30} color="#900" />)}}
-              component={UsersScreenStack}
-              initialParams={{ params: user_data }}
+              name="LogsSreen"
+              options={{drawerLabel: 'LOGS', drawerLabelStyle: {color: '#348ceb'}, drawerIcon: (({focused}) => <Icon name="alert-octagon" size={30} color="#348ceb" />)}}
+              component={LogsStack}
             />
         );
       }

@@ -39,35 +39,44 @@ const AddUsersScreen = ({route, navigation}) => {
   ];
 
 	const saveUser = () => {
-		setLoading(true);
-		let dataToSend = { firstname: firstname, middlename : middlename, lastname: lastname, age: age, address: address, contact_num: contact_num, username: username, password: password, access_level: access_level};
-		let formBody = [];
-		for (let key in dataToSend) {
-			let encodedKey = encodeURIComponent(key);
-			let encodedValue = encodeURIComponent(dataToSend[key]);
-			formBody.push(encodedKey + '=' + encodedValue);
-		}
-		formBody = formBody.join('&');
-		fetch(global.url+'saveUser.php', {
-			method: 'POST',
-			body: formBody,
-			headers: {
-				'Content-Type':
-				'application/x-www-form-urlencoded;charset=UTF-8',
-			},
-		})
-		.then((response) => response.json())
-		.then((responseJson) => {
-			if(responseJson.status == 'success'){
-				alert('Success!');
-			}else{
-				alert('Failed!');
-			}
-		  setLoading(false);
-		})
-		.catch((error) => {
-			setLoading(false);
-		});
+    if(firstname.trim() === '' || lastname.trim() === '' || username.trim() === '' || password.trim() === '' || access_level.trim() === ''){
+      alert('Please fill-up required fields.');
+    }else{
+		  setLoading(true);
+      const created_by = currentUserData.firstname+' '+currentUserData.lastname;
+      let dataToSend = { firstname: firstname, middlename : middlename, lastname: lastname, age: age, address: address, contact_num: contact_num, username: username, password: password, access_level: access_level, created_by: created_by};
+      let formBody = [];
+      for (let key in dataToSend) {
+        let encodedKey = encodeURIComponent(key);
+        let encodedValue = encodeURIComponent(dataToSend[key]);
+        formBody.push(encodedKey + '=' + encodedValue);
+      }
+      formBody = formBody.join('&');
+      fetch(global.url+'saveUser.php', {
+        method: 'POST',
+        body: formBody,
+        headers: {
+          'Content-Type':
+          'application/x-www-form-urlencoded;charset=UTF-8',
+        },
+      })
+      .then((response) => response.json())
+      .then((responseJson) => {
+        if(responseJson.status == 'success'){
+          alert('Success!');
+          setTimeout(()=>{
+            navigation.goBack();
+          }, 1500)
+        }else{
+          alert('Failed!');
+        }
+        setLoading(false);
+      })
+      .catch((error) => {
+        setLoading(false);
+      });
+    }
+    
 	}
 
 	useEffect(() => {
