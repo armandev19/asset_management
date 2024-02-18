@@ -39,9 +39,10 @@ const AssetDetailsScreen = ({navigation, route}) => {
 		.then((responseJson) => {
       setAssetDetails(responseJson.data[0]);
 			setLoading(false);
-      console.log('details', route.params)
+      console.log("responseJson", responseJson)
 		})
 		.catch((error) => {
+      console.log("error", error)
 			setLoading(false);
 		});
 	}
@@ -63,7 +64,7 @@ const AssetDetailsScreen = ({navigation, route}) => {
   return (
 		<ScrollView style={{ paddingBottom: 20}}>
     <Card style={{ marginHorizontal: 10, marginVertical: 10, padding: 5, marginBottom: 10, elevation: 3, height: '100%', borderRadius: 10, elevation: 5 }}>
-      <Card.Cover style={{marginTop: 3}} source={{ uri: 'https://picsum.photos/700' }} />
+      <Card.Cover style={{marginTop: 3}} source={{ uri: details?.image_loc ? details?.image_loc : 'https://picsum.photos/700' }} />
         <Card.Title titleStyle={{textTransform: 'uppercase'}} title={details.asset_name}/>
         <Card.Content style={{backgroundColor: 'white'}}>
             <View style={{flexDirection: 'row', marginBottom: 3}}>
@@ -124,16 +125,17 @@ const AssetDetailsScreen = ({navigation, route}) => {
               <Text style={styles.col_content}>{details.access_level ? details.access_level : 'N/A'}</Text>
             </View>
           <View style={{marginTop: 40, justifyContent: 'center'}}>
-            <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+            <View style={{justifyContent: 'center', alignItems: "center"}}>
                 <TouchableOpacity 
                   style={{
                     backgroundColor: '#348ceb',
-                    width: '45%',
+                    width: '80%',
                     alignItems: 'center',
                     justifyContent: 'center',
                     height: 35,
                     borderRadius: 10,
-                    elevation: 5
+                    elevation: 5,
+                    marginTop: 10
                   }}
                   onPress={() => setModalVisible(true)}
                 >
@@ -143,13 +145,14 @@ const AssetDetailsScreen = ({navigation, route}) => {
                 </TouchableOpacity>
                 <TouchableOpacity 
                   style={{
-                    backgroundColor: '#348ceb',
-                    width: '45%',
+                    backgroundColor: '#fc3d39',
+                    width: '80%',
                     alignItems: 'center',
                     justifyContent: 'center',
                     height: 35,
                     borderRadius: 10,
-                    elevation: 5
+                    elevation: 5,
+                    marginTop: 10
                   }}
                   onPress={() => navigation.navigate("AssetMaintenanceScreen", details)}
                 >
@@ -157,40 +160,26 @@ const AssetDetailsScreen = ({navigation, route}) => {
                     <Icon name='cog' size={18} color={'#ffffff'} ></Icon> MAINTENANCE
                   </Text>
                 </TouchableOpacity>
-            </View>
-            <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 10}}>
                 <TouchableOpacity 
                   style={{
                     backgroundColor: '#53d769',
-                    width: '45%',
+                    width: '80%',
                     alignItems: 'center',
                     justifyContent: 'center',
                     height: 35,
                     borderRadius: 10,
-                    elevation: 5
+                    elevation: 5,
+                    marginTop: 10
                   }}
                   onPress={() => navigation.navigate("UpdateAssetScreen", details)}
                 >
                   <Text style={{color: "#fff", fontSize: 16, fontWeight: '500'}}>
-                    <Icon name='refresh' size={18} color={'#ffffff'} ></Icon> UPDATE</Text>
-                </TouchableOpacity>
-                <TouchableOpacity 
-                  style={{
-                    backgroundColor: '#fc3d39',
-                    width: '45%',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    height: 35,
-                    borderRadius: 10,
-                    elevation: 5
-                  }}
-                  onPress={() => navigation.navigate("AssetMaintenanceScreen", details.id)}
-                >
-                  <Text style={{color: "#fff", fontSize: 16, fontWeight: '500'}}>
-                    <Icon name='delete' size={18} color={'#ffffff'} ></Icon> DELETE
-                  </Text>
+                    <Icon name='pencil' size={18} color={'#ffffff'} ></Icon> UPDATE</Text>
                 </TouchableOpacity>
             </View>
+            {/* <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 10}}> */}
+                
+            {/* </View> */}
             
             
           </View>

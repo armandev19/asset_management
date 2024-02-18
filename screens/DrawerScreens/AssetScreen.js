@@ -61,7 +61,6 @@ const getAssets = () => {
   })
     .then((response) => response.json())
     .then((responseJson) => {
-      // alert(responseJson)
       setLoading(false);
       setAssets(responseJson.data);
     })
@@ -136,8 +135,9 @@ useEffect(()=>{
 // );
   return (
       <View style={{justifyContent: 'center', backgroundColor: '#f2f3f8', marginTop: 40}}>
+        <Loader loading={loading} />
         <View styles={{flex: 1, padding: 6, alignSelf: 'center'}}>
-          <Card style={{ margin: 6, padding: 6, backgroundColor: '#f2f3f8', borderWidth: 0}}>
+          <View style={{ margin: 6, padding: 6, backgroundColor: '#f2f3f8'}}>
             <View style={{flexDirection: 'row', alignItems: 'center', backgroundColor: 'transparent' }}>
               <Searchbar
                 placeholder="Search"
@@ -148,7 +148,7 @@ useEffect(()=>{
               <Button style={{marginHorizontal: 5, marginTop: 1, padding: 5, backgroundColor: '#2eb82e'}} labelStyle={{fontWeight: 'bold'}} icon="plus-circle" compact="true" mode="contained" onPress={() => navigation.navigate('AddAssetScreen')}>
               </Button>
             </View>
-          </Card>
+          </View>
           {assets.length == 0 ? (
             <Text style={{color: 'black', fontWeight: 'bold', textAlign: 'center'}}>No results found.</Text>
           ): (

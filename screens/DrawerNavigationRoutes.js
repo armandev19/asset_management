@@ -24,7 +24,6 @@ import { useSelector } from 'react-redux';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
-
 const HomeScreenStack = ({navigation}) => {
   return (
     <Stack.Navigator initialRouteName="HomeScreen">
@@ -218,6 +217,7 @@ const TrackerStack = ({navigation}) => {
 };
 
 const DrawerNavigatorRoutes = ({navgiation, route}) => {
+  const currentUserData = useSelector(selectUserData);
   return (
     <Drawer.Navigator
       screenOptions={{headerShown: false, color: 'red', textColor: 'yellow',
@@ -228,46 +228,97 @@ const DrawerNavigatorRoutes = ({navgiation, route}) => {
         itemStyle: {marginVertical: 5, color: 'red'},
         backgroundColor: '#cc0000'}}
       drawerContent={(props) => <CustomSidebarMenu {...props} />}>
-      <Drawer.Screen
-        name="HomeScreenStack"
-        options={{drawerLabel: 'DASHBOARD', drawerLabelStyle: {color: '#348ceb'}, drawerIcon: (({focused}) => <Icon name="home" size={30} color="#348ceb" />)}}
-        component={HomeScreenStack}
-      />
-      <Drawer.Screen
-        name="AssetScreen"
-        options={{drawerLabel: 'ASSETS', drawerLabelStyle: {color: '#348ceb'}, drawerIcon: (({focused}) => <Icon name="format-list-checkbox" size={30} color="#348ceb" />)}}
-        component={AssetStack}
-      />
-      <Drawer.Screen
-        name="LocationsScreen"
-        options={{drawerLabel: 'LOCATIONS', drawerLabelStyle: {color: '#348ceb'}, drawerIcon: (({focused}) => <Icon name="map-marker-radius" size={30} color="#348ceb" />)}}
-        component={LocationsStack}
-      />
-      <Drawer.Screen
-        name="AssetTransferScreen"
-        options={{drawerLabel: 'ASSET TRANSFER', drawerLabelStyle: {color: '#348ceb'}, drawerIcon: (({focused}) => <Icon name="truck-fast" size={30} color="#348ceb" />)}}
-        component={AssetTransferStack}
-      />
-      <Drawer.Screen
-        name="ReportScreen"
-        options={{drawerLabel: 'REPORTS', drawerLabelStyle: {color: '#348ceb'}, drawerIcon: (({focused}) => <Icon name="clipboard-check" size={30} color="#348ceb" />)}}
-        component={ReportStack}
-      />
-      <Drawer.Screen
-        name="LogsSreen"
-        options={{drawerLabel: 'LOGS', drawerLabelStyle: {color: '#348ceb'}, drawerIcon: (({focused}) => <Icon name="alert-octagon" size={30} color="#348ceb" />)}}
-        component={LogsStack}
-      />
-      <Drawer.Screen
-        name="UsersScreen"
-        options={{drawerLabel: 'USERS', drawerLabelStyle: {color: '#348ceb'}, drawerIcon: (({focused}) => <Icon name="account-multiple" size={30} color="#348ceb" />)}}
-        component={UsersStack}
-      />
-      <Drawer.Screen
-        name="TrackerScreen"
-        options={{drawerLabel: 'TRACK ASSET', drawerLabelStyle: {color: '#348ceb'}, drawerIcon: (({focused}) => <Icon name="qrcode-scan" size={30} color="#348ceb" />)}}
-        component={TrackerStack}
-      />
+        
+    {currentUserData?.access_level === 'Admin' ? 
+      (
+        <>
+        <Drawer.Screen
+          name="HomeScreenStack"
+          options={{drawerLabel: 'DASHBOARD', drawerLabelStyle: {color: '#348ceb'}, drawerIcon: (({focused}) => <Icon name="home" size={30} color="#348ceb" />)}}
+          component={HomeScreenStack}
+        />
+        <Drawer.Screen
+          name="AssetScreen"
+          options={{drawerLabel: 'ASSETS', drawerLabelStyle: {color: '#348ceb'}, drawerIcon: (({focused}) => <Icon name="format-list-checkbox" size={30} color="#348ceb" />)}}
+          component={AssetStack}
+        />
+        <Drawer.Screen
+          name="LocationsScreen"
+          options={{drawerLabel: 'LOCATIONS', drawerLabelStyle: {color: '#348ceb'}, drawerIcon: (({focused}) => <Icon name="map-marker-radius" size={30} color="#348ceb" />)}}
+          component={LocationsStack}
+        />
+        <Drawer.Screen
+          name="AssetTransferScreen"
+          options={{drawerLabel: 'ASSET TRANSFER', drawerLabelStyle: {color: '#348ceb'}, drawerIcon: (({focused}) => <Icon name="truck-fast" size={30} color="#348ceb" />)}}
+          component={AssetTransferStack}
+        />
+        <Drawer.Screen
+          name="ReportScreen"
+          options={{drawerLabel: 'REPORTS', drawerLabelStyle: {color: '#348ceb'}, drawerIcon: (({focused}) => <Icon name="clipboard-check" size={30} color="#348ceb" />)}}
+          component={ReportStack}
+        />
+        <Drawer.Screen
+          name="LogsSreen"
+          options={{drawerLabel: 'LOGS', drawerLabelStyle: {color: '#348ceb'}, drawerIcon: (({focused}) => <Icon name="alert-octagon" size={30} color="#348ceb" />)}}
+          component={LogsStack}
+        />
+        <Drawer.Screen
+          name="UsersScreen"
+          options={{drawerLabel: 'USERS', drawerLabelStyle: {color: '#348ceb'}, drawerIcon: (({focused}) => <Icon name="account-multiple" size={30} color="#348ceb" />)}}
+          component={UsersStack}
+        />
+        <Drawer.Screen
+          name="TrackerScreen"
+          options={{drawerLabel: 'TRACK ASSET', drawerLabelStyle: {color: '#348ceb'}, drawerIcon: (({focused}) => <Icon name="qrcode-scan" size={30} color="#348ceb" />)}}
+          component={TrackerStack}
+        />
+        </>
+      ) : currentUserData?.access_level === 'Asset Tracker' ? 
+      (
+        <>
+          <Drawer.Screen
+            name="AssetTransferScreen"
+            options={{drawerLabel: 'ASSET TRANSFER', drawerLabelStyle: {color: '#348ceb'}, drawerIcon: (({focused}) => <Icon name="truck-fast" size={30} color="#348ceb" />)}}
+            component={AssetTransferStack}
+          />
+          <Drawer.Screen
+          name="TrackerScreen"
+          options={{drawerLabel: 'TRACK ASSET', drawerLabelStyle: {color: '#348ceb'}, drawerIcon: (({focused}) => <Icon name="qrcode-scan" size={30} color="#348ceb" />)}}
+          component={TrackerStack}
+        />
+        </>
+      ) : (
+        <>
+          <Drawer.Screen
+          name="HomeScreenStack"
+          options={{drawerLabel: 'DASHBOARD', drawerLabelStyle: {color: '#348ceb'}, drawerIcon: (({focused}) => <Icon name="home" size={30} color="#348ceb" />)}}
+          component={HomeScreenStack}
+          />
+          <Drawer.Screen
+            name="AssetScreen"
+            options={{drawerLabel: 'ASSETS', drawerLabelStyle: {color: '#348ceb'}, drawerIcon: (({focused}) => <Icon name="format-list-checkbox" size={30} color="#348ceb" />)}}
+            component={AssetStack}
+          />
+          <Drawer.Screen
+            name="LocationsScreen"
+            options={{drawerLabel: 'LOCATIONS', drawerLabelStyle: {color: '#348ceb'}, drawerIcon: (({focused}) => <Icon name="map-marker-radius" size={30} color="#348ceb" />)}}
+            component={LocationsStack}
+          />
+          <Drawer.Screen
+            name="AssetTransferScreen"
+            options={{drawerLabel: 'ASSET TRANSFER', drawerLabelStyle: {color: '#348ceb'}, drawerIcon: (({focused}) => <Icon name="truck-fast" size={30} color="#348ceb" />)}}
+            component={AssetTransferStack}
+          />
+          <Drawer.Screen
+            name="ReportScreen"
+            options={{drawerLabel: 'REPORTS', drawerLabelStyle: {color: '#348ceb'}, drawerIcon: (({focused}) => <Icon name="clipboard-check" size={30} color="#348ceb" />)}}
+            component={ReportStack}
+          />
+        </>
+      )
+  
+    }
+      
 
      {/* {(() => {
         if (currentUserData.access_level == 'Admin') {

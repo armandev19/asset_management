@@ -7,7 +7,7 @@ import {
   Surface,
   ThemeProvider,
 } from "react-native-paper";
-import {View, Text, SafeAreaView, ScrollView, KeyboardAvoidingView, StyleSheet, TouchableOpacity} from 'react-native';
+import {View, Text, SafeAreaView, ScrollView, KeyboardAvoidingView, StyleSheet, TouchableOpacity, Image} from 'react-native';
 import {Card, Title, Paragraph, Divider, TextInput, IconButton, Button} from 'react-native-paper';
 import Loader from './Components/loader';
 import { selectUserData, setUserData } from './redux/navSlice';
@@ -19,16 +19,21 @@ import DocumentPicker from 'react-native-document-picker';
 const AddAssetScreen = ({route, navigation}) => {
 	const [loading, setLoading] = useState(false);
   const [showDropDown, setShowDropDown] = useState(false);
+  const [showDropDownType, setShowDropDownType] = useState(false);
 	const [name, setName] = useState("");
 	const [description, setDescription] = useState("");
 	const [price, setPrice] = useState("");
 	const [purchaseDate, setPurchaseDate] = useState("");
   const [location, setLocation] = useState("");
+  const [type, setType] = useState("");
 	const [locationList, setLocationList] = useState([]);
+	const [assetType, setAssetType] = useState([]);
 	const currentUserData = useSelector(selectUserData);
 	const [isPickerShow, setIsPickerShow] = useState(false);
   const [date, setDate] = useState(new Date(Date.now()));
   const [selectedFile, setSelectedFile] = useState([]);
+  const [imageUri, setImageUri] = useState(null);
+  const [imageName, setImageName] = useState('');
 
 	const showPicker = () => {
     setIsPickerShow(true);
@@ -42,12 +47,12 @@ const AddAssetScreen = ({route, navigation}) => {
   const statusList = [
     {id:"Operational", value: "Operational"},
     {id:"In Repair", value: "In Repair"},
-    {id:"Disposed", value: "Disposed"}
+    {id:"Disposed/Destroyed", value: "Disposed/Destroyed"}
   ]
 
 	const saveAsset = () => {
 		setLoading(true);
-		let dataToSend = { name: name, description : description, price: price, purchaseDate: date, location: location, created_by: currentUserData.id };
+		let dataToSend = { name: name, description : description, type: type, price: price, purchaseDate: date, location: location, created_by: currentUserData.id, imageName: imageName, imageUri: imageUri };
 		let formBody = [];
 
 		for (let key in dataToSend) {
@@ -72,7 +77,7 @@ const AddAssetScreen = ({route, navigation}) => {
 		})
 		.then((response) => response.json())
 		.then((responseJson) => {
-      console.log(responseJson)
+      console.log("responseJson", responseJson)
 			if(responseJson.status == 'success'){
 				alert('Success!');
 			}else{
@@ -110,14 +115,38 @@ const AddAssetScreen = ({route, navigation}) => {
 			});
 	}
 
+  const getAssetType = () => {
+		setLoading(true)
+		fetch(global.url+'getAssetType.php', {
+			method: 'POST',
+			headers: {
+				'Content-Type':
+				'application/x-www-form-urlencoded;charset=UTF-8',
+			},
+		})
+			.then((response) => response.json())
+			.then((responseJson) => {
+				setLoading(false);
+				setAssetType(responseJson.data);
+			})
+			.catch((error) => {
+				alert(error);
+				setLoading(false);
+				console.error(error);
+			});
+	}
+
   const pickDocument = async () => {
     try {
       const res = await DocumentPicker.pick({
-        type: [DocumentPicker.types.allFiles],
+        type: [DocumentPicker.types.images],
       });
 
       if(res){
         setSelectedFile(res);
+        setImageUri(res[0].uri);
+        setImageName(res[0].name);
+        console.log("res", res[0].uri)
       }
     } catch (err) {
       if (DocumentPicker.isCancel(err)) {
@@ -155,19 +184,32 @@ const AddAssetScreen = ({route, navigation}) => {
 
 	useEffect(() => {
 		getLocationDropdown();
+    getAssetType();
 	}, [])
 
     return (
 			<Provider theme={DefaultTheme}>
         <View style={{flex: 1, backgroundColor: 'white'}}>
           <Loader loading={loading} />
-          <SafeAreaView
+          <ScrollView
             keyboardShouldPersistTaps="handled"
             contentContainerStyle={{
 						justifyContent: 'center',
 						alignContent: 'center',
 					}}>
             <KeyboardAvoidingView enabled style={{padding: 10, marginHorizontal: 10}}>
+              <View style={{marginTop: 10}}>
+                <View style={{borderColor: 'gray', borderWidth: 1, borderRadius: 5, minHeight: 270}}>
+                  <View>
+                    
+                    {imageUri ? <Image source={{ uri: imageUri }} style={styles.image} /> 
+                    : <Text style={{textAlign: 'center', fontSize: 20, color: '#000', justifyContent: 'center'}}>No Image Selected</Text>}
+                  </View>
+                  <Button style={{width: '50%', alignSelf: 'center', justifyContent: 'flex-end'}} icon="upload" mode="contained" onPress={pickDocument}>
+                    Upload Image
+                  </Button>
+                </View>
+              </View>
               <TextInput
 								mode="outlined"
                 label="Name"
@@ -182,6 +224,18 @@ const AddAssetScreen = ({route, navigation}) => {
                 value={description}
                 onChangeText={description => setDescription(description)}
 							/>
+              <View style={{ zIndex: 9999 }}>
+                <DropDown
+                  label={"Type"}
+                  mode={"outlined"}
+                  visible={showDropDownType}
+                  showDropDown={() => setShowDropDownType(true)}
+                  onDismiss={() => setShowDropDownType(false)}
+                  value={type}
+                  setValue={setType}
+                  list={assetType}
+                />
+              </View>
               <View style={{ zIndex: 9999 }}>
                 <DropDown
                   label={"Location"}
@@ -230,22 +284,6 @@ const AddAssetScreen = ({route, navigation}) => {
                     right={<TextInput.Icon name="calendar" onPress={showPicker} />}
                   />
                 </View>
-                <View>
-                {selectedFile.length > 0 ? (
-                    <Text style={{color: 'black'}}>adasd</Text>
-                  // <Card>
-                  //     <Card.Cover source={{ uri: selectedFile }} />
-                  // </Card>
-                  ):(
-                    <Text style={{color: 'black'}}>No image</Text>
-                  )}
-                  <Button style={{marginTop: 10}} icon="camera" mode="contained" onPress={pickDocument}>
-                    Image
-                  </Button>
-                  <View style={{marginTop: 5}}>
-
-                  </View>
-                </View>
 							<View style={{}}>
 								<Button style={{marginTop: 15}} icon="check" color='green' mode="contained" onPress={() => saveAsset()}>
 									SAVE
@@ -255,7 +293,7 @@ const AddAssetScreen = ({route, navigation}) => {
 								</Button>
 							</View>
             </KeyboardAvoidingView>
-        	</SafeAreaView>
+        	</ScrollView>
             {/* end upload */}
 					</View>
 					</Provider>
@@ -359,5 +397,12 @@ const styles = StyleSheet.create({
       marginRight: 35,
       textAlign: 'center',
       color: 'black'
+    },
+    image: {
+      width: 200,
+      height: 200,
+      marginTop: 10,
+      margin: 5,
+      alignSelf: 'center'
     },
   });

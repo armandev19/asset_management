@@ -3,7 +3,7 @@ import {
   ActivityIndicator,
   View,
   StyleSheet,
-  Image
+  Text
 } from 'react-native';
  
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -28,16 +28,13 @@ const SplashScreen = ({navigation}) => {
  
   return (
     <View style={styles.container}>
-      {/* <Image
-        source={require('../Image/aboutreact.png')}
-        style={{width: '90%', resizeMode: 'contain', margin: 30}}
-      /> */}
       <ActivityIndicator
         animating={animating}
         color="#FFFFFF"
         size="large"
         style={styles.activityIndicator}
       />
+      <Text style={{justifyContent: 'center', color: "white", fontSize: 18, fontWeight: '700'}}>LOADING...</Text>
     </View>
   );
 };

@@ -10,7 +10,6 @@ import {createStackNavigator} from '@react-navigation/stack';
 // Import Screens
 import SplashScreen from './screens/SplashScreen';
 import LoginScreen from './screens/LoginScreen';
-import RegisterScreen from './screens/RegisterScreen';
 import DrawerNavigationRoutes from './screens/DrawerNavigationRoutes';
 import DetailScreen from './screens/DetailScreen';
 import EditProfileScreen from './screens/EditProfileScreen';
@@ -40,20 +39,6 @@ const Auth = () => {
         component={LoginScreen}
         options={{headerShown: false}}
       />
-      <Stack.Screen
-        name="RegisterScreen"
-        component={RegisterScreen}
-        options={{
-          title: 'Register', //Set Header Title
-          headerStyle: {
-            backgroundColor: '#ff3333', //Set Header color
-          },
-          headerTintColor: '#fff', //Set Header text color
-          headerTitleStyle: {
-            fontWeight: 'bold', //Set Header text style
-          },
-        }}
-      />
     </Stack.Navigator>
   );
 };
@@ -63,9 +48,7 @@ const App = () => {
   // global.url = "http://192.168.7.152/asset_management/";
   // global.url = "http://192.168.29.123/asset_management/";
   // global.url = "http://asset-management.epizy.com/mobile/ams/";
-  global.url = "http://192.168.1.6/asset_management/";
-  
-  // global.url = "https://homeworldconstruction.com/mobile/blood_saver/";
+  global.url = "http://192.168.1.10/asset_management/";
   const appState = useRef(AppState.currentState);
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
 
