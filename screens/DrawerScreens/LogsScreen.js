@@ -87,10 +87,15 @@ const LogsScreen = ({navigation, route}) => {
     handleSubmit();
   }, [])
 
+  const dateFromTemp = dateFrom.toDateString();
+  const withoutWeekdayFrom = dateFromTemp.split(' ').slice(1).join(' ');
+  const dateToTemp = dateTo.toDateString();
+  const withoutWeekdayTo = dateToTemp.split(' ').slice(1).join(' ');
+
   return (
     <Provider theme={DefaultTheme}>
     <Loader loading={loading} />
-    <ScrollView style={{flex: 1, padding: 15, marginHorizontal: 10, }}
+    <ScrollView style={{flex: 1, padding: 2, marginHorizontal: 10, }}
       contentContainerStyle={{
         justifyContent: 'center',
         alignContent: 'center',
@@ -124,8 +129,8 @@ const LogsScreen = ({navigation, route}) => {
               mode="outlined"
               label="From"
               activeOutlineColor='#348ceb'
-              value={dateFrom.toDateString()} editable={false}
-              // style={{flex: 1}}
+              value={withoutWeekdayFrom} editable={false}
+              style={{width: '45%'}}
               // value={text}
               // onChangeText={text => setText(text)}
               right={<TextInput.Icon name="calendar" onPress={showPickerFrom} />}
@@ -134,8 +139,8 @@ const LogsScreen = ({navigation, route}) => {
               mode="outlined"
               label="To"
               activeOutlineColor='#348ceb'
-              value={dateTo.toDateString()} editable={false}
-              // style={{flex: 1}}
+              value={withoutWeekdayTo} editable={false}
+              style={{width: '45%'}}
               // value={text}
               // onChangeText={text => setText(text)}
               right={<TextInput.Icon name="calendar" onPress={showPickerTo} />}
@@ -144,12 +149,11 @@ const LogsScreen = ({navigation, route}) => {
           <Button style={{marginTop: 10}} mode="contained" onPress={() => handleSubmit()}>
               Generate
             </Button>
-          <View style={{marginTop: 20}}>
+          <View style={{marginTop: 20, padding: 3, backgroundColor: 'white', borderWidth: 1, borderColor: 'lightgray'}}>
             <Text style={{color: 'black', fontWeight: 'bold', textAlign: 'center', fontSize: 20}}>
               Logs
             </Text>
             <Text style={{color: 'black', fontWeight: 'bold', textAlign: 'center', fontSize: 16}}>{moment(dateFrom).format("MM/DD/YY")} - {moment(dateTo).format("MM/DD/YY")}</Text>
-           
                 <View style={styles.tableRow}>
                   <Text style={styles.tableHeader}>Date</Text>
                   <Text style={styles.tableHeader}>Activity</Text>

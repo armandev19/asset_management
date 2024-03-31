@@ -91,7 +91,7 @@ const UpdateUsersScreen = ({route, navigation}) => {
 			<Provider theme={DefaultTheme}>
         <View style={{flex: 1, backgroundColor: 'white'}}>
           <Loader loading={loading} />
-          <SafeAreaView
+          <ScrollView
             keyboardShouldPersistTaps="handled"
             contentContainerStyle={{
 						justifyContent: 'center',
@@ -195,7 +195,7 @@ const UpdateUsersScreen = ({route, navigation}) => {
 								</Button>
 							</View>
             </KeyboardAvoidingView>
-        	</SafeAreaView>
+        	</ScrollView>
 					</View>
 					</Provider>
     )

@@ -7,6 +7,7 @@ import Loader from './../Components/loader';
 import { selectUserData, setUserData } from '../redux/navSlice';
 import { useSelector } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/native';
+import { ScrollView } from 'react-native-gesture-handler';
 
 const AssetScreen = ({navigation, route}) => {
 
@@ -22,10 +23,21 @@ const currentUserData = useSelector(selectUserData);
 //   setSearchQuery(query);
 // }
 
-const onChangeSearch = () => {
+const onChangeSearch = (query) => {
   setLoading(true)
-  fetch('http://192.168.1.6:5000/api/assets', {
+  let dataToSend = { search: query };
+  let formBody = [];
+
+  for (let key in dataToSend) {
+    let encodedKey = encodeURIComponent(key);
+    let encodedValue = encodeURIComponent(dataToSend[key]);
+    formBody.push(encodedKey + '=' + encodedValue);
+  }
+
+  formBody = formBody.join('&');
+  fetch(global.url+'getAssets.php', {
     method: 'POST',
+    body: formBody,
     headers: {
       'Content-Type':
       'application/x-www-form-urlencoded;charset=UTF-8',
@@ -34,7 +46,7 @@ const onChangeSearch = () => {
   .then((response) => response.json())
   .then((responseJson) => {
     setLoading(false);
-    setAssets(responseJson);
+    setAssets(responseJson.data);
     console.log(responseJson);
   })
   .catch((error) => {
@@ -46,7 +58,9 @@ const onChangeSearch = () => {
 
 const handleSearchQueryChange = (query) => {
   setSearch(query);
-  onChangeSearch(query);
+  setTimeout(()=>{
+    onChangeSearch(query);
+  }, 1000)
 };
 
 const getAssets = () => {
@@ -77,62 +91,10 @@ const onRefresh = () => {
 // 00cc44 green operational
 // ffcc00 orange in repair
 // e62e00 red disposed
-function RowItem({ key, navigation, asset_code, asset_name, asset_description, current_location, original_location, item_id, status }) {
-  return (
-    <Card style={{ margin: 3, elevation: 3 }}>
-      <TouchableOpacity key={asset_code} style={{marginBottom: 5}} onPress={() => navigation.navigate("AssetDetailsScreen", asset_code)}>
-        <View>
-          <View style={{ flexDirection: 'row', padding: 5, margin: 3, borderBottomColor: 'lightgray', borderBottomWidth: 1 }}>
-            <View style={{flex: 1}}>
-              <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 15, fontWeight: "bold", textTransform: 'uppercase' }}>{asset_code}</Text>
-            </View>
-            <View style={{ flex: 1, alignItems: 'flex-end'}}>
-              {status === 'Operational' ? 
-                 <View style={{ padding: 3, backgroundColor: '#2eb82e', flexDirection: 'row', borderRadius: 5}}>
-                  <Icon name='check-circle' size={13} color={'#ffffff'} ></Icon>
-                  <Text adjustsFontSizeToFit style={{ color: '#ffffff', fontSize: 13, fontWeight: "bold", textTransform: 'uppercase', marginRight: 2}}> {status}</Text>
-                </View>
-                : status === 'Under Repair' ? 
-                <View style={{ padding: 3, backgroundColor: '#ffcc00', flexDirection: 'row', borderRadius: 5}}>
-                  <Icon name='check-circle' size={13} color={'#ffffff'} ></Icon>
-                  <Text adjustsFontSizeToFit style={{ color: '#ffffff', fontSize: 13, fontWeight: "bold", textTransform: 'uppercase', marginRight: 2}}> {status}</Text>
-                </View>
-                :  
-                <View style={{ padding: 3, backgroundColor: '#fc4747', flexDirection: 'row', borderRadius: 5}}>
-                  <Icon name='check-circle' size={13} color={'#ffffff'} ></Icon>
-                  <Text adjustsFontSizeToFit style={{ color: '#ffffff', fontSize: 13, fontWeight: "bold", textTransform: 'uppercase', marginRight: 2}}> {status}</Text>
-                </View>
-              }
-            </View>
-          </View>
-        </View>
-        <View style={styles.item}>
-          <View style={{flex: 1}}>
-            <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>ASSSET NAME: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{asset_name}</Text></Text>
-          </View>
-        </View>
-        <View style={styles.item}>
-          <View style={{flex: 1}}>
-            <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>DESCRIPTION: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{asset_description}</Text></Text>
-          </View>
-        </View>
-        <View style={styles.item}>
-          <View style={{flex: 1}}>
-            <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>LOCATION: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{current_location == null ? original_location : current_location }</Text></Text>
-          </View>
-        </View>
-      </TouchableOpacity>
-    </Card>
-  );
-}
 useEffect(()=>{
   getAssets();
 }, [])
-// useFocusEffect(
-//   React.useCallback(() => {
-//     getAssets();
-//   }, []),
-// );
+
   return (
       <View style={{justifyContent: 'center', backgroundColor: '#f2f3f8', marginTop: 40}}>
         <Loader loading={loading} />
@@ -149,39 +111,60 @@ useEffect(()=>{
               </Button>
             </View>
           </View>
-          {assets.length == 0 ? (
+          <ScrollView style={{padding: 5}}>
+          {assets?.length == 0 ? (
             <Text style={{color: 'black', fontWeight: 'bold', textAlign: 'center'}}>No results found.</Text>
           ): (
-          <FlatList
-            data={assets}
-            contentContainerStyle={{paddingBottom: 80, paddingHorizontal: 5, marginBottom: 20}}
-            initialNumToRender={10}
-            windowSize={5}
-            maxToRenderPerBatch={5}
-            updateCellsBatchingPeriod={30}
-            removeClippedSubviews={false}
-            onEndReachedThreshold={0.1}
-            renderItem={({ item, index }) =>
-              <RowItem
-                key={item.id}
-                navigation={navigation}
-                asset_code={item.asset_code}
-                asset_name={item.asset_name}
-                asset_description={item.asset_description}
-                current_location={item.loc_name ? item.loc_name : "N/A"}
-                original_location={item.original_location}
-                item_id={item.id}
-                status={item.status}
-              />
-            }
-            refreshControl={
-              <RefreshControl
-                refreshing={false}
-                onRefresh={onRefresh}
-              />
-            }
-          />
+            assets?.map((item, index)=>{
+              return (
+              <Card key={index} style={{ margin: 3, elevation: 1, padding: 2, borderWidth: 1, borderColor: "lightgray" }}>
+                <TouchableOpacity style={{marginBottom: 5}} onPress={() => navigation.navigate("AssetDetailsScreen", item.asset_code)}>
+                  <View>
+                    <View style={{ flexDirection: 'row', padding: 5, margin: 3, borderBottomColor: 'lightgray', borderBottomWidth: 1 }}>
+                      <View style={{flex: 1}}>
+                        <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 15, fontWeight: "bold", textTransform: 'uppercase' }}>{item.asset_code}</Text>
+                      </View>
+                      <View style={{ flex: 1, alignItems: 'flex-end'}}>
+                        {item.status === 'Operational' ? 
+                          <View style={{ padding: 3, backgroundColor: '#2eb82e', flexDirection: 'row', borderRadius: 5}}>
+                            <Icon name='check-circle' size={13} color={'#ffffff'} ></Icon>
+                            <Text adjustsFontSizeToFit style={{ color: '#ffffff', fontSize: 13, fontWeight: "bold", textTransform: 'uppercase', marginRight: 2}}> {item.status}</Text>
+                          </View>
+                          : item.status === 'Under Repair' ? 
+                          <View style={{ padding: 3, backgroundColor: '#ffcc00', flexDirection: 'row', borderRadius: 5}}>
+                            <Icon name='check-circle' size={13} color={'#ffffff'} ></Icon>
+                            <Text adjustsFontSizeToFit style={{ color: '#ffffff', fontSize: 13, fontWeight: "bold", textTransform: 'uppercase', marginRight: 2}}> {item.status}</Text>
+                          </View>
+                          :  
+                          <View style={{ padding: 3, backgroundColor: '#fc4747', flexDirection: 'row', borderRadius: 5}}>
+                            <Icon name='check-circle' size={13} color={'#ffffff'} ></Icon>
+                            <Text adjustsFontSizeToFit style={{ color: '#ffffff', fontSize: 13, fontWeight: "bold", textTransform: 'uppercase', marginRight: 2}}> {item.status}</Text>
+                          </View>
+                        }
+                      </View>
+                    </View>
+                  </View>
+                  <View style={styles.item}>
+                    <View style={{flex: 1}}>
+                      <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: '500'}}>ASSSET NAME: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{item.asset_name}</Text></Text>
+                    </View>
+                  </View>
+                  <View style={styles.item}>
+                    <View style={{flex: 1}}>
+                      <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: '500'}}>DESCRIPTION: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{item.asset_description}</Text></Text>
+                    </View>
+                  </View>
+                  <View style={styles.item}>
+                    <View style={{flex: 1}}>
+                      <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: '500'}}>LOCATION: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{item.current_location == null ? item.original_location : item.current_location }</Text></Text>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              </Card>
+              )
+            })
           )}
+          </ScrollView>
         </View>
       </View>
   )

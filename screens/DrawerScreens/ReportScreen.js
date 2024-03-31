@@ -32,6 +32,7 @@ const ReportScreen = ({navigation, route}) => {
 	const [loading, setLoading] = useState(false);
   const [reportHeader, setReportHeader] = useState([]);
 
+  const dateToday = new Date(Date.now());
   const showPickerFrom = () => {
     setIsPickerShowFrom(true);
   };
@@ -62,7 +63,6 @@ const ReportScreen = ({navigation, route}) => {
   const assetHeader = ["Code", "Asset", "Status", "Purchase Date"];
   const assetTransferHeader = ["Asset", "From", "To", "Schedule Date"];
   const maintenanceHeader = ["Asset", "Description", "Status", "Schedule Date"];
-  // const assetHeader = ["Code", "Name", "Status", "Purchase Date"];
 
   const handleSubmit = () => {
     if(reportType){
@@ -88,8 +88,7 @@ const ReportScreen = ({navigation, route}) => {
       .then((responseJson) => {
         setReportData(responseJson.data);
         setLoading(false);
-        // alert(responseJson)
-        console.log("data", responseJson.data)
+        console.log("data", responseJson)
       })
       .catch((error) => {
         setLoading(false);
@@ -107,10 +106,21 @@ const ReportScreen = ({navigation, route}) => {
     // Add more items as needed
   ];
 
+  const dateFromTemp = dateFrom.toDateString();
+  const withoutWeekdayFrom = dateFromTemp.split(' ').slice(1).join(' ');
+  const dateToTemp = dateTo.toDateString();
+  const withoutWeekdayTo = dateToTemp.split(' ').slice(1).join(' ');
+
+  const getYearDifference = (startDate, endDate) => {
+    const startMoment = moment(startDate);
+    const endMoment = moment(endDate);
+    return endMoment.diff(startMoment, 'years');
+}
+
   return (
     <Provider theme={DefaultTheme}>
     <Loader loading={loading} />
-    <ScrollView style={{flex: 1, padding: 15, marginHorizontal: 10, }}
+    <ScrollView style={{flex: 1, padding: 2, marginHorizontal: 10, }}
       contentContainerStyle={{
         justifyContent: 'center',
         alignContent: 'center',
@@ -158,8 +168,8 @@ const ReportScreen = ({navigation, route}) => {
               mode="outlined"
               label="From"
               activeOutlineColor='#348ceb'
-              value={dateFrom.toDateString()} editable={false}
-              // style={{flex: 1}}
+              value={withoutWeekdayFrom} editable={false}
+              style={{width: '45%'}}
               // value={text}
               // onChangeText={text => setText(text)}
               right={<TextInput.Icon name="calendar" onPress={showPickerFrom} />}
@@ -168,8 +178,8 @@ const ReportScreen = ({navigation, route}) => {
               mode="outlined"
               label="To"
               activeOutlineColor='#348ceb'
-              value={dateTo.toDateString()} editable={false}
-              // style={{flex: 1}}
+              value={withoutWeekdayTo} editable={false}
+              // style={{width: '45%'}}
               // value={text}
               // onChangeText={text => setText(text)}
               right={<TextInput.Icon name="calendar" onPress={showPickerTo} />}
@@ -178,7 +188,7 @@ const ReportScreen = ({navigation, route}) => {
           <Button style={{marginTop: 10}} mode="contained" onPress={() => handleSubmit()}>
               Generate
             </Button>
-          <View style={{marginTop: 20}}>
+          <View style={{marginTop: 20, backgroundColor: 'white', borderWidth: 1, borderColor: 'lightgray'}}>
             <Text style={{color: 'black', fontWeight: 'bold', textAlign: 'center', fontSize: 20}}>
               {reportType} Report
             </Text>
@@ -234,21 +244,73 @@ const ReportScreen = ({navigation, route}) => {
                 </View>
                 ))}
               </>
-            :  
-              <>
-                {/* <View style={{marginTop: 10, flexDirection: 'row'}}>
-                  <Text style={{color: 'red'}}>Code</Text>
-                  <Text style={{color: 'red'}}>Asset</Text>
-                  <Text style={{color: 'red'}}>Status</Text>
-                  <Text style={{color: 'red'}}>Purchase Date</Text>
-                </View> */}
-                {/* {reportData.map((item, index)=>{
-                  return (
-                  <View style={{ flexDirection: 'row'}} key={index}>
-                    <Text style={{color: 'red'}} key={index}>{item.asset_code}</Text>
+            :  reportType === 'Depreciation'? 
+            <>
+              <View style={styles.tableRow}>
+                <Text style={styles.tableHeader}>Asset</Text>
+                <Text style={styles.tableHeader}>Purchaed Price</Text>
+                <Text style={styles.tableHeader}>Purchased Date</Text>
+                <Text style={styles.tableHeader}>Current Value</Text>
+              </View>
+              {reportData?.map(item => {
+                let depreciated_price = item.original_price;
+                const yearOld = getYearDifference(item.purchase_date, moment(dateToday).format("YYYY-MM-DD"))
+                if(item.type === 1){
+                  if(yearOld === 1){
+                    depreciated_price = item.original_price * 0.9
+                  }else if(yearOld === 2){
+                    depreciated_price = item.original_price * 0.8
+                  }else if(yearOld === 3){
+                    depreciated_price = item.original_price * 0.7
+                  }else{
+                    depreciated_price = item.original_price
+                  }
+                }else if(item.type === 2){
+                  if(yearOld === 2){
+                    depreciated_price = item.original_price * 0.9
+                  }else if(yearOld === 3){
+                    depreciated_price = item.original_price * 0.8
+                  }else{
+                    depreciated_price = item.original_price
+                  }
+                }else if(item.type === 3){
+                  if(yearOld === 3){
+                    depreciated_price = item.original_price * 0.9
+                  }else if(yearOld === 4){
+                    depreciated_price = item.original_price * 0.8
+                  }else if(yearOld === 5){
+                    depreciated_price = item.original_price * 0.7
+                  }else{
+                    depreciated_price = item.original_price
+                  }
+                }else{
+                  if(yearOld === 3){
+                    depreciated_price = item.original_price * 0.9
+                  }else if(yearOld === 4){
+                    depreciated_price = item.original_price * 0.8
+                  }else if(yearOld === 5){
+                    depreciated_price = item.original_price * 0.7
+                  }else{
+                    depreciated_price = item.original_price
+                  }
+                }
+                  
+                return (
+                  <View key={item.id} style={styles.tableRow}>
+                    <Text style={{flex: 1, textAlign: 'center', fontSize: 12, color: 'black'}}>{item.asset_name}</Text>
+                    <Text style={{flex: 1, textAlign: 'center', fontSize: 12, color: 'black'}}>{item.original_price}</Text>
+                    <Text style={{flex: 1, textAlign: 'center', fontSize: 12, color: 'black'}}>{item.purchase_date}</Text>
+                    <Text style={{flex: 1, textAlign: 'center', fontSize: 12, color: 'black'}}>{depreciated_price}</Text>
                   </View>
-                  )
-                })} */}
+                )
+              })}
+            </>
+
+            :
+              <>
+                <View style={{marginTop: 10, alignContent: 'center'}}>
+                  <Text style={{color: 'black', fontSize: 14, textAlign: 'center'}}>No data found</Text>
+                </View>
               </>
             }
               

@@ -7,6 +7,9 @@
       <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
       <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
       <uses-permission android:name="android.permission.READ_SMS"/>
+      <uses-permission android:name="android.permission.VIBRATE" />
+      <uses-permission android:name="android.permission.WAKE_LOCK" />
+      <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <application
       android:name=".MainApplication"
       android:label="@string/app_name"
@@ -34,5 +37,12 @@
        android:value="AIzaSyDjsOffgtvLOALY057tisNMWX9gid0GNW0"
       />
       <uses-library android:name="org.apache.http.legacy" android:required="false"/>
+      <!-- <channel
+        android:name="test123"
+        android:importance="high"
+        android:description="@string/your_notification_channel_description" >
+        <notificationStyle>
+            <inboxStyle /> </notificationStyle>
+      </channel> -->
     </application>
 </manifest>

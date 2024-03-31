@@ -17,14 +17,25 @@ const [loading, setLoading] = useState(false);
 const [users, setUsers] = useState([]);
 const [selectedId, setSelectedId] = useState(null);
 const [userdata, setUserData] = useState('');
-
+const [search, setSearch] = useState('');
 
 const currentUserData = useSelector(selectUserData);
+
 const getUsers = () => {
   setLoading(true)
+  let dataToSend = { search: search };
+  let formBody = [];
+
+  for (let key in dataToSend) {
+    let encodedKey = encodeURIComponent(key);
+    let encodedValue = encodeURIComponent(dataToSend[key]);
+    formBody.push(encodedKey + '=' + encodedValue);
+  }
+
+  formBody = formBody.join('&');
   fetch(global.url+'getUsers.php', {
     method: 'POST',
-    // body: formBody,
+    body: formBody,
     headers: {
       'Content-Type':
       'application/x-www-form-urlencoded;charset=UTF-8',
@@ -43,137 +54,74 @@ const getUsers = () => {
     });
 }
 
-function RowItem({key, navigation, firstname, lastname, id, access_level, address, status }) {
-  return (
-    <Card style={{ margin: 3, padding: 10, elevation: 3 }}>
-      <TouchableOpacity key={key} onPress={() => navigation.navigate("UserDetailsScreen", id)}>
-        <View>
-          <View style={{ flexDirection: 'row', padding: 2 }}>
-            <View style={{ flex: 1 }}>
-              <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 15, fontWeight: "bold", textTransform: 'uppercase'}}>{firstname+" "+lastname}</Text>
-            </View>
-            <View style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'flex-end'}}>
-            {status == 'Active' ? (
-              <Text adjustsFontSizeToFit style={{ color: 'green', fontSize: 12, fontWeight: "bold", textTransform: 'uppercase', marginRight: 2}}>{status}</Text>
-            ) : (
-              <Text adjustsFontSizeToFit style={{ color: 'red', fontSize: 12, fontWeight: "bold", textTransform: 'uppercase', marginRight: 2}}>{status}</Text>
-            )}
-            </View>
-          </View>
-        </View>
-        <View style={styles.item}>
-          <View style={{flex: 1}}>
-            <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>ACCESS: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{access_level}</Text></Text>
-          </View>
-        </View>
-        <View style={styles.item}>
-          <View style={{flex: 1}}>
-            <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>ADDRES: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{address}</Text></Text>
-          </View>
-        </View>
-      </TouchableOpacity>
-    </Card>
-  );
-}
-
 const onRefresh = () => {
   getUsers();
 };
 
-// useEffect(()=>{
-//   getUsers();
-// }, []);
+const handleSearchQueryChange = (query) => {
+  setSearch(query);
+  setTimeout(()=>{
+    getUsers();
+  }, 1000)
+  // onChangeSearch(query);
+};
+
 useFocusEffect(
   React.useCallback(() => {
     getUsers();
   }, []),
 );
   return (
-    <View style={{justifyContent: 'center', backgroundColor: '#f2f3f8',}}>
+    <View style={{justifyContent: 'center', backgroundColor: '#f2f3f8'}}>
+      <Loader loading={loading} />
       <View styles={{flex: 1, padding: 6, alignSelf: 'center'}}>
         <Card style={{ margin: 6, padding: 6}}>
           <View style={{flexDirection: 'row', alignItems: 'center' }}>
             <Searchbar
               placeholder="Search"
-              // onChangeText={onChangeSearch}
-              // value={searchQuery}
+              onChangeText={handleSearchQueryChange}
+              value={search}
               style={{ marginHorizontal: 5, flex: 6}}
             />
             <Button onPress={()=>navigation.navigate('AddUsersScreen')} style={{marginHorizontal: 5, marginTop: 1, padding: 5}} labelStyle={{fontWeight: 'bold'}} icon="plus" compact="true" mode="contained"/>
           </View>
         </Card>
-        <FlatList
-          data={users}
-          contentContainerStyle={{paddingBottom: 20, padding: 5}}
-          initialNumToRender={10}
-          windowSize={5}
-          maxToRenderPerBatch={5}
-          updateCellsBatchingPeriod={30}
-          removeClippedSubviews={false}
-          onEndReachedThreshold={0.1}
-          renderItem={({ item, i }) =>
-            <RowItem
-            key={i}
-            navigation={navigation}
-            firstname={item.firstname}
-            lastname={item.lastname}
-            id={item.id}
-            access_level={item.access_level}
-            address={item.address}
-            status={item.status}
-            />
-          }
-          refreshControl={
-            <RefreshControl
-              refreshing={false}
-              onRefresh={onRefresh}
-            />
-          }
-        />
       </View>
+        <ScrollView style={{padding: 5, paddingBottom: 40, marginBottom: 50}}>
+        {users && users?.map((item, index)=>{
+          return (
+            <Card  key={index} style={{ margin: 3, elevation: 1, padding: 5, borderWidth: 1, borderColor: "lightgray" }}>
+              <TouchableOpacity onPress={() => navigation.navigate("UserDetailsScreen", item.id)}>
+                <View>
+                  <View style={{ flexDirection: 'row', padding: 2 }}>
+                    <View style={{ flex: 1 }}>
+                      <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 15, fontWeight: "bold", textTransform: 'uppercase'}}>{item.firstname+" "+item.lastname}</Text>
+                    </View>
+                    <View style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'flex-end'}}>
+                    {item.status == 'Active' ? (
+                      <Text adjustsFontSizeToFit style={{ color: 'green', fontSize: 12, fontWeight: "bold", textTransform: 'uppercase', marginRight: 2}}>{item.status}</Text>
+                    ) : (
+                      <Text adjustsFontSizeToFit style={{ color: 'red', fontSize: 12, fontWeight: "bold", textTransform: 'uppercase', marginRight: 2}}>{item.status}</Text>
+                    )}
+                    </View>
+                  </View>
+                </View>
+                <View style={styles.item}>
+                  <View style={{flex: 1}}>
+                    <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>ACCESS: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{item.access_level}</Text></Text>
+                  </View>
+                </View>
+                <View style={styles.item}>
+                  <View style={{flex: 1}}>
+                    <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>ADDRES: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{item.address}</Text></Text>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            </Card>
+          )
+        })}
+        </ScrollView>
     </View>
-    // <View style={{justifyContent: 'center', backgroundColor: '#f2f3f8',}}>
-    //   <View styles={{flex: 1, padding: 6, alignSelf: 'center'}}>
-    //     <Card style={{ margin: 6, padding: 6}}>
-    //       <View style={{flexDirection: 'row', alignItems: 'center' }}>
-    //         <Searchbar
-    //           placeholder="Search"
-    //           // onChangeText={onChangeSearch}
-    //           // value={searchQuery}
-    //           style={{ marginHorizontal: 5, flex: 6}}
-    //         />
-    //         <Button style={{marginHorizontal: 5, marginTop: 1, padding: 5}} labelStyle={{fontWeight: 'bold'}} icon="plus" compact="true" mode="contained" onPress={() => navigation.navigate('AddUsersScreen')}>
-    //         </Button>
-    //       </View>
-    //     </Card>
-    //     <FlatList
-    //       data={users}
-    //       contentContainerStyle={{paddingBottom: 20}}
-    //       initialNumToRender={10}
-    //       windowSize={5}
-    //       maxToRenderPerBatch={5}
-    //       updateCellsBatchingPeriod={30}
-    //       removeClippedSubviews={false}
-    //       onEndReachedThreshold={0.1}
-    //       renderItem={({ item }) =>
-    //         <RowItem
-    //           navigation={navigation}
-    //           firstname={item.firstname}
-    //           lastname={item.lastname}
-    //           id={item.id}
-    //           access_level={item.access_level}
-    //           address={item.address}
-    //         />
-    //       }
-    //       refreshControl={
-    //         <RefreshControl
-    //           refreshing={false}
-    //           onRefresh={onRefresh}
-    //         />
-    //       }
-    //     />
-    //   </View>
-    // </View>
   )
 };
 

@@ -19,51 +19,40 @@ const [selectedId, setSelectedId] = useState(null);
 const [userdata, setUserData] = useState('');
 const [modalVisible, setModalVisible] = useState(false);
 const [selectedReference, setSelectedReference] = useState('');
-
+const [search, setSearch] = useState('');
 const currentUserData = useSelector(selectUserData);
 
 const getAssets = () => {
   setLoading(true)
-//   fetch('http://192.168.1.6:5000/api/asset-transfer', {
-//     method: 'POST',
-//     headers: {
-//       'Content-Type':
-//       'application/x-www-form-urlencoded;charset=UTF-8',
-//     },
-//   })
-//   .then((response) => response.json())
-//   .then((responseJson) => {
-//     setLoading(false);
-//     setAssets(responseJson);
-//     console.log(responseJson);
-//   })
-//   .catch((error) => {
-//     alert(error);
-//     setLoading(false);
-//     console.error(error);
-//   });
-// }
-fetch(global.url+'getAssetsTransfer.php', {
-  method: 'POST',
-  headers: {
-    'Content-Type':
-    'application/x-www-form-urlencoded;charset=UTF-8',
-  },
-})
-  .then((response) => response.json())
-  .then((responseJson) => {
-    // alert(responseJson)
-    setLoading(false);
-    setAssets(responseJson.data);
-  })
-  .catch((error) => {
-    alert(error);
-    setLoading(false);
-    console.error(error);
-  });
-}
+  let dataToSend = { search: search };
+  let formBody = [];
 
-console.log(assets)
+  for (let key in dataToSend) {
+    let encodedKey = encodeURIComponent(key);
+    let encodedValue = encodeURIComponent(dataToSend[key]);
+    formBody.push(encodedKey + '=' + encodedValue);
+  }
+  formBody = formBody.join('&');
+  fetch(global.url+'getAssetsTransfer.php', {
+    method: 'POST',
+    body: formBody,
+    headers: {
+      'Content-Type':
+      'application/x-www-form-urlencoded;charset=UTF-8',
+    },
+  })
+    .then((response) => response.json())
+    .then((responseJson) => {
+      // alert(responseJson)
+      setLoading(false);
+      setAssets(responseJson.data);
+    })
+    .catch((error) => {
+      alert(error);
+      setLoading(false);
+      console.error(error);
+    });
+}
 
 const onRefresh = () => {
   getAssets();
@@ -111,55 +100,13 @@ const updateStatus = () => {
 		});
 }
 
-function RowItem({ key_id, navigation, ref_no, asset_name, remarks, original_location, from, to, transfer_status }) {
-  console.log(key_id)
-  return (
-    <View key={key_id}>
-    <Card style={{ margin: 3, paddingBottom: 5, elevation: 3 }} >
-      <TouchableOpacity
-      onPress={() => updateTransferStatus(key_id)}
-      >
-        <View style={{borderBottomColor: 'lightgray', borderBottomWidth: 1 }}>
-          <View style={{ flexDirection: 'row', padding: 5, marginLeft: 3 }}>
-            <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 15, fontWeight: "bold", textTransform: 'uppercase', width: '35%' }}>{ref_no}</Text>
-            <View style={{ flex: 1, alignItems: 'flex-end'}}>
-              {transfer_status === 'DELIVERED' ? 
-                 <View style={{ padding: 3, backgroundColor: '#2eb82e', flexDirection: 'row', borderRadius: 5}}>
-                  <Icon name='check-circle' size={13} color={'#ffffff'} ></Icon>
-                  <Text adjustsFontSizeToFit style={{ color: '#ffffff', fontSize: 13, fontWeight: "bold", textTransform: 'uppercase', marginRight: 2}}> {transfer_status}</Text>
-                </View>
-                :
-                <View style={{ padding: 3, backgroundColor: '#ffcc00', flexDirection: 'row', borderRadius: 5}}>
-                  <Icon name='check-circle' size={13} color={'#ffffff'} ></Icon>
-                  <Text adjustsFontSizeToFit style={{ color: '#ffffff', fontSize: 13, fontWeight: "bold", textTransform: 'uppercase', marginRight: 2}}> {transfer_status}</Text>
-                </View>
-              }
-            </View>
-          </View>
-        </View>
-        <View style={styles.item}>
-          <View style={{flex: 1}}>
-            <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>ASSSET NAME: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{asset_name}</Text></Text>
-          </View>
-        </View>
-        <View style={styles.item}>
-          <View style={{flex: 1}}>
-            <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>REMARKS: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{remarks}</Text></Text>
-          </View>
-        </View>
-        <View style={styles.item}>
-          <View style={{flex: 1}}>
-            <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>FROM: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{from}</Text></Text>
-          </View>
-          <View style={{flex: 1}}>
-            <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>TO: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{to}</Text></Text>
-          </View>
-        </View>
-      </TouchableOpacity>
-    </Card>
-    </View>
-  );
-}
+const handleSearchQueryChange = (query) => {
+  setSearch(query);
+  setTimeout(()=>{
+    getUsers();
+  }, 1000)
+  // onChangeSearch(query);
+};
 
 useFocusEffect(
   React.useCallback(() => {
@@ -174,43 +121,62 @@ useFocusEffect(
             <View style={{flexDirection: 'row', alignItems: 'center' }}>
               <Searchbar
                 placeholder="Search"
-                // onChangeText={onChangeSearch}
-                // value={searchQuery}
+                onChangeText={handleSearchQueryChange}
+                value={search}
                 style={{ marginHorizontal: 5, flex: 6}}
               />
               <Button style={{marginHorizontal: 5, marginTop: 1, padding: 5}} labelStyle={{fontWeight: 'bold'}} icon="plus" compact="true" mode="contained" onPress={() => navigation.navigate('AddAssetTransferScreen')}>
               </Button>
             </View>
           </Card>
-          <FlatList
-            data={assets}
-            contentContainerStyle={{paddingBottom: 20, padding: 5}}
-            initialNumToRender={10}
-            windowSize={5}
-            maxToRenderPerBatch={5}
-            updateCellsBatchingPeriod={30}
-            removeClippedSubviews={false}
-            onEndReachedThreshold={0.1}
-            renderItem={({ item, i }) =>
-              <RowItem
-                key_id={item.reference_no}
-                navigation={navigation}
-                ref_no={item.reference_no}
-                asset_name={item.asset_name}
-                original_location={item.original}
-                remarks={item.remarks}
-                from={item.from}
-                to={item.to}
-                transfer_status={item.transfer_status}
-              />
-            }
-            refreshControl={
-              <RefreshControl
-                refreshing={false}
-                onRefresh={onRefresh}
-              />
-            }
-          />
+          <ScrollView style={{padding: 5}}>
+            {assets && assets?.map((item, index)=>{
+              return (
+              <Card key={index} style={{ margin: 3, paddingBottom: 5, elevation: 3, borderWidth: 1, borderColor: "lightgray" }} >
+                <TouchableOpacity
+                onPress={() => updateTransferStatus(item.id)}
+                >
+                  <View style={{borderBottomColor: 'lightgray', borderBottomWidth: 1 }}>
+                    <View style={{ flexDirection: 'row', padding: 5, marginLeft: 3 }}>
+                      <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 15, fontWeight: "bold", textTransform: 'uppercase', width: '35%' }}>{item.ref_no}</Text>
+                      <View style={{ flex: 1, alignItems: 'flex-end'}}>
+                        {item.transfer_status === 'DELIVERED' ? 
+                          <View style={{ padding: 3, backgroundColor: '#2eb82e', flexDirection: 'row', borderRadius: 5}}>
+                            <Icon name='check-circle' size={13} color={'#ffffff'} ></Icon>
+                            <Text adjustsFontSizeToFit style={{ color: '#ffffff', fontSize: 13, fontWeight: "bold", textTransform: 'uppercase', marginRight: 2}}> {item.transfer_status}</Text>
+                          </View>
+                          :
+                          <View style={{ padding: 3, backgroundColor: '#ffcc00', flexDirection: 'row', borderRadius: 5}}>
+                            <Icon name='check-circle' size={13} color={'#ffffff'} ></Icon>
+                            <Text adjustsFontSizeToFit style={{ color: '#ffffff', fontSize: 13, fontWeight: "bold", textTransform: 'uppercase', marginRight: 2}}> {item.transfer_status}</Text>
+                          </View>
+                        }
+                      </View>
+                    </View>
+                  </View>
+                  <View style={styles.item}>
+                    <View style={{flex: 1}}>
+                      <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>ASSSET NAME: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{item.asset_name}</Text></Text>
+                    </View>
+                  </View>
+                  <View style={styles.item}>
+                    <View style={{flex: 1}}>
+                      <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>REMARKS: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{item.remarks}</Text></Text>
+                    </View>
+                  </View>
+                  <View style={styles.item}>
+                    <View style={{flex: 1}}>
+                      <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>FROM: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{item.from}</Text></Text>
+                    </View>
+                    <View style={{flex: 1}}>
+                      <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>TO: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{item.to}</Text></Text>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              </Card>
+              )
+            })}
+          </ScrollView>
         </View>
         <Modal
           animationType="fade"
@@ -229,8 +195,8 @@ useFocusEffect(
                 </View>
               </View>
               <View style={{flexDirection: 'row', justifyContent: 'space-evenly'}}>
-                <Button icon="check" compact="true" mode="contained" color={"#2eb82e"} style={{marginTop: 10}} onPress={() => updateStatus()}><Text>Yes</Text></Button>
-                <Button icon="close" compact="true" mode="contained" color={"#fc4747"} style={{marginTop: 10}} onPress={() => setModalVisible(false)}><Text>Cancel</Text></Button>
+                <Button compact="true" mode="contained" width={'40%'} color={"#2eb82e"} style={{marginTop: 10}} onPress={() => updateStatus()}><Text>Yes</Text></Button>
+                <Button compact="true" mode="contained" width={'40%'} color={"#fc4747"} style={{marginTop: 10}} onPress={() => setModalVisible(false)}><Text>Cancel</Text></Button>
               </View>
             </KeyboardAvoidingView>
           </View>

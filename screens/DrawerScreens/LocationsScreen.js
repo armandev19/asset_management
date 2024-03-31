@@ -20,8 +20,7 @@ const [userdata, setUserData] = useState('');
 const currentUserData = useSelector(selectUserData);
 const [search, setSearch] = useState('');
 
-
-const onChangeSearch = () => {
+const getLocations = () => {
   setLoading(true)
   let dataToSend = { search: search };
   let formBody = [];
@@ -34,41 +33,6 @@ const onChangeSearch = () => {
   fetch(global.url+'getLocations.php', {
     method: 'POST',
     body: formBody,
-    headers: {
-      'Content-Type':
-      'application/x-www-form-urlencoded;charset=UTF-8',
-    },
-  })
-    .then((response) => response.json())
-    .then((responseJson) => {
-      setLoading(false);
-      setLocations(responseJson.data);
-    })
-    .catch((error) => {
-      alert(error);
-      setLoading(false);
-      console.error(error);
-    });
-}
-
-const handleSearchQueryChange = (query) => {
-  setSearch(query);
-  onChangeSearch(query);
-};
-
-const getLocations = () => {
-  setLoading(true)
-  // let dataToSend = { asset_id: params.id };
-  // let formBody = [];
-  // for (let key in dataToSend) {
-  //   let encodedKey = encodeURIComponent(key);
-  //   let encodedValue = encodeURIComponent(dataToSend[key]);
-  //   formBody.push(encodedKey + '=' + encodedValue);
-  // }
-  // formBody = formBody.join('&');
-  fetch(global.url+'getLocations.php', {
-    method: 'POST',
-    // body: formBody,
     headers: {
       'Content-Type':
       'application/x-www-form-urlencoded;charset=UTF-8',
@@ -92,6 +56,14 @@ const onRefresh = () => {
   getLocations();
 };
 
+const handleSearchQueryChange = (query) => {
+  setSearch(query);
+  setTimeout(()=>{
+    getLocations();
+  }, 1000)
+};
+
+
 function RowItem({ navigation, name, address, id }) {
   return (
     <Card style={{ margin: 3, paddingBottom: 5, elevation: 3 }}>
@@ -113,6 +85,7 @@ function RowItem({ navigation, name, address, id }) {
   );
 }
 
+console.log("search", search)
 // useEffect(()=>{
 // }, []);
 useFocusEffect(
@@ -122,13 +95,14 @@ useFocusEffect(
 );
   return (
     <View style={{justifyContent: 'center', backgroundColor: '#f2f3f8',}}>
+      <Loader loading={loading} />
       <View styles={{flex: 1, padding: 6, alignSelf: 'center'}}>
         <Card style={{ margin: 6, padding: 6}}>
           <View style={{flexDirection: 'row', alignItems: 'center' }}>
             <Searchbar
               placeholder="Search"
-              // onChangeText={onChangeSearch}
-              // value={searchQuery}
+              onChangeText={handleSearchQueryChange}
+              value={search}
               style={{ marginHorizontal: 5, flex: 6}}
             />
             <Button style={{marginHorizontal: 5, marginTop: 1, padding: 5}} labelStyle={{fontWeight: 'bold'}} icon="plus" compact="true" mode="contained" onPress={() => navigation.navigate('AddAssetTransferScreen')}>
