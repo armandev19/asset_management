@@ -1,7 +1,7 @@
 import React, {useEffect, useState, useRef} from 'react';
-import {View, Text, SafeAreaView, StyleSheet, TouchableOpacity, KeyboardAvoidingView} from 'react-native';
+import {View, Text, SafeAreaView, StyleSheet, TouchableOpacity, KeyboardAvoidingView, TouchableWithoutFeedback} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { selectUserData, setUserData } from '../redux/navSlice';
+import { selectFCMToken, selectUserData, setUserData } from '../redux/navSlice';
 import { useFocusEffect } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import Loader from '../Components/loader';
@@ -14,15 +14,14 @@ import { processColor } from 'react-native-reanimated';
 import DropDown from 'react-native-paper-dropdown';
 import { Button, Modal, Provider } from 'react-native-paper';
 
-import * as firebase from '@react-native-firebase/app';
-import messaging from '@react-native-firebase/messaging';
-import PushNotification from 'react-native-push-notification';
-
+import SendSMS from 'react-native-sms'
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const HomeScreen = ({navigation, props}) => {
   const [userData, setUserData] = useState({});
   const [users, setUsers] = useState({});
   const currentUserData = useSelector(selectUserData);
+  const fbKey = useSelector(selectFCMToken);
   const [loading, setLoading] = useState(false);
   const screenWidth = Dimensions.get("window").width;
   const [newAssets, setNewAssets] = useState(0);
@@ -35,8 +34,21 @@ const HomeScreen = ({navigation, props}) => {
   const [showDropDown, setShowDropDown] = useState(false);
   const [filter, setFilter] = useState('Today');
   const [filterShow, setFilterShow] = useState(false);
-  const [fbKey, setFbKey] = useState('');
-  const [deviceToken, setDeviceToken] = useState('');
+
+
+  const sendSms = () => {
+    SendSMS.send({
+      body: 'The default body of the SMS!',
+      recipients: ['09162970673'],
+      successTypes: ['sent', 'queued'],
+      allowAndroidSendWithoutReadPermission: true
+    }, (completed, cancelled, error) => {
+
+        console.log('SMS Callback: completed: ' + completed + ' cancelled: ' + cancelled + 'error: ' + error);
+
+    });
+  }
+
 
   const pieData = {
     dataSets: [
@@ -52,27 +64,6 @@ const HomeScreen = ({navigation, props}) => {
         },
       },
     ],
-  };
-
-  PushNotification.createChannel(
-    {
-      channelId: 'rawr123', // Unique ID for the channel
-      channelName: 'Default Channel', // Display name of the channel
-      channelDescription: 'A default channel for notifications', // Description of the channel
-      soundName: 'default', // Sound to play for notifications (optional)
-      importance: 4, // Importance level of the channel (0-4, with 4 being highest)
-      vibrate: true, // Whether to enable vibration for notifications (optional)
-    },
-    (created) => console.log(`Channel created: ${created}`)
-  );
-
-  
-  const showNotification = (title, message) => {
-    PushNotification.localNotification({
-      title: 'rawr',
-      message: 'rawr',
-      channelId: 'rawr123', // Specify the channel ID for Android (required)
-    });
   };
 
   const test = (filter) => {
@@ -134,38 +125,25 @@ const HomeScreen = ({navigation, props}) => {
   }
 
   const serverkey = 'MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDaT+j/s+f9pKP7\nObSieH1Z77ENtVlanTl5J/YoeSXR+2nO7IeXhhwhyqZrE9PVpXtCmKhqfQQgevD6\nCM/x6lLBQEl2aLM5PBQgxtpogZvYkHzFLI3R6XoaDrkt4KS3AtWEB9cuGP4aT9JE\nQTYpsao7Q8MsDWZOO3VwHZeZFBn4ilMFtAgMqwxcp2zi1p8qLOoz7tmz6bzFmjjh\nnAUVAjmfQTTyguQq4+r3PJnT4SeDbNKe1JztPrRHYx+Ch1BRBXbnMoT3iaGQOuKV\nP2YXM03wHFo2xZk7CJjgUmr8hpYWZMJPMz2y2vYdeIDEoOqQFfYMhqzo6cgN6GNk\nz+owJh/RAgMBAAECggEAHripEra3+lcdZmCX/VcUWMAku8ed4+UFLfoEJ2zo+BQ3\nrxFVAWszcUPpyF65bDLF1jjSVm3yUznJyH3N+X6el6hazilssyyzrmsdWCCJFGA8\n1qhu6q++6YTR5VVcCI8DCfnqe4ez1nMOJWHB4/sm+AEQqZXXJEI0xAq+ByIvh2x5\nHj5byL9nqIPMrs7pGkLP5wd6qw9uZ3uw1Hg1Z5Yx7W6K0MGrCnPt6gebfBuBkT37\nMhbdG5OIA5lhUb4NAQCtVqg5B1U64AXu+lbNsHRaXnHNPYqW900IPFhd/ExcgJAB\n4Ul6MnzzkBTQ3Chx+v41Uabfouva5foqNo0Wv5+DEwKBgQD6VwZQjZE3D0tEdVdW\nS++w8P3MMmjiIJGQzantqegEpwNmSk8KsthnXdjDBjAZrnV6QO4khBxK34+Alp8n\nu0XimhcO6EU6sj5iLMeC7yyw0ZocK+F4aU7y41w2YGhdWWUa3peUl2qd00Jhmjea\nd6tNUgekh5rn1gCiUGIaao0c8wKBgQDfP4H0iKiKbTpCec4tCSfb9OqmJameNBxe\nvH4NQ7l/OCfQ3pFC7s8r4mhHrR4cdB3R3MuUwONbQleV5Y3I7cAuNg1pDan2mx9E\nyi7pBSHyVB512tGSVuUsF2YIu8C1tTLFutLUl2OTH1sqrBNJT2oNuwg7x7VWHLNT\n2/JOm2lxKwKBgHEvbZR4HWL2kEJYh29mD+5BV46+b/tlXEtLIXxqKJQJ6xiRmmEs\n8XjyznGG17KU1Vq8BrAN5zjXEWvDLhxpqLRGlQxRahOayWfb9Sy29M7RRctc76lg\ne6iHsYaIWkdyhqr6XzB4sWTAQrAcaO13E8V2xCvYf+o4MLsyetiUuk6PAoGAfCzR\n9xdQT/bjcfhYcvplvlXjctj+GK45nYRQxMYH1riAhRBXUhiNCYbcpAmp9v+rWoDq\nh+omTCuBljHiBIIh5FJScT2VbULpSJUBNMGTGTwq2TkGWtSUkkrNiUwNq8SG4i7B\neFhgnYPSbNDbxWozvkFrGf1CYwyBvsJXa9vL8ZMCgYEAySdj7n+r8OrfPinU6O0Y\np1oZ+mwKqZ87uTJtqBviFmJKal6T5Z3qPSI7Wik4R8R+K1Yn009Xl+B673T/m9cL\nyO9vEe2WngRIGBKuYE8g2Wklqo4mhgQRgqGhXzEIrBszr7trpLghQXb0sBORnuRe\niJC7XJwB7wna/UzugPREJHg=';
-
+  
   const sendNotif = () => {
-    let dataToSend = { token: global.serverkey, device_token: fbKey };
-    let formBody = [];
-
-    // for (let key in dataToSend) {
-    //   let encodedKey = encodeURIComponent(key);
-    //   let encodedValue = encodeURIComponent(dataToSend[key]);
-    //   formBody.push(encodedKey + '=' + encodedValue);
-    // }
-
-    // formBody = formBody.join('&');
-    fetch('http://192.168.1.7:5000/send-notification', {
+    let dataToSend = { token: serverkey, device_token: fbKey };
+    fetch('http://192.168.1.7:5000/asset-maintenance', {
       method: 'POST',
       body: JSON.stringify(dataToSend),
       headers: {
         'Content-Type': 'application/json'
       },
     })
-    .then((response) => response.json())
+    .then((response) => response.text())
     .then(data => {
       console.log(data);
-      // setXDataStatus(data?.data?.xData);
-      // setYDataStatus(data?.data?.yData);
     
     })
     .catch(error => {
       console.error('Error:', error);
     });
   }
-
-  console.log("fbToken", fbKey)
 
   const getAssetsByStatus = () => {
     let dataToSend = { filter: filter };
@@ -261,6 +239,7 @@ const HomeScreen = ({navigation, props}) => {
     test(value);
     getAssetsByStatus();
     getNewAssets();
+    
   }
 
   useEffect(()=>{
@@ -269,81 +248,15 @@ const HomeScreen = ({navigation, props}) => {
     test(filter);
   }, [])
 
-  // useEffect(() => {
-  //   requestUserPermission();
-  //   messageSubscription();
-  //   getFcmToken();
-  //   return () => messageSubscription();
-  // }, []);
-  
-  // const requestUserPermission = async () => {
-  //   const authStatus = await messaging().requestPermission();
-  //   if (authStatus === messaging.AuthorizationStatus.AUTHORIZED) {
-  //     console.log('User granted messaging permissions');
-  //   } else {
-  //     console.log('User denied messaging permissions');
-  //   }
-  // }
-
-  // const messageSubscription = messaging().onMessage(async remoteMessage => {
-  //   console.log('Received message in foreground: ', remoteMessage);
-  //   const notificationData = remoteMessage.notification; // Extract notification data
-  //   if (notificationData) {
-  //     const title = notificationData.title;
-  //     const body = notificationData.body;
-  //     PushNotification.localNotification({
-  //       title: title,
-  //       message: body,
-  //       channelId: 'rawr123', // Specify the channel ID for the notification
-  //     });
-  //     // const localNotification = new Notifications.Notification({
-  //     //   title: title,
-  //     //   body: body,
-  //     //   android: {
-  //     //     channelId: 'test123', // Replace with your channel ID (Android only)
-  //     //   },
-  //     // });
-  
-  //     // Schedule the notification (optional)
-  //     // try {
-  //     //   Notifications.postLocalNotification(localNotification);
-  //     // } catch (error) {
-  //     //   console.error('Error posting notification:', error);
-  //     // }
-  //     // Display a local notification or perform other actions using title and body
-  //   }
-  // });
-
-  // const testFunction = async () => {
-  //   // await messaging().registerDeviceForRemoteMessages();
-  //   // const token = await messaging().getToken();
-  //   // console.log("token", token);
-
-  //   const unsubscribe = messaging().onMessage(async remoteMessage => {
-  //     console.log('A new FCM message arrived!', JSON.stringify(remoteMessage));
-  //   });
-
-  //   return unsubscribe;
-  // }
-
-
-  // const getFcmToken = async () => {
-  //   const fcmToken = await messaging().getToken();
-  //   if (fcmToken) {
-  //     setFbKey(fcmToken)
-  //     console.log('FCM Token:', fcmToken);
-  //     // Send fcmToken to your backend
-  //     // Example: fetch('http://your-backend.com/register', { method: 'POST', body: fcmToken });
-  //   } else {
-  //     console.log('Failed to get FCM token');
-  //   }
-  // };
-  // if(currentUserData){
+  const closeModal = (val) => {
+    setFilterShow(val);
+  };
+  console.log(filterShow)
   return (
     <Provider>
     <ScrollView style={{flex: 1, backgroundColor: '#348ceb'}}>
       <View style={{flex: 1, padding: 16, marginBottom: 20}}>
-        <Text style={{color: "white", fontSize: 25, fontWeight: '700', textTransform: 'uppercase', 
+        <Text style={{color: "white", fontSize: 20, fontWeight: '700', textTransform: 'uppercase', 
               marginBottom: 10, fontFamily: 'Lato-Thin'}}>Welcome {currentUserData?.firstname}</Text>
         <View style={{alignItems: 'flex-start'}}>
           <TouchableOpacity onPress={()=>setFilterShow(true)} style={{backgroundColor: '#1970cf', padding: 5, borderRadius: 3, borderColor: '#1970cf', elevation: 5}}>
@@ -352,15 +265,15 @@ const HomeScreen = ({navigation, props}) => {
         </View>
         <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 10}}>
           <View style={{borderColor: "#1970cf", borderWidth: 1, borderRadius: 5, width: 110, height: 90, padding: 5, backgroundColor: '#1970cf'}}>
-            <Text style={{color: "white", fontSize: 14, fontWeight: '500', textAlign: 'center'}}>Assets</Text>
+            <Text style={{color: "white", fontSize: 14, fontWeight: '500', textAlign: 'center', marginTop: 10}}>Assets</Text>
             <Text style={{color: "white", fontSize: 25, textAlign: 'center', fontWeight: 'bold'}}>{newAssets}</Text>
           </View>
           <View style={{borderColor: "#1970cf", borderWidth: 1, borderRadius: 5, width: 110, height: 90, padding: 5, backgroundColor: '#1970cf'}}>
-            <Text style={{color: "white", fontSize: 14, fontWeight: '500', textAlign: 'center'}}>Operational</Text>
+            <Text style={{color: "white", fontSize: 14, fontWeight: '500', textAlign: 'center', marginTop: 10}}>Operational</Text>
             <Text style={{color: "white", fontSize: 25, textAlign: 'center', fontWeight: 'bold'}}>{operationalAssets}</Text>
           </View>
           <View style={{borderColor: "#1970cf", borderWidth: 1, borderRadius: 5, width: 110, height: 90, padding: 5, backgroundColor: '#1970cf'}}>
-            <Text style={{color: "white", fontSize: 14, fontWeight: '500', textAlign: 'center'}}>Maintenance</Text>
+            <Text style={{color: "white", fontSize: 14, fontWeight: '500', textAlign: 'center', marginTop: 10}}>Maintenance</Text>
             <Text style={{color: "white", fontSize: 25, textAlign: 'center', fontWeight: 'bold'}}>{forMaintenanceAssets}</Text>
           </View>
         </View>
@@ -374,24 +287,24 @@ const HomeScreen = ({navigation, props}) => {
             marginTop: 5
           }}>
             
-      <TouchableOpacity onPress={()=>sendNotif()}><Text style={{color: 'black'}}>asdasda</Text></TouchableOpacity>
+      {/* <TouchableOpacity onPress={()=>sendSms()}><Text style={{color: 'black'}}>asdasda</Text></TouchableOpacity> */}
             <View style={{borderColor: "#1970cf", borderWidth: 1, borderRadius: 5, width: '100%', padding: 5}}>
               <Text style={{color: "#000", fontSize: 20, textAlign: 'center', fontWeight: '500', marginTop: 4}}>New Assets</Text>
-              {/* <LineChart style={styles.chart}
+              <LineChart style={styles.chart}
                 data={dataStatus}
                 xAxis={xAxis}
                 yAxis={yAxis}
-              /> */}
+              />
             </View>
             <View style={{borderColor: "#1970cf", borderWidth: 1, borderRadius: 5, width: '100%', padding: 5, marginTop: 10}}>
               <Text style={{color: "#000", fontSize: 20, textAlign: 'center', fontWeight: '500', marginTop: 4}}>New Assets</Text>
-              {/* <BarChart
+              <BarChart
                 style={styles.chart}
                 data={data}
                 xAxis={xAxis}
                 yAxis={yAxis}
                 animation={{ durationX: 2000 }}
-              /> */}
+              />
             </View>
             {/* <View style={{borderColor: "#1970cf", borderWidth: 1, borderRadius: 5, width: '100%', padding: 5, marginTop: 10}}>
               <PieChart
@@ -413,21 +326,26 @@ const HomeScreen = ({navigation, props}) => {
             </View> */}
         </View>
       </View>
-      <Modal
+      
+    </ScrollView>
+    <Modal
         animationType="fade"
         transparent={true}
         centeredView={true}
         visible={filterShow}
-        onRequestClose={() => {
-          setFilterShow(!filterShow);
-        }}>
+        onRequestClose={()=>closeModal(false)}
+        >
+        <TouchableWithoutFeedback onPress={closeModal}>
         <View style={styles.centeredView}>
           <KeyboardAvoidingView enabled style={styles.modalView}>
             <View style={{}}>
+              <TouchableOpacity style={{alignItems: 'flex-end'}} onPress={()=>closeModal(false)}>
+                <Icon name="close" size={20} />
+              </TouchableOpacity>
               <View style={{flexDirection: 'row', justifyContent: 'center'}}>
                 <Text style={{color: '#404040', fontSize: 14, fontWeight: 'bold'}}>Select Filter</Text>
               </View>
-              <View style={{marginTop: 10}}>
+              <View style={{marginTop: 10, marginBottom: 10}}>
                 <TouchableOpacity onPress={()=>handleFilterSelect('All Assets')} style={{marginVertical: 5}}>
                   <Text style={{textAlign: 'center', color: 'black'}}>All Assets</Text>
                 </TouchableOpacity>
@@ -444,8 +362,8 @@ const HomeScreen = ({navigation, props}) => {
             </View>
           </KeyboardAvoidingView>
         </View>
+        </TouchableWithoutFeedback>
       </Modal>
-    </ScrollView>
     </Provider>
   );
 // }
@@ -470,7 +388,7 @@ const styles = StyleSheet.create({
     // alignContent: 'center',
     // alignItems: 'center',
     // justifyContent: 'center',
-    height: 180,
+    height: 190,
     width: 150,
     backgroundColor: 'white',
     borderRadius: 5,

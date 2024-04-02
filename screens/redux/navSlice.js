@@ -12,11 +12,16 @@ export const navSlice = createSlice({
         setUserData: (state, action) => {
             state.userData = action.payload;
         },
+        setFCMToken: (state, action) => {
+            state.fcmtoken = action.payload;
+        },
     },
 });
 
-export const { setUserData } = navSlice.actions;
+export const { setUserData, setFCMToken } = navSlice.actions;
 
 export const selectUserData = (state) => state.nav.userData;
+
+export const selectFCMToken = (state) => state.nav.fcmtoken;
 
 export default navSlice.reducer;

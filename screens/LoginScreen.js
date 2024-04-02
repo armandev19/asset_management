@@ -13,11 +13,16 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import {Card, Title, Paragraph, Divider, Button} from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { setUserData } from './redux/navSlice';
+import { setUserData, setFCMToken } from './redux/navSlice';
 import { useDispatch } from 'react-redux';
 import Loader from './Components/loader';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
- 
+
+import * as firebase from '@react-native-firebase/app';
+import messaging from '@react-native-firebase/messaging';
+
+
+
 const LoginScreen = ({navigation}) => {
   const [userEmail, setUserEmail] = useState('');
   const [userPassword, setUserPassword] = useState('');
@@ -27,6 +32,16 @@ const LoginScreen = ({navigation}) => {
   const passwordInputRef = createRef();
   
   const dispatch = useDispatch();
+
+  const getFcmToken = async () => {
+    const fcmToken = await messaging().getToken();
+    if (fcmToken) {
+      dispatch(setFCMToken(fcmToken));
+      console.log('FCM Token:', fcmToken);
+    } else {
+      console.log('Failed to get FCM token');
+    }
+  };
   
   const handleSubmitPress = () => {
     setErrortext('');
@@ -76,6 +91,11 @@ const LoginScreen = ({navigation}) => {
         console.error(error);
       });
   };
+
+  useEffect(()=>{
+    
+    getFcmToken();
+  }, [])
  
   return (
     <View style={styles.mainBody}>
