@@ -20,6 +20,7 @@ import {
 import moment from 'moment';
 import { Col, Row, Grid } from "react-native-easy-grid";
 import { ScrollView } from 'react-native-gesture-handler';
+import RNHTMLtoPDF from 'react-native-html-to-pdf';
 
 const ReportScreen = ({navigation, route}) => {
   const [reportType, setReportType] = useState('');
@@ -52,6 +53,18 @@ const ReportScreen = ({navigation, route}) => {
     setDateTo(value);
     console.log(date)
   };
+
+  const createPDF = async () => {
+    let options = {
+      html: '<h1>PDF TEST</h1>',
+      fileName: 'test',
+      directory: 'Documents',
+    };
+
+    let file = await RNHTMLtoPDF.convert(options)
+    console.log(file.filePath);
+    alert(file.filePath);
+  }
 
   const reports = [
     {value: "Asset", label: "Asset"},
@@ -138,7 +151,7 @@ const ReportScreen = ({navigation, route}) => {
             dropDownStyle={{
               width:'100%',
             }}
-            style={{ heigt: 200 }} 
+            style={{  }} 
           />
           {/* The date picker */}
           {isPickerShowFrom && (
@@ -179,7 +192,7 @@ const ReportScreen = ({navigation, route}) => {
               label="To"
               activeOutlineColor='#348ceb'
               value={withoutWeekdayTo} editable={false}
-              // style={{width: '45%'}}
+              style={{width: '45%'}}
               // value={text}
               // onChangeText={text => setText(text)}
               right={<TextInput.Icon name="calendar" onPress={showPickerTo} />}
@@ -189,7 +202,7 @@ const ReportScreen = ({navigation, route}) => {
               Generate
             </Button>
           <View style={{marginTop: 20, backgroundColor: 'white', borderWidth: 1, borderColor: 'lightgray'}}>
-            <Text style={{color: 'black', fontWeight: 'bold', textAlign: 'center', fontSize: 20}}>
+            <Text style={{color: 'black', fontWeight: 'bold', textAlign: 'center', fontSize: 20, marginTop: 5}}>
               {reportType} Report
             </Text>
             <Text style={{color: 'black', fontWeight: 'bold', textAlign: 'center', fontSize: 16}}>{moment(dateFrom).format("MM/DD/YY")} - {moment(dateTo).format("MM/DD/YY")}</Text>
@@ -308,13 +321,25 @@ const ReportScreen = ({navigation, route}) => {
 
             :
               <>
-                <View style={{marginTop: 10, alignContent: 'center'}}>
+                <View style={{marginTop: 10, alignContent: 'center', marginBottom: 5}}>
                   <Text style={{color: 'black', fontSize: 14, textAlign: 'center'}}>No data found</Text>
                 </View>
               </>
             }
               
           </View>
+          <TouchableOpacity 
+          style={{
+            borderRadius: 3, 
+            backgroundColor: 'grey', 
+            width: '40%', 
+            marginTop: 5,   
+            padding: 5,
+            marginVertical: 20,
+            alignSelf: 'center'
+          }}
+          onPress={()=>createPDF()}
+          ><Text style={{textAlign: 'center', color: '#fff'}}>EXPORT TO PDF</Text></TouchableOpacity>
       </View>
     </ScrollView>
     </Provider>
@@ -338,7 +363,9 @@ const styles = StyleSheet.create({
   tableCell: {
     flex: 1,
     textAlign: 'center',
-    color: 'black'
+    color: 'black',
+    fontSize: 13,
+    margin: 1
   },
 });
  

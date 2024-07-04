@@ -6,12 +6,11 @@ import {
   DrawerItemList,
   DrawerItem,
 } from '@react-navigation/drawer';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { selectUserData, setUserData } from '../redux/navSlice';
 import { useSelector, useDispatch } from 'react-redux';
-
-import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const CustomSidebarMenu = (props) => {
   const [userEmail, setUserEmail] = useState('');
@@ -24,7 +23,7 @@ const CustomSidebarMenu = (props) => {
     <View style={stylesSidebar.sideMenuContainer}>
       <View style={stylesSidebar.profileHeader}>
         <View style={stylesSidebar.profileHeaderPicCircle}>
-          <Icon name="person" size={40}/>
+          {/* <Icon name="person" size={40}/> */}
         </View>
 
         {currentUserData ? (
@@ -41,19 +40,24 @@ const CustomSidebarMenu = (props) => {
         )}
           
       </View>
-      <View style={stylesSidebar.profileHeaderLine} />
+      {/* <View style={stylesSidebar.profileHeaderLine} /> */}
  
       <DrawerContentScrollView {...props}>
         <DrawerItemList {...props} />
         <DrawerItem
           label={({color}) => 
+            <View>
+              
+              <Icon name="account-off" size={20} color="#348ceb" />
             <Text style={{
               color: '#348ceb',
-              fontSize: 20,
-              fontWeight: 'bold'
+              fontSize: 14,
+              fontWeight: '400',
               }}>
-              LOG OUT
+              Log out
             </Text>
+            
+            </View>
           }
           onPress={() => {
             props.navigation.toggleDrawer();
@@ -94,7 +98,7 @@ const stylesSidebar = StyleSheet.create({
     width: '100%',
     height: '100%',
     backgroundColor: 'white',
-    paddingTop: 40,
+    paddingTop: 5,
     color: 'white',
   },
   profileHeader: {

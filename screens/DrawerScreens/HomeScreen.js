@@ -13,7 +13,7 @@ import {LineChart, BarChart, PieChart} from 'react-native-charts-wrapper';
 import { processColor } from 'react-native-reanimated';
 import DropDown from 'react-native-paper-dropdown';
 import { Button, Modal, Provider } from 'react-native-paper';
-
+import LinearGradient from 'react-native-linear-gradient';
 import SendSMS from 'react-native-sms'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -206,14 +206,14 @@ const HomeScreen = ({navigation, props}) => {
   const data = {
     dataSets: [
       {
-        values: yData,
+        values: [5, 40, 77, 81, 43],
         label: 'Status',
         config: {
-          color: '#2196F3',
-          barSpacePercent: 40,
-          barShadowColor: '#BDBDBD',
-          highlightAlpha: 90,
-          highlightColor: '#000',
+          color: processColor('skyblue'),
+          barSpacePercent: 10,
+          // barShadowColor: '#BDBDBD',
+          // highlightAlpha: 90,
+          // highlightColor: '#000',
         },
       },
     ],
@@ -251,34 +251,47 @@ const HomeScreen = ({navigation, props}) => {
   const closeModal = (val) => {
     setFilterShow(val);
   };
-  console.log(filterShow)
+
   return (
     <Provider>
-    <ScrollView style={{flex: 1, backgroundColor: '#348ceb'}}>
-      <View style={{flex: 1, padding: 16, marginBottom: 20}}>
-        <Text style={{color: "white", fontSize: 20, fontWeight: '700', textTransform: 'uppercase', 
-              marginBottom: 10, fontFamily: 'Lato-Thin'}}>Welcome {currentUserData?.firstname}</Text>
+    <ScrollView style={{flex: 1, backgroundColor: '#ffffff'}}>
+      <View style={{flex: 1, padding: 16, borderBottomLeftRadius: 60, borderBottomRightRadius: 60, backgroundColor: '#348ceb', height: 100}}>
+        <Text style={{color: "white", fontSize: 14, fontWeight: '500', marginBottom: 10}}>Welcome {currentUserData?.firstname}</Text>
         <View style={{alignItems: 'flex-start'}}>
-          <TouchableOpacity onPress={()=>setFilterShow(true)} style={{backgroundColor: '#1970cf', padding: 5, borderRadius: 3, borderColor: '#1970cf', elevation: 5}}>
+          {/* <TouchableOpacity onPress={()=>setFilterShow(true)} style={{backgroundColor: '#1970cf', padding: 5, borderRadius: 3, borderColor: '#1970cf', elevation: 5}}>
             <Text style={{color: 'white'}}>{filter}</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 10}}>
-          <View style={{borderColor: "#1970cf", borderWidth: 1, borderRadius: 5, width: 110, height: 90, padding: 5, backgroundColor: '#1970cf'}}>
-            <Text style={{color: "white", fontSize: 14, fontWeight: '500', textAlign: 'center', marginTop: 10}}>Assets</Text>
-            <Text style={{color: "white", fontSize: 25, textAlign: 'center', fontWeight: 'bold'}}>{newAssets}</Text>
-          </View>
-          <View style={{borderColor: "#1970cf", borderWidth: 1, borderRadius: 5, width: 110, height: 90, padding: 5, backgroundColor: '#1970cf'}}>
-            <Text style={{color: "white", fontSize: 14, fontWeight: '500', textAlign: 'center', marginTop: 10}}>Operational</Text>
-            <Text style={{color: "white", fontSize: 25, textAlign: 'center', fontWeight: 'bold'}}>{operationalAssets}</Text>
-          </View>
-          <View style={{borderColor: "#1970cf", borderWidth: 1, borderRadius: 5, width: 110, height: 90, padding: 5, backgroundColor: '#1970cf'}}>
-            <Text style={{color: "white", fontSize: 14, fontWeight: '500', textAlign: 'center', marginTop: 10}}>Maintenance</Text>
-            <Text style={{color: "white", fontSize: 25, textAlign: 'center', fontWeight: 'bold'}}>{forMaintenanceAssets}</Text>
-          </View>
+          </TouchableOpacity> */}
         </View>
       </View>
-      <View style={{flex: 5, backgroundColor: 'white', top: 0, borderTopRightRadius: 20, borderTopLeftRadius: 20, minHeight: 600}}>
+      <View style={{flexDirection: 'row', justifyContent: 'space-evenly', marginTop: -50, marginHorizontal: 20}}>
+        <View style={{borderColor: "#1970cf", borderWidth: 1, borderRadius: 5, width: 150, height: 90, padding: 5, backgroundColor: '#1970cf'}}>
+          <Text style={{color: "white", fontSize: 14, fontWeight: '500', textAlign: 'center', marginTop: 10}}>Assets</Text>
+          <Text style={{color: "white", fontSize: 25, textAlign: 'center', fontWeight: 'bold'}}>{newAssets}</Text>
+        </View>
+        <View style={{borderColor: "#1970cf", borderWidth: 1, borderRadius: 5, width: 150, height: 90, padding: 5, backgroundColor: '#1970cf'}}>
+          <Text style={{color: "white", fontSize: 14, fontWeight: '500', textAlign: 'center', marginTop: 10}}>Operational</Text>
+          <Text style={{color: "white", fontSize: 25, textAlign: 'center', fontWeight: 'bold'}}>{operationalAssets}</Text>
+        </View>
+        {/* <View style={{borderColor: "#1970cf", borderWidth: 1, borderRadius: 5, width: 110, height: 90, padding: 5, backgroundColor: '#1970cf'}}>
+          <Text style={{color: "white", fontSize: 14, fontWeight: '500', textAlign: 'center', marginTop: 10}}>Maintenance</Text>
+          <Text style={{color: "white", fontSize: 25, textAlign: 'center', fontWeight: 'bold'}}>{forMaintenanceAssets}</Text>
+        </View> */}
+      </View>
+      <View style={{flexDirection: 'row', justifyContent: 'space-evenly', marginTop: 20, marginHorizontal: 20}}>
+        <View style={{borderColor: "#1970cf", borderWidth: 1, borderRadius: 5, width: 150, height: 90, padding: 5, backgroundColor: '#1970cf'}}>
+          <Text style={{color: "white", fontSize: 14, fontWeight: '500', textAlign: 'center', marginTop: 10}}>Assets</Text>
+          <Text style={{color: "white", fontSize: 25, textAlign: 'center', fontWeight: 'bold'}}>{newAssets}</Text>
+        </View>
+        <View style={{borderColor: "#1970cf", borderWidth: 1, borderRadius: 5, width: 150, height: 90, padding: 5, backgroundColor: '#1970cf'}}>
+          <Text style={{color: "white", fontSize: 14, fontWeight: '500', textAlign: 'center', marginTop: 10}}>Operational</Text>
+          <Text style={{color: "white", fontSize: 25, textAlign: 'center', fontWeight: 'bold'}}>{operationalAssets}</Text>
+        </View>
+        {/* <View style={{borderColor: "#1970cf", borderWidth: 1, borderRadius: 5, width: 110, height: 90, padding: 5, backgroundColor: '#1970cf'}}>
+          <Text style={{color: "white", fontSize: 14, fontWeight: '500', textAlign: 'center', marginTop: 10}}>Maintenance</Text>
+          <Text style={{color: "white", fontSize: 25, textAlign: 'center', fontWeight: 'bold'}}>{forMaintenanceAssets}</Text>
+        </View> */}
+      </View>
+      <View style={{flex: 5, backgroundColor: 'white', top: 0, minHeight: 600}}>
         <View
           style={{
             justifyContent: 'center',
@@ -288,17 +301,18 @@ const HomeScreen = ({navigation, props}) => {
           }}>
             
       {/* <TouchableOpacity onPress={()=>sendSms()}><Text style={{color: 'black'}}>asdasda</Text></TouchableOpacity> */}
-            <View style={{borderColor: "#1970cf", borderWidth: 1, borderRadius: 5, width: '100%', padding: 5}}>
-              <Text style={{color: "#000", fontSize: 20, textAlign: 'center', fontWeight: '500', marginTop: 4}}>New Assets</Text>
+            <View style={{width: '100%', padding: 5}}>
+              <Text style={{color: "#000", fontSize: 16, textAlign: 'left', fontWeight: '400', marginTop: 4}}>NEW ASSETS</Text>
               <LineChart style={styles.chart}
                 data={dataStatus}
                 xAxis={xAxis}
                 yAxis={yAxis}
               />
             </View>
-            <View style={{borderColor: "#1970cf", borderWidth: 1, borderRadius: 5, width: '100%', padding: 5, marginTop: 10}}>
-              <Text style={{color: "#000", fontSize: 20, textAlign: 'center', fontWeight: '500', marginTop: 4}}>New Assets</Text>
+            <View style={{width: '100%', padding: 5, marginTop: 10}}>
+              <Text style={{color: "#000", fontSize: 16, fontWeight: '400', marginTop: 4}}>NEW ASSETS</Text>
               <BarChart
+                gridBackgroundColor={processColor('#ffffff')}
                 style={styles.chart}
                 data={data}
                 xAxis={xAxis}
@@ -375,8 +389,8 @@ const styles = StyleSheet.create({
     width: 200,
   },
   chart: {
-    width: 350,
-    height: 220,
+    // width: 350,
+    height: 280,
   },
   centeredView: {
     flex: 1,

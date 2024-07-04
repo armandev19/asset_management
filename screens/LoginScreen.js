@@ -74,6 +74,8 @@ const LoginScreen = ({navigation}) => {
     })
       .then((response) => response.json())
       .then((responseJson) => {
+        // alert(responseJson)
+        console.log(responseJson)
         //Hide Loader
         setLoading(false);
         // If server response message same as Data Matched
@@ -88,7 +90,7 @@ const LoginScreen = ({navigation}) => {
       })
       .catch((error) => {
         setLoading(false);
-        console.error(error);
+        console.error('Error', error);
       });
   };
 
