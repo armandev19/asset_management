@@ -27,7 +27,7 @@ import CameraScreen from './screens/CameraScreen';
 import * as firebase from '@react-native-firebase/app';
 import messaging from '@react-native-firebase/messaging';
 import PushNotification from 'react-native-push-notification';
-
+import RootStackNavigation from './screens/RootStackNavigation';
 // import { selectUserData, setUserData } from './screens/redux/navSlice';
 
 import { Provider, useSelector } from 'react-redux';
@@ -39,10 +39,10 @@ const Stack = createStackNavigator();
 const Auth = () => {
   // Stack Navigator for Login and Sign up Screen
   return (
-    <Stack.Navigator initialRouteName="LoginScreen">
+    <Stack.Navigator initialRouteName="SplashScreen">
       <Stack.Screen
-        name="LoginScreen"
-        component={LoginScreen}
+        name="SplashScreen"
+        component={SplashScreen}
         options={{headerShown: false}}
       />
     </Stack.Navigator>
@@ -53,7 +53,7 @@ const Auth = () => {
 const App = () => {
   // global.url = "http://127.0.0.1/asset_management/";
   
-  global.url = "http://192.168.1.4/asset_management/";
+  global.url = "http://192.168.1.5/asset_management/";
   // global.url = "https://app-ams.online/asset_management/"
   const appState = useRef(AppState.currentState);
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
@@ -144,206 +144,7 @@ const App = () => {
 
   return (
     <Provider store={store}>
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="SplashScreen">
-        {/* SplashScreen which will come once for 5 Seconds */}
-        <Stack.Screen
-          name="SplashScreen"
-          component={SplashScreen}
-          // Hiding header for Splash Screen
-          options={{headerShown: false}}
-        />
-        {/* Auth Navigator: Include Login and Signup */}
-        <Stack.Screen
-          name="Auth"
-          component={Auth}
-          options={{headerShown: false}}
-        />
-        {/* Navigation Drawer as a landing page */}
-        <Stack.Screen
-          name="DrawerNavigationRoutes"
-          component={DrawerNavigationRoutes}
-          // Hiding header for Navigation Drawer
-          options={{headerShown: false}}
-        />
-        
-        <Stack.Screen
-          name="DetailScreen"
-          title="Request Details"
-          component={DetailScreen}
-          options={{title: "Request Details"}}
-        />
-        <Stack.Screen
-          name="EditProfileScreen"
-          title="Edit Profile"
-          component={EditProfileScreen}
-          options={{title: "Edit Profile"}}
-        />
-        <Stack.Screen
-          name="AddAssetScreen"
-          title="Add Asset"
-          component={AddAssetScreen}
-          options={{
-            title: "ADD ASSET",
-            headerStyle: {
-              backgroundColor: '#348ceb', //Set Header color
-            },
-            headerTintColor: '#fff', //Set Header text color
-            headerTitleStyle: {
-              fontWeight: 'bold', //Set Header text style
-            },
-          }}
-        />
-        <Stack.Screen
-          name="AddLocationScreen"
-          title="Add Asset"
-          component={AddLocationScreen}
-          options={{
-            title: "ADD LOCATION",
-            headerStyle: {
-              backgroundColor: '#348ceb', //Set Header color
-            },
-            headerTintColor: '#fff', //Set Header text color
-            headerTitleStyle: {
-              fontWeight: 'bold', //Set Header text style
-            },
-          }}
-        />
-        <Stack.Screen
-          name="AddUsersScreen"
-          title="Add User"
-          component={AddUsersScreen}
-          options={{
-            title: "ADD USER",
-            headerStyle: {
-              backgroundColor: '#348ceb', //Set Header color
-            },
-            headerTintColor: '#fff', //Set Header text color
-            headerTitleStyle: {
-              fontWeight: 'bold', //Set Header text style
-            },
-          }}
-        />
-        <Stack.Screen
-          name="AddAssetTransferScreen"
-          title="Add Asset Transfer"
-          component={AddAssetTransferScreen}
-          options={{
-            title: "ADD ASSET TRANSFER",
-            headerStyle: {
-              backgroundColor: '#348ceb', //Set Header color
-            },
-            headerTintColor: '#fff', //Set Header text color
-            headerTitleStyle: {
-              fontWeight: 'bold', //Set Header text style
-            },
-          }}
-        />
-
-        <Stack.Screen
-          name="AssetDetailsScreen"
-          title="Asset Details"
-          component={AssetDetailsScreen}
-          options={{
-            title: "ASSET DETAILS",
-            headerStyle: {
-              backgroundColor: '#348ceb', //Set Header color
-            },
-            headerTintColor: '#fff', //Set Header text color
-            headerTitleStyle: {
-              fontWeight: 'bold', //Set Header text style
-            },}}
-        />
-
-        <Stack.Screen
-          name="AssetMaintenanceScreen"
-          title="ASSET MAINTENANCE"
-          component={AssetMaintenanceScreen}
-          options={{
-            title: "ASSET MAINTENANCE",
-            headerStyle: {
-              backgroundColor: '#348ceb', //Set Header color
-            },
-            headerTintColor: '#fff', //Set Header text color
-            headerTitleStyle: {
-              fontWeight: 'bold', //Set Header text style
-            },}}
-        />
-
-        <Stack.Screen
-          name="CameraScreen"
-          title="CAMERA"
-          component={CameraScreen}
-          options={{
-            title: "CAMERA",
-            headerStyle: {
-              backgroundColor: '#348ceb', //Set Header color
-            },
-            headerTintColor: '#fff', //Set Header text color
-            headerTitleStyle: {
-              fontWeight: 'bold', //Set Header text style
-            },}}
-        />
-
-        <Stack.Screen
-          name="UpdateAssetScreen"
-          title="Update Asset"
-          component={UpdateAssetScreen}
-          options={{
-            title: "UPDATE ASSET",
-            headerStyle: {
-              backgroundColor: '#348ceb', //Set Header color
-            },
-            headerTintColor: '#fff', //Set Header text color
-            headerTitleStyle: {
-              fontWeight: 'bold', //Set Header text style
-            },}}
-        />
-        <Stack.Screen
-          name="UpdateLocationScreen"
-          title="Update Location"
-          component={UpdateLocationScreen}
-          options={{
-            title: "UPDATE LOCATION",
-            headerStyle: {
-              backgroundColor: '#348ceb', //Set Header color
-            },
-            headerTintColor: '#fff', //Set Header text color
-            headerTitleStyle: {
-              fontWeight: 'bold', //Set Header text style
-            },}}
-        />
-        <Stack.Screen
-          name="UpdateUsersScreen"
-          title="Update User"
-          component={UpdateUsersScreen}
-          options={{
-            title: "UPDATE USER",
-            headerStyle: {
-              backgroundColor: '#348ceb', //Set Header color
-            },
-            headerTintColor: '#fff', //Set Header text color
-            headerTitleStyle: {
-              fontWeight: 'bold', //Set Header text style
-            },}}
-        />
-        
-        <Stack.Screen
-          name="UserDetailsScreen"
-          title="User Details"
-          component={UserDetailsScreen}
-          options={{
-            title: "USER DETAILS",
-            headerStyle: {
-              backgroundColor: '#348ceb', //Set Header color
-            },
-            headerTintColor: '#fff', //Set Header text color
-            headerTitleStyle: {
-              fontWeight: 'bold', //Set Header text style
-            },}}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+     <RootStackNavigation />
     </Provider>
   );
 };

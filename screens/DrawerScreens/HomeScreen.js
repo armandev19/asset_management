@@ -3,7 +3,7 @@ import {View, Text, SafeAreaView, StyleSheet, TouchableOpacity, KeyboardAvoiding
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { selectFCMToken, selectUserData, setUserData } from '../redux/navSlice';
 import { useFocusEffect } from '@react-navigation/native';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import Loader from '../Components/loader';
 import axios from 'axios';
 import { Dimensions } from "react-native";
@@ -18,7 +18,7 @@ import SendSMS from 'react-native-sms'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const HomeScreen = ({navigation, props}) => {
-  const [userData, setUserData] = useState({});
+  // const [userData, setUserData] = useState({});
   const [users, setUsers] = useState({});
   const currentUserData = useSelector(selectUserData);
   const fbKey = useSelector(selectFCMToken);
@@ -34,6 +34,8 @@ const HomeScreen = ({navigation, props}) => {
   const [showDropDown, setShowDropDown] = useState(false);
   const [filter, setFilter] = useState('Today');
   const [filterShow, setFilterShow] = useState(false);
+  
+  const dispatch = useDispatch();
 
 
   const sendSms = () => {
@@ -252,10 +254,14 @@ const HomeScreen = ({navigation, props}) => {
     setFilterShow(val);
   };
 
+  const logout = () => {
+    AsyncStorage.removeItem('user_id');
+    dispatch(setUserData(null));
+  }
   return (
     <Provider>
     <ScrollView style={{flex: 1, backgroundColor: '#ffffff'}}>
-      <View style={{flex: 1, padding: 16, borderBottomLeftRadius: 60, borderBottomRightRadius: 60, backgroundColor: '#348ceb', height: 100}}>
+      <View style={{flex: 1, padding: 16, borderBottomLeftRadius: 60, borderBottomRightRadius: 60, backgroundColor: '#F05924', height: 100}}>
         <Text style={{color: "white", fontSize: 14, fontWeight: '500', marginBottom: 10}}>Welcome {currentUserData?.firstname}</Text>
         <View style={{alignItems: 'flex-start'}}>
           {/* <TouchableOpacity onPress={()=>setFilterShow(true)} style={{backgroundColor: '#1970cf', padding: 5, borderRadius: 3, borderColor: '#1970cf', elevation: 5}}>
@@ -264,11 +270,11 @@ const HomeScreen = ({navigation, props}) => {
         </View>
       </View>
       <View style={{flexDirection: 'row', justifyContent: 'space-evenly', marginTop: -50, marginHorizontal: 20}}>
-        <View style={{borderColor: "#1970cf", borderWidth: 1, borderRadius: 5, width: 150, height: 90, padding: 5, backgroundColor: '#1970cf'}}>
-          <Text style={{color: "white", fontSize: 14, fontWeight: '500', textAlign: 'center', marginTop: 10}}>Assets</Text>
+        <View style={{borderColor: "#1970cf", borderWidth: 1, borderRadius: 5, width: 150, height: 90, padding: 5, backgroundColor: '#fae5d7'}}>
+          <Text style={{color: "white", fontSize: 14, fontWeight: '500', textAlign: 'center', marginTop: 10}} onPress={()=>logout()}>Assets</Text>
           <Text style={{color: "white", fontSize: 25, textAlign: 'center', fontWeight: 'bold'}}>{newAssets}</Text>
         </View>
-        <View style={{borderColor: "#1970cf", borderWidth: 1, borderRadius: 5, width: 150, height: 90, padding: 5, backgroundColor: '#1970cf'}}>
+        <View style={{borderColor: "#1970cf", borderWidth: 1, borderRadius: 5, width: 150, height: 90, padding: 5, backgroundColor: '#fae5d7'}}>
           <Text style={{color: "white", fontSize: 14, fontWeight: '500', textAlign: 'center', marginTop: 10}}>Operational</Text>
           <Text style={{color: "white", fontSize: 25, textAlign: 'center', fontWeight: 'bold'}}>{operationalAssets}</Text>
         </View>
@@ -340,7 +346,6 @@ const HomeScreen = ({navigation, props}) => {
             </View> */}
         </View>
       </View>
-      
     </ScrollView>
     <Modal
         animationType="fade"

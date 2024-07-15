@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, SafeAreaView, FlatList, StyleSheet, TouchableOpacity, Modal, ToastAndroid, Alert, TextInput, RefreshControl} from 'react-native';
+import {View, Text, SafeAreaView, FlatList, StyleSheet, TouchableOpacity, Modal, ToastAndroid, Alert, TextInput, RefreshControl, Image} from 'react-native';
 import {Card, Title, Paragraph, Divider, List, Button, IconButton, Searchbar, Chip } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -96,16 +96,16 @@ useEffect(()=>{
 }, [])
 
   return (
-      <View style={{justifyContent: 'center', backgroundColor: '#f2f3f8', marginTop: 40}}>
+      <View style={{justifyContent: 'center', backgroundColor: '#ffffff', marginTop: 40}}>
         <Loader loading={loading} />
         <View styles={{flex: 1, padding: 6, alignSelf: 'center'}}>
-          <View style={{ margin: 6, padding: 6, backgroundColor: '#f2f3f8'}}>
+          <View style={{ margin: 6, padding: 6, backgroundColor: '#F05924', borderRadius: 20}}>
             <View style={{flexDirection: 'row', alignItems: 'center', backgroundColor: 'transparent' }}>
               <Searchbar
                 placeholder="Search"
                 onChangeText={handleSearchQueryChange}
                 value={search}
-                style={{ marginHorizontal: 5, flex: 6}}
+                style={{ margin: 2, flex: 6, borderRadius: 20}}
               />
               <Button style={{marginHorizontal: 5, marginTop: 1, padding: 5, backgroundColor: '#2eb82e'}} labelStyle={{fontWeight: 'bold'}} icon="plus-circle" compact="true" mode="contained" onPress={() => navigation.navigate('AddAssetScreen')}>
               </Button>
@@ -119,44 +119,29 @@ useEffect(()=>{
               return (
               <Card key={index} style={{ margin: 3, elevation: 1, padding: 2, borderWidth: 1, borderColor: "lightgray" }}>
                 <TouchableOpacity style={{marginBottom: 5}} onPress={() => navigation.navigate("AssetDetailsScreen", item.asset_code)}>
-                  <View>
-                    <View style={{ flexDirection: 'row', padding: 5, margin: 3, borderBottomColor: 'lightgray', borderBottomWidth: 1 }}>
-                      <View style={{flex: 1}}>
-                        <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 15, fontWeight: "bold", textTransform: 'uppercase' }}>{item.asset_code}</Text>
-                      </View>
-                      <View style={{ flex: 1, alignItems: 'flex-end'}}>
-                        {item.status === 'Operational' ? 
-                          <View style={{ padding: 3, backgroundColor: '#2eb82e', flexDirection: 'row', borderRadius: 5}}>
-                            <Icon name='check-circle' size={13} color={'#ffffff'} ></Icon>
-                            <Text adjustsFontSizeToFit style={{ color: '#ffffff', fontSize: 13, fontWeight: "bold", textTransform: 'uppercase', marginRight: 2}}> {item.status}</Text>
-                          </View>
-                          : item.status === 'Under Repair' ? 
-                          <View style={{ padding: 3, backgroundColor: '#ffcc00', flexDirection: 'row', borderRadius: 5}}>
-                            <Icon name='check-circle' size={13} color={'#ffffff'} ></Icon>
-                            <Text adjustsFontSizeToFit style={{ color: '#ffffff', fontSize: 13, fontWeight: "bold", textTransform: 'uppercase', marginRight: 2}}> {item.status}</Text>
-                          </View>
-                          :  
-                          <View style={{ padding: 3, backgroundColor: '#fc4747', flexDirection: 'row', borderRadius: 5}}>
-                            <Icon name='check-circle' size={13} color={'#ffffff'} ></Icon>
-                            <Text adjustsFontSizeToFit style={{ color: '#ffffff', fontSize: 13, fontWeight: "bold", textTransform: 'uppercase', marginRight: 2}}> {item.status}</Text>
-                          </View>
-                        }
+                  <View style={{flexDirection: 'row'}}>
+                    <View>
+                      <Image
+                        source={require('../../assets/noimage.jpg')}
+                        style={{width: 50, height: 50, margin: 2, alignSelf: 'center', borderRadius: 5}}
+                      />
+                    </View>
+                    <View>
+                    <View style={styles.item}>
+                      <View style={{}}>
+                        <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, fontWeight: '500'}}>Name: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, fontWeight: 'bold' }}>{item.asset_name}</Text></Text>
                       </View>
                     </View>
-                  </View>
-                  <View style={styles.item}>
-                    <View style={{flex: 1}}>
-                      <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: '500'}}>ASSSET NAME: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{item.asset_name}</Text></Text>
+                    <View style={styles.item}>
+                      <View style={{}}>
+                        <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, fontWeight: '500'}}>Description: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, fontWeight: 'bold' }}>{item.asset_description}</Text></Text>
+                      </View>
                     </View>
-                  </View>
-                  <View style={styles.item}>
-                    <View style={{flex: 1}}>
-                      <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: '500'}}>DESCRIPTION: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{item.asset_description}</Text></Text>
+                    <View style={styles.item}>
+                      <View style={{}}>
+                        <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, fontWeight: '500'}}>Type: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, fontWeight: 'bold' }}>{item.current_location == null ? item.original_location : item.current_location }</Text></Text>
+                      </View>
                     </View>
-                  </View>
-                  <View style={styles.item}>
-                    <View style={{flex: 1}}>
-                      <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: '500'}}>LOCATION: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{item.current_location == null ? item.original_location : item.current_location }</Text></Text>
                     </View>
                   </View>
                 </TouchableOpacity>

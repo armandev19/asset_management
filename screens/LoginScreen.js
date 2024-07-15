@@ -82,7 +82,7 @@ const LoginScreen = ({navigation}) => {
         if (responseJson.status === 'success') {
           AsyncStorage.setItem('user_id', JSON.stringify(responseJson.user_data));
           dispatch(setUserData(responseJson.user_data));
-          navigation.replace('DrawerNavigationRoutes');
+          // navigation.replace('DrawerNavigationRoutes');
         } else {
           setErrortext(responseJson.message);
           console.log('Please check your email id or password');
@@ -102,7 +102,7 @@ const LoginScreen = ({navigation}) => {
   return (
     <View style={styles.mainBody}>
       <LinearGradient
-          colors={['#348ceb', 'white' ]}
+          colors={['#fae5d7','#fae5d7' ]}
           style={styles.mainBody}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 2 }}
@@ -115,8 +115,11 @@ const LoginScreen = ({navigation}) => {
           justifyContent: 'center',
           alignContent: 'center',
         }}>
-        <Icon style={{fontSize: 100, color: 'green', textAlign: 'center', color: '#FFFFFF'}} name="devices"></Icon>
-        <Text style={{textAlign: 'center', fontSize: 25, fontWeight: 'bold', marginBottom: 10, color: '#FFFFFF'}}>ASSET MANAGEMENT</Text>
+        <Image
+          source={require('../assets/amslogo.png')}
+          style={{width: 100, height: 100, alignSelf: 'center', borderRadius: 5}}
+        />
+        <Text style={{textAlign: 'center', fontSize: 25, fontWeight: 'bold', marginBottom: 10, color: '#f5571d'}}>ASSET MANAGEMENT</Text>
         <View style={{
           backgroundColor: 'transparent', 
           marginLeft: 20,
@@ -173,7 +176,7 @@ const LoginScreen = ({navigation}) => {
                 padding: 5, 
                 flex: 1, 
                 borderRadius: 5,
-                backgroundColor: '#4988e6',
+                backgroundColor: '#f5571d',
                 height: 38,
                 borderRadius: 20,
                 alignItems: 'center',
