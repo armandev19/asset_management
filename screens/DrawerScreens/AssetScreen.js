@@ -1,12 +1,12 @@
 import React, {useState, useEffect} from 'react';
 import {View, Text, SafeAreaView, FlatList, StyleSheet, TouchableOpacity, Modal, ToastAndroid, Alert, TextInput, RefreshControl, Image} from 'react-native';
-import {Card, Title, Paragraph, Divider, List, Button, IconButton, Searchbar, Chip } from 'react-native-paper';
+import {Card, Title, Paragraph, Divider, List, Button, IconButton, Searchbar, Chip, FAB, Portal } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Loader from './../Components/loader';
 import { selectUserData, setUserData } from '../redux/navSlice';
 import { useSelector } from 'react-redux';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import { ScrollView } from 'react-native-gesture-handler';
 
 const AssetScreen = ({navigation, route}) => {
@@ -18,7 +18,10 @@ const [userdata, setUserData] = useState('');
 const [search, setSearch] = useState('');
 
 const currentUserData = useSelector(selectUserData);
+const isFocused = useIsFocused();
 
+const [open, setOpen] = useState(false);
+const onStateChange = ({ open }) => setOpen(open);
 // const onChangeSearch = () => {
 //   setSearchQuery(query);
 // }
@@ -98,28 +101,72 @@ useEffect(()=>{
   return (
       <View style={{justifyContent: 'center', backgroundColor: '#ffffff', marginTop: 40}}>
         <Loader loading={loading} />
-        <View styles={{flex: 1, padding: 6, alignSelf: 'center'}}>
-          <View style={{ margin: 6, padding: 6, backgroundColor: '#F05924', borderRadius: 20}}>
+        <Portal>
+          {isFocused && (
+            <FAB.Group
+              open={open}
+              style={{ top: 0, right: 0, bottom: 50}}
+              containerStyle={{color: 'red'}}
+              icon={open ? 'cog' : 'more'}
+              color="white"
+              fabStyle={{backgroundColor: '#f5571d'}}
+              actions={[
+                {
+                  icon: 'plus',
+                  label: 'Add',
+                  labelTextColor: '#fff',
+                  labelStyle: { backgroundColor: '#f5571d'},
+                  style: { backgroundColor: '#f5571d' },
+                  onPress: () => navigation.navigate("AddAssetScreen"),
+                },
+                {
+                  icon: 'truck',
+                  label: 'Transfer',
+                  labelTextColor: '#fff',
+                  labelStyle: { backgroundColor: '#f5571d'},
+                  style: { backgroundColor: '#f5571d' },
+                  onPress: () => navigation.navigate("AssetTransferScreen"),
+                },
+                {
+                  icon: 'qrcode-scan',
+                  label: 'Scan',
+                  labelTextColor: '#fff',
+                  labelStyle: { backgroundColor: '#f5571d'},
+                  style: { backgroundColor: '#f5571d' },
+                  onPress: () => navigation.navigate("TrackerScreen"),
+                },
+              ]}
+              
+              onStateChange={onStateChange}
+            />
+          )}
+        </Portal>
+        <View styles={{flex: 1, padding: 6, alignSelf: 'center', paddingBottom: 50}}>
+          <View style={{ padding: 6, borderRadius: 20}}>
             <View style={{flexDirection: 'row', alignItems: 'center', backgroundColor: 'transparent' }}>
               <Searchbar
                 placeholder="Search"
                 onChangeText={handleSearchQueryChange}
                 value={search}
-                style={{ margin: 2, flex: 6, borderRadius: 20}}
+                style={{ margin: 2, flex: 1, borderRadius: 5, backgroundColor: 'lightgray'}}
               />
-              <Button style={{marginHorizontal: 5, marginTop: 1, padding: 5, backgroundColor: '#2eb82e'}} labelStyle={{fontWeight: 'bold'}} icon="plus-circle" compact="true" mode="contained" onPress={() => navigation.navigate('AddAssetScreen')}>
-              </Button>
             </View>
           </View>
-          <ScrollView style={{padding: 5}}>
+          <ScrollView style={{paddingHorizontal: 5, marginBottom: 65}}>
           {assets?.length == 0 ? (
             <Text style={{color: 'black', fontWeight: 'bold', textAlign: 'center'}}>No results found.</Text>
           ): (
             assets?.map((item, index)=>{
               return (
-              <Card key={index} style={{ margin: 3, elevation: 1, padding: 2, borderWidth: 1, borderColor: "lightgray" }}>
-                <TouchableOpacity style={{marginBottom: 5}} onPress={() => navigation.navigate("AssetDetailsScreen", item.asset_code)}>
-                  <View style={{flexDirection: 'row'}}>
+                <TouchableOpacity style={{
+                  marginBottom: 5, 
+                  backgroundColor: 'white', 
+                  borderColor: 'lightgrey', 
+                  borderWidth: 1, 
+                  elevation: 2, 
+                  borderRadius: 5
+                  }} onPress={() => navigation.navigate("AssetDetailsScreen", item.asset_code)}>
+                  <View style={{flexDirection: 'row', padding: 2}}>
                     <View>
                       <Image
                         source={require('../../assets/noimage.jpg')}
@@ -139,13 +186,12 @@ useEffect(()=>{
                     </View>
                     <View style={styles.item}>
                       <View style={{}}>
-                        <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, fontWeight: '500'}}>Type: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, fontWeight: 'bold' }}>{item.current_location == null ? item.original_location : item.current_location }</Text></Text>
+                        <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, fontWeight: '500'}}>Type: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, fontWeight: 'bold' }}>{item.type }</Text></Text>
                       </View>
                     </View>
                     </View>
                   </View>
                 </TouchableOpacity>
-              </Card>
               )
             })
           )}

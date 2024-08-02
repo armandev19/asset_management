@@ -30,7 +30,7 @@ const Loader = (props) => {
             size="large"
             style={styles.activityIndicator}
           /> */}
-          <BarIndicator color='#348ceb' size={20}/>
+          <BarIndicator color='#f5571d' size={20}/>
         </View>
       </View>
     </Modal>

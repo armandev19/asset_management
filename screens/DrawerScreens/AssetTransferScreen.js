@@ -100,12 +100,69 @@ const updateStatus = () => {
 		});
 }
 
+const deleteTransfer = (id) => {
+  setLoading(true);
+  console.log("id", id)
+		let dataToSend = { id: id};
+		let formBody = [];
+		for (let key in dataToSend) {
+			let encodedKey = encodeURIComponent(key);
+			let encodedValue = encodeURIComponent(dataToSend[key]);
+			formBody.push(encodedKey + '=' + encodedValue);
+		}
+		formBody = formBody.join('&');
+		fetch(global.url+'deleteTransfer.php', {
+			method: 'POST',
+			body: formBody,
+			headers: {
+				'Content-Type':
+				'application/x-www-form-urlencoded;charset=UTF-8',
+			},
+		})
+		.then((response) => response.json())
+		.then((responseJson) => {
+			if(responseJson.status == 'success'){
+				alert('Success!');
+        setModalVisible(false);
+			}else{
+				alert('Failed!');
+        setModalVisible(false);
+			}
+		  setLoading(false);
+      getAssets();
+		})
+		.catch((error) => {
+      
+      console.log(error);
+			setLoading(false);
+		});
+}
+
 const handleSearchQueryChange = (query) => {
   setSearch(query);
   setTimeout(()=>{
     getUsers();
   }, 1000)
-  // onChangeSearch(query);
+};
+
+const handleLongPress = (id) => {
+  Alert.alert(
+    "Delete?",
+    "Are you sure you want to delete this data?",
+    [
+      {
+        text: "Delete",
+        onPress: () => deleteTransfer(id),
+        style: "cancel"
+      },
+      {
+        text: "Cancel", 
+        onPress: () => {
+        }
+      }
+    ],
+    { cancelable: false }
+  );
 };
 
 useFocusEffect(
@@ -117,23 +174,30 @@ useFocusEffect(
   return (
       <View style={{justifyContent: 'center', backgroundColor: '#f2f3f8',}}>
         <View styles={{flex: 1, padding: 6, alignSelf: 'center'}}>
-          <Card style={{ margin: 6, padding: 6}}>
-            <View style={{flexDirection: 'row', alignItems: 'center' }}>
-              <Searchbar
-                placeholder="Search"
-                onChangeText={handleSearchQueryChange}
-                value={search}
-                style={{ marginHorizontal: 5, flex: 6}}
-              />
-              <Button style={{marginHorizontal: 5, marginTop: 1, padding: 5}} labelStyle={{fontWeight: 'bold'}} icon="plus" compact="true" mode="contained" onPress={() => navigation.navigate('AddAssetTransferScreen')}>
-              </Button>
-            </View>
-          </Card>
+          <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 5 }}>
+            <Searchbar
+              placeholder="Search"
+              placeholderTextColor={"#fff"}
+              onChangeText={handleSearchQueryChange}
+              value={search}
+              style={{ marginHorizontal: 5, flex: 6, backgroundColor: 'lightgrey'}}
+            />
+            <Button style={{marginHorizontal: 5, marginTop: 1, padding: 5}} labelStyle={{fontWeight: 'bold'}} icon="plus" compact="true" mode="contained" onPress={() => navigation.navigate('AddAssetTransferScreen')}>
+            </Button>
+          </View>
           <ScrollView style={{padding: 5}}>
             {assets && assets?.map((item, index)=>{
               return (
-              <Card key={index} style={{ margin: 3, paddingBottom: 5, elevation: 3, borderWidth: 1, borderColor: "lightgray" }} >
                 <TouchableOpacity
+                style={{
+                  backgroundColor: 'white', 
+                  borderColor: 'lightgrey', 
+                  borderWidth: 1, 
+                  elevation: 2, 
+                  borderRadius: 5,
+                  marginVertical: 2
+                }}
+                onLongPress={()=>handleLongPress(item.ref_no)}
                 onPress={() => updateTransferStatus(item.id)}
                 >
                   <View style={{borderBottomColor: 'lightgray', borderBottomWidth: 1 }}>
@@ -173,7 +237,6 @@ useFocusEffect(
                     </View>
                   </View>
                 </TouchableOpacity>
-              </Card>
               )
             })}
           </ScrollView>

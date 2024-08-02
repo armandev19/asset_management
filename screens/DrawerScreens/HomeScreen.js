@@ -261,41 +261,19 @@ const HomeScreen = ({navigation, props}) => {
   return (
     <Provider>
     <ScrollView style={{flex: 1, backgroundColor: '#ffffff'}}>
-      <View style={{flex: 1, padding: 16, borderBottomLeftRadius: 60, borderBottomRightRadius: 60, backgroundColor: '#F05924', height: 100}}>
-        <Text style={{color: "white", fontSize: 14, fontWeight: '500', marginBottom: 10}}>Welcome {currentUserData?.firstname}</Text>
-        <View style={{alignItems: 'flex-start'}}>
-          {/* <TouchableOpacity onPress={()=>setFilterShow(true)} style={{backgroundColor: '#1970cf', padding: 5, borderRadius: 3, borderColor: '#1970cf', elevation: 5}}>
-            <Text style={{color: 'white'}}>{filter}</Text>
-          </TouchableOpacity> */}
-        </View>
+      <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between', padding: 16, borderBottomLeftRadius: 25, borderBottomRightRadius: 25, backgroundColor: '#F05924', height: 60}}>
+        <Text style={{color: "white", fontSize: 14, fontWeight: '500', marginTop: 5}}>Welcome {currentUserData?.firstname}</Text>
+        <Text style={{color: "white", fontSize: 14, fontWeight: '500', marginTop: 5}}>Sat, July 20</Text>
       </View>
-      <View style={{flexDirection: 'row', justifyContent: 'space-evenly', marginTop: -50, marginHorizontal: 20}}>
-        <View style={{borderColor: "#1970cf", borderWidth: 1, borderRadius: 5, width: 150, height: 90, padding: 5, backgroundColor: '#fae5d7'}}>
+      <View style={{flexDirection: 'row', justifyContent: 'space-evenly', marginTop: 15, marginHorizontal: 20}}>
+        <View style={{borderColor: "#F05924", borderWidth: 1, borderRadius: 5, width: 150, height: 90, padding: 5, backgroundColor: '#F05924'}}>
           <Text style={{color: "white", fontSize: 14, fontWeight: '500', textAlign: 'center', marginTop: 10}} onPress={()=>logout()}>Assets</Text>
           <Text style={{color: "white", fontSize: 25, textAlign: 'center', fontWeight: 'bold'}}>{newAssets}</Text>
         </View>
-        <View style={{borderColor: "#1970cf", borderWidth: 1, borderRadius: 5, width: 150, height: 90, padding: 5, backgroundColor: '#fae5d7'}}>
+        <View style={{borderColor: "#F05924", borderWidth: 1, borderRadius: 5, width: 150, height: 90, padding: 5, backgroundColor: '#F05924'}}>
           <Text style={{color: "white", fontSize: 14, fontWeight: '500', textAlign: 'center', marginTop: 10}}>Operational</Text>
           <Text style={{color: "white", fontSize: 25, textAlign: 'center', fontWeight: 'bold'}}>{operationalAssets}</Text>
         </View>
-        {/* <View style={{borderColor: "#1970cf", borderWidth: 1, borderRadius: 5, width: 110, height: 90, padding: 5, backgroundColor: '#1970cf'}}>
-          <Text style={{color: "white", fontSize: 14, fontWeight: '500', textAlign: 'center', marginTop: 10}}>Maintenance</Text>
-          <Text style={{color: "white", fontSize: 25, textAlign: 'center', fontWeight: 'bold'}}>{forMaintenanceAssets}</Text>
-        </View> */}
-      </View>
-      <View style={{flexDirection: 'row', justifyContent: 'space-evenly', marginTop: 20, marginHorizontal: 20}}>
-        <View style={{borderColor: "#1970cf", borderWidth: 1, borderRadius: 5, width: 150, height: 90, padding: 5, backgroundColor: '#1970cf'}}>
-          <Text style={{color: "white", fontSize: 14, fontWeight: '500', textAlign: 'center', marginTop: 10}}>Assets</Text>
-          <Text style={{color: "white", fontSize: 25, textAlign: 'center', fontWeight: 'bold'}}>{newAssets}</Text>
-        </View>
-        <View style={{borderColor: "#1970cf", borderWidth: 1, borderRadius: 5, width: 150, height: 90, padding: 5, backgroundColor: '#1970cf'}}>
-          <Text style={{color: "white", fontSize: 14, fontWeight: '500', textAlign: 'center', marginTop: 10}}>Operational</Text>
-          <Text style={{color: "white", fontSize: 25, textAlign: 'center', fontWeight: 'bold'}}>{operationalAssets}</Text>
-        </View>
-        {/* <View style={{borderColor: "#1970cf", borderWidth: 1, borderRadius: 5, width: 110, height: 90, padding: 5, backgroundColor: '#1970cf'}}>
-          <Text style={{color: "white", fontSize: 14, fontWeight: '500', textAlign: 'center', marginTop: 10}}>Maintenance</Text>
-          <Text style={{color: "white", fontSize: 25, textAlign: 'center', fontWeight: 'bold'}}>{forMaintenanceAssets}</Text>
-        </View> */}
       </View>
       <View style={{flex: 5, backgroundColor: 'white', top: 0, minHeight: 600}}>
         <View
@@ -306,16 +284,15 @@ const HomeScreen = ({navigation, props}) => {
             marginTop: 5
           }}>
             
-      {/* <TouchableOpacity onPress={()=>sendSms()}><Text style={{color: 'black'}}>asdasda</Text></TouchableOpacity> */}
-            <View style={{width: '100%', padding: 5}}>
-              <Text style={{color: "#000", fontSize: 16, textAlign: 'left', fontWeight: '400', marginTop: 4}}>NEW ASSETS</Text>
+            <View style={{width: '100%', padding: 10, borderRadius: 5, elevation: 2, backgroundColor: '#f5ede4'}}>
+              <Text style={{color: "#000", fontSize: 16, textAlign: 'left', fontWeight: '400', marginTop: 4}}>Operational</Text>
               <LineChart style={styles.chart}
                 data={dataStatus}
                 xAxis={xAxis}
                 yAxis={yAxis}
               />
             </View>
-            <View style={{width: '100%', padding: 5, marginTop: 10}}>
+            <View style={{width: '100%', padding: 10, borderRadius: 5, elevation: 2, backgroundColor: '#f5ede4', marginTop: 10}}>
               <Text style={{color: "#000", fontSize: 16, fontWeight: '400', marginTop: 4}}>NEW ASSETS</Text>
               <BarChart
                 gridBackgroundColor={processColor('#ffffff')}

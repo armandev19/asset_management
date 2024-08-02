@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, StyleSheet, KeyboardAvoidingView, TouchableOpacity} from 'react-native';
-import {Card, Title, Paragraph, Divider, Button, Modal} from 'react-native-paper';
+import {View, Text, StyleSheet, KeyboardAvoidingView, TouchableOpacity, Image} from 'react-native';
+import {Card, Title, Paragraph, Divider, Button, Modal, FAB, Portal} from 'react-native-paper';
 import QRCode from 'react-native-qrcode-svg';
 import Loader from './Components/loader';
 import { selectUserData, setUserData } from './redux/navSlice';
@@ -8,15 +8,18 @@ import { useSelector } from 'react-redux';
 import Moment from 'moment';
 import { ScrollView } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 
 const AssetDetailsScreen = ({navigation, route}) => {
-  
   const params = route.params;
   const [details, setAssetDetails] = useState([]);
   const [loading, setLoading] = useState(false);
-  
+  const isFocused = useIsFocused();
+
+  const [open, setOpen] = useState(false);
+  const onStateChange = ({ open }) => setOpen(open);
   const [modalVisible, setModalVisible] = useState(false);
+
   const getAssetDetails = () => {
     setLoading(true);
 		let dataToSend = { id: params };
@@ -47,150 +50,126 @@ const AssetDetailsScreen = ({navigation, route}) => {
 		});
 	}
 
-  // useEffect(()=>{
-  //   getAssetDetails();
-  // }, [])
+  useEffect(()=>{
+  }, [])
+
   useFocusEffect(
     React.useCallback(() => {
       getAssetDetails();
     }, []),
   );
 
-
-  //danger #fc4747
-  //primary #
-  //secondary #348ceb
-  //success #41e85a
   return (
-		<ScrollView style={{ paddingBottom: 20}}>
-    <Card style={{ marginHorizontal: 10, marginVertical: 10, padding: 5, marginBottom: 10, elevation: 3, height: '100%', borderRadius: 10, elevation: 5 }}>
-      <Card.Cover style={{marginTop: 3}} source={{ uri: details?.image_loc ? details?.image_loc : 'https://picsum.photos/700' }} />
-        <Card.Title titleStyle={{textTransform: 'uppercase'}} title={details.asset_name}/>
-        <Card.Content style={{backgroundColor: 'white'}}>
-            <View style={{flexDirection: 'row', marginBottom: 3}}>
-              <Text style={styles.col_title}>Asset Code </Text>
-              <Text style={styles.col_content}>{details.asset_code ? details.asset_code : 'N/A'}</Text>
-            </View>
-            <View style={{flexDirection: 'row', marginBottom: 3}}>
-              <Text style={styles.col_title}>Description </Text>
-              <Text style={styles.col_content}>{details.asset_description ? details.asset_description : 'N/A'}</Text>
-            </View>
-            <View style={{flexDirection: 'row', marginBottom: 3}}>
-              <Text style={styles.col_title}>Original Location </Text>
-              <Text style={styles.col_content}>{details.name ? details.name : 'N/A'}</Text>
-            </View>
-            <View style={{flexDirection: 'row', marginBottom: 3}}>
-              <Text style={styles.col_title}>Current Location </Text>
-              <Text style={styles.col_content}>{details.name ? details.name : 'N/A'}</Text>
-            </View>
-            <View style={{flexDirection: 'row', marginBottom: 3}}>
-              <Text style={styles.col_title}>Original Price </Text>
-              <Text style={styles.col_content}>{details.original_price ? details.original_price : 'N/A'}</Text>
-            </View>
-            <View style={{flexDirection: 'row', marginBottom: 3}}>
-              <Text style={styles.col_title}>Current Price </Text>
-              <Text style={styles.col_content}>{details.current_price ? details.original_price : 'N/A'}</Text>
-            </View>
-            <View style={{flexDirection: 'row', marginBottom: 3}}>
-              <Text style={styles.col_title}>Status </Text>
-                <View style={{flex: 1, alignItems: "flex-end"}}>
-                {details.status === 'Operational' ? 
-                 <View 
-                 style={{flex: 1, padding: 3, backgroundColor: '#2eb82e', flexDirection: 'row', borderRadius: 5, justifyContent: 'center'}}>
-                    <Icon name='check-circle' size={13} color={'#ffffff'} ></Icon>
-                    <Text adjustsFontSizeToFit style={{ color: '#ffffff', fontSize: 13, fontWeight: "bold", textTransform: 'uppercase', marginRight: 2}}> {details.status ? details.status : 'N/A'}</Text>
-                  </View>
-                : details.status === 'Under Repair' ? 
-                <View 
-                style={{flex: 1, padding: 3, backgroundColor: '#ffcc00', flexDirection: 'row', borderRadius: 5, justifyContent: 'center'}}>
-                    <Icon name='check-circle' size={13} color={'#ffffff'} ></Icon>
-                    <Text adjustsFontSizeToFit style={{ color: '#ffffff', fontSize: 13, fontWeight: "bold", textTransform: 'uppercase', marginRight: 2}}> {details.status ? details.status : 'N/A'}</Text>
-                  </View>
-                :  
-                <View 
-                 style={{flex: 1, padding: 3, backgroundColor: '#fc4747', flexDirection: 'row', borderRadius: 5, justifyContent: 'center'}}>
-                  <Icon name='check-circle' size={13} color={'#ffffff'} ></Icon>
-                  <Text adjustsFontSizeToFit style={{ color: '#ffffff', fontSize: 13, fontWeight: "bold", textTransform: 'uppercase', marginRight: 2}}> {details.status ? details.status : 'N/A'}</Text>
-                </View>
-              }
-                
+      <ScrollView style={{}}>
+        <Portal>
+          {isFocused && (
+            <FAB.Group
+              open={open}
+              style={{ top: 0, right: 0, bottom: 50}}
+              containerStyle={{color: 'red'}}
+              icon={open ? 'cog' : 'more'}
+              color="white"
+              fabStyle={{backgroundColor: '#f5571d'}}
+              actions={[
+                {
+                  icon: 'qrcode-scan',
+                  label: 'QR Code',
+                  labelTextColor: '#fff',
+                  labelStyle: { backgroundColor: '#f5571d'},
+                  style: { backgroundColor: '#f5571d' },
+                  onPress: () => setModalVisible(true),
+                },
+                {
+                  icon: 'wrench',
+                  label: 'Maintenance',
+                  labelTextColor: '#fff',
+                  labelStyle: { backgroundColor: '#f5571d'},
+                  style: { backgroundColor: '#f5571d' },
+                  onPress: () => navigation.navigate("AssetMaintenanceScreen", details),
+                },
+                {
+                  icon: 'pencil',
+                  label: 'Update',
+                  labelTextColor: '#fff',
+                  labelStyle: { backgroundColor: '#f5571d'},
+                  style: { backgroundColor: '#f5571d' },
+                  onPress: () => navigation.navigate("UpdateAssetScreen", details),
+                },
+              ]}
+              
+              onStateChange={onStateChange}
+            />
+          )}
+        </Portal>
+      <View style={{ marginHorizontal: 10, marginVertical: 10, padding: 5, marginBottom: 10}}>
+        <View style={{ borderWidth: 0.5, borderColor: 'gray', marginBottom: 5, elevation: 2}}>
+          <Image
+            source={require('../assets/amslogo.png')}
+            style={{width: 100, height: 100, alignSelf: 'center', borderRadius: 5}}
+          />
+        </View>
+        <View style={{flexDirection: 'row', marginBottom: 3}}>
+          <Text style={styles.col_title}>Asset Code </Text>
+          <Text style={styles.col_content}>{details.asset_code ? details.asset_code : 'N/A'}</Text>
+        </View>
+        <View style={{flexDirection: 'row', marginBottom: 3}}>
+          <Text style={styles.col_title}>Description </Text>
+          <Text style={styles.col_content}>{details.asset_description ? details.asset_description : 'N/A'}</Text>
+        </View>
+        <View style={{flexDirection: 'row', marginBottom: 3}}>
+          <Text style={styles.col_title}>Qty </Text>
+          <Text style={styles.col_content}>{details.qty ? details.qty : 'N/A'}</Text>
+        </View>
+        <View style={{flexDirection: 'row', marginBottom: 3}}>
+          <Text style={styles.col_title}>Original Location </Text>
+          <Text style={styles.col_content}>{details.name ? details.name : 'N/A'}</Text>
+        </View>
+        <View style={{flexDirection: 'row', marginBottom: 3}}>
+          <Text style={styles.col_title}>Current Location </Text>
+          <Text style={styles.col_content}>{details.name ? details.name : 'N/A'}</Text>
+        </View>
+        <View style={{flexDirection: 'row', marginBottom: 3}}>
+          <Text style={styles.col_title}>Original Price </Text>
+          <Text style={styles.col_content}>{details.original_price ? details.original_price : 'N/A'}</Text>
+        </View>
+        <View style={{flexDirection: 'row', marginBottom: 3}}>
+          <Text style={styles.col_title}>Current Price </Text>
+          <Text style={styles.col_content}>{details.current_price ? details.original_price : 'N/A'}</Text>
+        </View>
+        <View style={{flexDirection: 'row', marginBottom: 3}}>
+          <Text style={styles.col_title}>Status </Text>
+            <View style={{flex: 1, alignItems: "flex-end"}}>
+            {details.status === 'Operational' ? 
+              <View 
+              style={{flex: 1, padding: 3, backgroundColor: '#2eb82e', flexDirection: 'row', borderRadius: 5, justifyContent: 'center'}}>
+                <Icon name='check-circle' size={13} color={'#ffffff'} ></Icon>
+                <Text adjustsFontSizeToFit style={{ color: '#ffffff', fontSize: 13, fontWeight: "bold", textTransform: 'uppercase', marginRight: 2}}> {details.status ? details.status : 'N/A'}</Text>
               </View>
+            : details.status === 'Under Repair' ? 
+            <View 
+            style={{flex: 1, padding: 3, backgroundColor: '#ffcc00', flexDirection: 'row', borderRadius: 5, justifyContent: 'center'}}>
+                <Icon name='check-circle' size={13} color={'#ffffff'} ></Icon>
+                <Text adjustsFontSizeToFit style={{ color: '#ffffff', fontSize: 13, fontWeight: "bold", textTransform: 'uppercase', marginRight: 2}}> {details.status ? details.status : 'N/A'}</Text>
+              </View>
+            :  
+            <View 
+              style={{flex: 1, padding: 3, backgroundColor: '#fc4747', flexDirection: 'row', borderRadius: 5, justifyContent: 'center'}}>
+              <Icon name='check-circle' size={13} color={'#ffffff'} ></Icon>
+              <Text adjustsFontSizeToFit style={{ color: '#ffffff', fontSize: 13, fontWeight: "bold", textTransform: 'uppercase', marginRight: 2}}> {details.status ? details.status : 'N/A'}</Text>
             </View>
-            <View style={{flexDirection: 'row', marginBottom: 3}}>
-              <Text style={styles.col_title}>Purchased Date </Text>
-              <Text style={styles.col_content}>{details.purchase_date ? details.purchase_date : 'N/A'}</Text>
-            </View>
-            <View style={{flexDirection: 'row', marginBottom: 3}}>
-              <Text style={styles.col_title}>Added by</Text>
-              <Text style={styles.col_content}>{details.access_level ? details.access_level : 'N/A'}</Text>
-            </View>
-          <View style={{marginTop: 40, justifyContent: 'center'}}>
-            <View style={{justifyContent: 'center', alignItems: "center"}}>
-                <TouchableOpacity 
-                  style={{
-                    backgroundColor: '#348ceb',
-                    width: '80%',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    height: 35,
-                    borderRadius: 10,
-                    elevation: 5,
-                    marginTop: 10
-                  }}
-                  onPress={() => setModalVisible(true)}
-                >
-                  <Text style={{color: "#fff", fontSize: 16, fontWeight: '500'}}>
-                    <Icon name='qrcode' size={18} color={'#ffffff'} ></Icon> QR CODE
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity 
-                  style={{
-                    backgroundColor: '#fc3d39',
-                    width: '80%',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    height: 35,
-                    borderRadius: 10,
-                    elevation: 5,
-                    marginTop: 10
-                  }}
-                  onPress={() => navigation.navigate("AssetMaintenanceScreen", details)}
-                >
-                  <Text style={{color: "#fff", fontSize: 16, fontWeight: '500'}}>
-                    <Icon name='cog' size={18} color={'#ffffff'} ></Icon> MAINTENANCE
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity 
-                  style={{
-                    backgroundColor: '#53d769',
-                    width: '80%',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    height: 35,
-                    borderRadius: 10,
-                    elevation: 5,
-                    marginTop: 10
-                  }}
-                  onPress={() => navigation.navigate("UpdateAssetScreen", details)}
-                >
-                  <Text style={{color: "#fff", fontSize: 16, fontWeight: '500'}}>
-                    <Icon name='pencil' size={18} color={'#ffffff'} ></Icon> UPDATE</Text>
-                </TouchableOpacity>
-            </View>
-            {/* <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 10}}> */}
-                
-            {/* </View> */}
-            
-            
+          }
           </View>
-        </Card.Content>
-        {/* <Card.Actions style={{justifyContent: 'flex-end', marginTop: 100}}>
-          <Button icon="cog" color="#348ceb" mode="contained" style={{marginRight: 5}} onPress={() => navigation.navigate("AssetMaintenanceScreen", details.id)}>Maintenance</Button>
-          <Button icon="pencil" mode="contained" style={{marginRight: 5}} onPress={() => navigation.navigate("UpdateAssetScreen", details.id)}>Update</Button>
-          <Button icon="delete" color="red" mode="contained">Delete</Button>
-        </Card.Actions> */}
-    </Card>
-
+        </View>
+        <View style={{flexDirection: 'row', marginBottom: 3}}>
+          <Text style={styles.col_title}>Purchased Date </Text>
+          <Text style={styles.col_content}>{details.purchase_date ? details.purchase_date : 'N/A'}</Text>
+        </View>
+        <View style={{flexDirection: 'row', marginBottom: 3}}>
+          <Text style={styles.col_title}>Added by</Text>
+          <Text style={styles.col_content}>{details.access_level ? details.access_level : 'N/A'}</Text>
+        </View>
+        </View>
+        
       <Modal
         animationType="fade"
         transparent={true}
@@ -243,6 +222,6 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
-  col_title: {color: '#000000', width: '45%', fontSize: 16, fontWeight: '400', fontFamily: 'Roboto'},
+  col_title: {color: '#73706e', width: '45%', fontSize: 16, fontWeight: '400', fontFamily: 'Roboto'},
   col_content: {color: '#000', textTransform: 'uppercase', fontSize: 16, width: '55%', textAlign: 'right', fontFamily: 'Roboto'}
 });

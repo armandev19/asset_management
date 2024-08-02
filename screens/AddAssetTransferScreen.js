@@ -131,7 +131,7 @@ const AddAssetTransferScreen = ({route, navigation}) => {
 								list={assetList}
 							/>
 							<DropDown
-								label={"Target Location"}
+								label={"Transfer To"}
 								mode={"outlined"}
 								visible={showDropDown}
                 style={{alignItems: 'center'}}

@@ -26,6 +26,7 @@ const AddAssetScreen = ({route, navigation}) => {
 	const [purchaseDate, setPurchaseDate] = useState("");
   const [location, setLocation] = useState("");
   const [type, setType] = useState("");
+  const [qty, setQty] = useState(1);
 	const [locationList, setLocationList] = useState([]);
 	const [assetType, setAssetType] = useState([]);
 	const currentUserData = useSelector(selectUserData);
@@ -52,7 +53,7 @@ const AddAssetScreen = ({route, navigation}) => {
 
 	const saveAsset = () => {
 		setLoading(true);
-		let dataToSend = { name: name, description : description, type: type, price: price, purchaseDate: date, location: location, created_by: currentUserData.id, imageName: imageName, imageUri: imageUri };
+		let dataToSend = { name: name, description : description, qty: qty, type: type, price: price, purchaseDate: date, location: location, created_by: currentUserData.id, imageName: imageName, imageUri: imageUri };
 		let formBody = [];
 
 		for (let key in dataToSend) {
@@ -223,6 +224,13 @@ const AddAssetScreen = ({route, navigation}) => {
 								activeOutlineColor='#348ceb'
                 value={description}
                 onChangeText={description => setDescription(description)}
+							/>
+              <TextInput
+								mode="outlined"
+                label="Quantity"
+								activeOutlineColor='#348ceb'
+                value={qty}
+                onChangeText={qty => setQty(qty)}
 							/>
               <View style={{ zIndex: 9999 }}>
                 <DropDown

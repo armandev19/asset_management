@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import {View, Text, SafeAreaView, FlatList, StyleSheet, TouchableOpacity, Modal, ToastAndroid, Alert, RefreshControl, KeyboardAvoidingView} from 'react-native';
 import {Card, Title, Paragraph, Divider, List, Button, IconButton, Searchbar, TextInput} from 'react-native-paper';
+import { Swipeable } from 'react-native-gesture-handler';
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -184,10 +185,29 @@ const onRefresh = () => {
   getAssetsMaintenance();
 };
 
+const LeftActions = () => {
+  return (
+    <View style={styles.leftAction}>
+      <Text style={styles.actionText}>Left Action</Text>
+    </View>
+  );
+};
+
+const RightActions = () => {
+  return (
+    <View style={styles.rightAction}>
+      <Text style={styles.actionText}>Right Action</Text>
+    </View>
+  );
+};
+
 function RowItem({ key, navigation, description, cost, schedule, status, start_date, end_date, technician}) {
   return (
-    <Card style={{ margin: 3 }}>
-      <View style={{marginBottom: 5}}>
+    <Swipeable
+        renderLeftActions={LeftActions}
+        renderRightActions={RightActions}
+      >
+      <View style={{marginBottom: 5, borderWidth: 1, borderColor: 'lightgrey', elevation: 2, borderRadius: 5, backgroundColor: 'white', }}>
         <View>
           <View style={{ flexDirection: 'row', padding: 5, marginLeft: 3 }}>
             <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 15, fontWeight: "bold", textTransform: 'uppercase', width: '35%' }}>{description}</Text>
@@ -226,7 +246,7 @@ function RowItem({ key, navigation, description, cost, schedule, status, start_d
           </Button>
         </View>
       </View>
-    </Card>
+    </Swipeable>
   );
 }
 // 00cc44 green operational
@@ -241,24 +261,21 @@ useFocusEffect(
   return (
       <View style={{justifyContent: 'center', backgroundColor: '#f2f3f8',}}>
         <View styles={{flex: 1, padding: 6, alignSelf: 'center'}}>
-          <Card style={{ margin: 6, padding: 6, backgroundColor: '#f2f3f8'}}>
-            <View style={{flexDirection: 'row', alignItems: 'center', backgroundColor: 'transparent' }}>
+            <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 5 }}>
               <Searchbar
                 placeholder="Search"
+                placeholderTextColor={"white"}
                 onChangeText={handleSearchQueryChange}
                 value={search}
-                style={{ marginHorizontal: 5, flex: 6}}
+                style={{ marginHorizontal: 5, flex: 6, backgroundColor: 'lightgrey'}}
               />
               <Button style={{marginHorizontal: 5, marginTop: 1, padding: 5, backgroundColor: '#00cc44'}} labelStyle={{fontWeight: 'bold'}} icon="plus" compact="true" mode="contained" onPress={()=>setModalVisible(true)}>
               </Button>
             </View>
-          </Card>
-          <Card style={{ marginHorizontal: 8}}>
             <View style={{justifyContent: 'center', alignItems: "flex-start", padding: 5}}>
               <Text style={{color: 'black', fontWeight: 'bold', fontSize: 18}}>Asset: {params.asset_name}</Text>
               <Text style={{color: 'black', fontWeight: 'bold', fontSize: 18}}>Code: {params.asset_code}</Text>
             </View>
-          </Card>
           {assets.length == 0 ? (
             <Text style={{color: 'black', fontSize: 20, textAlign: 'center', marginTop: 5}}>NO DATA FOUND.</Text>
           ): (

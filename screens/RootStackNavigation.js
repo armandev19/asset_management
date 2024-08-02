@@ -5,20 +5,17 @@ import Navigation from './Components/Navigation';
 import { useSelector, useDispatch } from 'react-redux';
 import LoginScreen from './LoginScreen';
 import SplashScreen from './SplashScreen';
-
 import { selectUserData, setUserData } from './redux/navSlice';
 const RootStackNavigation = () => { 
-    const userData = useSelector(selectUserData);
+const userData = useSelector(selectUserData);
     return (
-        <SafeAreaView style={{flex: 1}}>
-            <NavigationContainer >
-                    { 
-                        !userData
-                        ? <LoginScreen />
-                        : <Navigation />
-                    }
-            </NavigationContainer>
-        </SafeAreaView>
+        <NavigationContainer >
+                { 
+                    !userData
+                    ? <LoginScreen />
+                    : <Navigation />
+                }
+        </NavigationContainer>
     )
 }
 

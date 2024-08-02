@@ -67,22 +67,17 @@ const LoginScreen = ({navigation}) => {
       method: 'POST',
       body: formBody,
       headers: {
-        //Header Defination
         'Content-Type':
         'application/x-www-form-urlencoded;charset=UTF-8',
       },
     })
       .then((response) => response.json())
       .then((responseJson) => {
-        // alert(responseJson)
         console.log(responseJson)
-        //Hide Loader
         setLoading(false);
-        // If server response message same as Data Matched
         if (responseJson.status === 'success') {
           AsyncStorage.setItem('user_id', JSON.stringify(responseJson.user_data));
           dispatch(setUserData(responseJson.user_data));
-          // navigation.replace('DrawerNavigationRoutes');
         } else {
           setErrortext(responseJson.message);
           console.log('Please check your email id or password');
@@ -117,9 +112,9 @@ const LoginScreen = ({navigation}) => {
         }}>
         <Image
           source={require('../assets/amslogo.png')}
-          style={{width: 100, height: 100, alignSelf: 'center', borderRadius: 5}}
+          style={{width: 150, height: 150, justifyContent: 'center', alignSelf: 'center' ,borderRadius: 5}}
         />
-        <Text style={{textAlign: 'center', fontSize: 25, fontWeight: 'bold', marginBottom: 10, color: '#f5571d'}}>ASSET MANAGEMENT</Text>
+        <Text style={{textAlign: 'center', fontSize: 25, fontWeight: 'bold', marginBottom: 10, color: '#f5571d'}}>AMS</Text>
         <View style={{
           backgroundColor: 'transparent', 
           marginLeft: 20,

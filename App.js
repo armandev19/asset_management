@@ -7,53 +7,22 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
  
-// Import Screens
-import SplashScreen from './screens/SplashScreen';
-import LoginScreen from './screens/LoginScreen';
-import DrawerNavigationRoutes from './screens/DrawerNavigationRoutes';
-import DetailScreen from './screens/DetailScreen';
-import EditProfileScreen from './screens/EditProfileScreen';
-import UserDetailsScreen from './screens/UserDetailsScreen';
-import AssetDetailsScreen from './screens/AssetDetailsScreen';
-import AddAssetScreen from './screens/AddAssetScreen';
-import AddLocationScreen from './screens/AddLocationScreen';
-import UpdateAssetScreen from './screens/UpdateAssetScreen';
-import UpdateLocationScreen from './screens/UpdateLocationScreen';
-import UpdateUsersScreen from './screens/UpdateUsersScreen';
-import AddUsersScreen from './screens/AddUsersScreen';
-import AddAssetTransferScreen from './screens/AddAssetTransferScreen';
-import AssetMaintenanceScreen from './screens/AssetMaintenanceScreen';
-import CameraScreen from './screens/CameraScreen';
+import { Provider as PaperProvider, DefaultTheme } from 'react-native-paper';
 import * as firebase from '@react-native-firebase/app';
 import messaging from '@react-native-firebase/messaging';
 import PushNotification from 'react-native-push-notification';
 import RootStackNavigation from './screens/RootStackNavigation';
 // import { selectUserData, setUserData } from './screens/redux/navSlice';
 
-import { Provider, useSelector } from 'react-redux';
+import { Provider as ReduxProvider, useSelector } from 'react-redux';
 import { store } from './screens/redux/store';
-import SmsAndroid from 'react-native-get-sms-android';
 
 const Stack = createStackNavigator();
- 
-const Auth = () => {
-  // Stack Navigator for Login and Sign up Screen
-  return (
-    <Stack.Navigator initialRouteName="SplashScreen">
-      <Stack.Screen
-        name="SplashScreen"
-        component={SplashScreen}
-        options={{headerShown: false}}
-      />
-    </Stack.Navigator>
-  );
-};
 
 
 const App = () => {
   // global.url = "http://127.0.0.1/asset_management/";
-  
-  global.url = "http://192.168.1.5/asset_management/";
+  global.url = "http://192.168.192.35/asset_management/";
   // global.url = "https://app-ams.online/asset_management/"
   const appState = useRef(AppState.currentState);
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
@@ -142,10 +111,14 @@ const App = () => {
     return unsubscribe;
   }
 
+  const SimpleComponent = () => <Text>Hello, world!</Text>;
+
   return (
-    <Provider store={store}>
-     <RootStackNavigation />
-    </Provider>
+    <ReduxProvider store={store}>
+      <PaperProvider>
+        <RootStackNavigation />
+      </PaperProvider>
+    </ReduxProvider>
   );
 };
  
