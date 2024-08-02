@@ -328,7 +328,7 @@ const ReportScreen = ({navigation, route}) => {
             }
               
           </View>
-          <TouchableOpacity 
+          {/* <TouchableOpacity 
           style={{
             borderRadius: 3, 
             backgroundColor: 'grey', 
@@ -339,7 +339,7 @@ const ReportScreen = ({navigation, route}) => {
             alignSelf: 'center'
           }}
           onPress={()=>createPDF()}
-          ><Text style={{textAlign: 'center', color: '#fff'}}>EXPORT TO PDF</Text></TouchableOpacity>
+          ><Text style={{textAlign: 'center', color: '#fff'}}>EXPORT TO PDF</Text></TouchableOpacity> */}
       </View>
     </ScrollView>
     </Provider>

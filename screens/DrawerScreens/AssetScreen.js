@@ -143,7 +143,7 @@ useEffect(()=>{
         </Portal>
         <View styles={{flex: 1, padding: 6, alignSelf: 'center', paddingBottom: 50}}>
           <View style={{ padding: 6, borderRadius: 20}}>
-            <View style={{flexDirection: 'row', alignItems: 'center', backgroundColor: 'transparent' }}>
+            <View style={{flexDirection: 'row', backgroundColor: 'transparent' }}>
               <Searchbar
                 placeholder="Search"
                 onChangeText={handleSearchQueryChange}

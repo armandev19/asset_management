@@ -190,7 +190,7 @@ const UpdateUsersScreen = ({route, navigation}) => {
 								<Button style={{marginTop: 15}} icon="check" color='green' mode="contained" onPress={() => saveUser()}>
 									SAVE
 								</Button>
-                <Button style={{marginTop: 5}} icon="close" color='red' mode="contained">
+                <Button style={{marginTop: 5}} icon="close" color='red' mode="contained" onPress={() => navigation.goBack()}>
 									Cancel
 								</Button>
 							</View>

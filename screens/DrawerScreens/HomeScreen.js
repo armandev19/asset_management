@@ -16,9 +16,11 @@ import { Button, Modal, Provider } from 'react-native-paper';
 import LinearGradient from 'react-native-linear-gradient';
 import SendSMS from 'react-native-sms'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import moment from 'moment/moment';
 
 const HomeScreen = ({navigation, props}) => {
   // const [userData, setUserData] = useState({});
+  let currentDate = moment().format('ddd, MMM DD');
   const [users, setUsers] = useState({});
   const currentUserData = useSelector(selectUserData);
   const fbKey = useSelector(selectFCMToken);
@@ -247,7 +249,7 @@ const HomeScreen = ({navigation, props}) => {
   useEffect(()=>{
     getNewAssets();
     getAssetsByStatus();
-    test(filter);
+    test();
   }, [])
 
   const closeModal = (val) => {
@@ -263,16 +265,16 @@ const HomeScreen = ({navigation, props}) => {
     <ScrollView style={{flex: 1, backgroundColor: '#ffffff'}}>
       <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between', padding: 16, borderBottomLeftRadius: 25, borderBottomRightRadius: 25, backgroundColor: '#fc8953', height: 60}}>
         <Text style={{color: "white", fontSize: 14, fontWeight: '500', marginTop: 5}}>Welcome {currentUserData?.firstname}</Text>
-        <Text style={{color: "white", fontSize: 14, fontWeight: '500', marginTop: 5}}>Sat, July 20</Text>
+        <Text style={{color: "white", fontSize: 14, fontWeight: '500', marginTop: 5}}>{currentDate}</Text>
       </View>
       <View style={{flexDirection: 'row', justifyContent: 'space-evenly', marginTop: 15, marginHorizontal: 20}}>
         <View style={{borderColor: "#F05924", borderWidth: 1, borderRadius: 5, width: 150, height: 90, padding: 5, backgroundColor: '#fc8953'}}>
-          <Text style={{color: "white", fontSize: 14, fontWeight: '500', textAlign: 'center', marginTop: 10}} onPress={()=>logout()}>Assets</Text>
-          <Text style={{color: "white", fontSize: 25, textAlign: 'center', fontWeight: 'bold'}}>{newAssets}</Text>
+          <Text style={{color: "white", fontSize: 18, fontWeight: '500', textAlign: 'center', marginTop: 10}} onPress={()=>logout()}>Assets</Text>
+          <Text style={{color: "white", fontSize: 35, textAlign: 'center', fontWeight: 'bold'}}>{newAssets}</Text>
         </View>
         <View style={{borderColor: "#F05924", borderWidth: 1, borderRadius: 5, width: 150, height: 90, padding: 5, backgroundColor: '#fc8953'}}>
-          <Text style={{color: "white", fontSize: 14, fontWeight: '500', textAlign: 'center', marginTop: 10}}>Operational</Text>
-          <Text style={{color: "white", fontSize: 25, textAlign: 'center', fontWeight: 'bold'}}>{operationalAssets}</Text>
+          <Text style={{color: "white", fontSize: 18, fontWeight: '500', textAlign: 'center', marginTop: 10}}>Operational</Text>
+          <Text style={{color: "white", fontSize: 35, textAlign: 'center', fontWeight: 'bold'}}>{operationalAssets}</Text>
         </View>
       </View>
       <View style={{flex: 5, backgroundColor: 'white', top: 0, minHeight: 600}}>

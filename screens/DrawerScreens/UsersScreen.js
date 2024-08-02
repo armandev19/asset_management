@@ -75,13 +75,14 @@ useFocusEffect(
     <View style={{justifyContent: 'center', backgroundColor: '#f2f3f8'}}>
       <Loader loading={loading} />
       <View styles={{flex: 1, padding: 6, alignSelf: 'center'}}>
-        <Card style={{ margin: 6, padding: 6}}>
+        <Card style={{ margin: 6, padding: 6, backgroundColor: '#fff'}}>
           <View style={{flexDirection: 'row', alignItems: 'center' }}>
             <Searchbar
               placeholder="Search"
+              placeholderTextColor={"#fff"}
               onChangeText={handleSearchQueryChange}
               value={search}
-              style={{ marginHorizontal: 5, flex: 6}}
+              style={{ marginHorizontal: 5, flex: 6, backgroundColor: "lightgray"}}
             />
             <Button onPress={()=>navigation.navigate('AddUsersScreen')} style={{marginHorizontal: 5, marginTop: 1, padding: 5}} labelStyle={{fontWeight: 'bold'}} icon="plus" compact="true" mode="contained"/>
           </View>
@@ -90,34 +91,39 @@ useFocusEffect(
         <ScrollView style={{padding: 5, paddingBottom: 40, marginBottom: 50}}>
         {users && users?.map((item, index)=>{
           return (
-            <Card  key={index} style={{ margin: 3, elevation: 1, padding: 5, borderWidth: 1, borderColor: "lightgray" }}>
-              <TouchableOpacity onPress={() => navigation.navigate("UserDetailsScreen", item.id)}>
-                <View>
-                  <View style={{ flexDirection: 'row', padding: 2 }}>
-                    <View style={{ flex: 1 }}>
-                      <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 15, fontWeight: "bold", textTransform: 'uppercase'}}>{item.firstname+" "+item.lastname}</Text>
-                    </View>
-                    <View style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'flex-end'}}>
-                    {item.status == 'Active' ? (
-                      <Text adjustsFontSizeToFit style={{ color: 'green', fontSize: 12, fontWeight: "bold", textTransform: 'uppercase', marginRight: 2}}>{item.status}</Text>
-                    ) : (
-                      <Text adjustsFontSizeToFit style={{ color: 'red', fontSize: 12, fontWeight: "bold", textTransform: 'uppercase', marginRight: 2}}>{item.status}</Text>
-                    )}
-                    </View>
+            <TouchableOpacity style={{
+              marginBottom: 5, 
+              backgroundColor: 'white', 
+              borderColor: 'lightgrey', 
+              borderWidth: 1, 
+              elevation: 2, 
+              borderRadius: 5,
+              padding: 5}} onPress={() => navigation.navigate("UserDetailsScreen", item.id)}>
+              <View>
+                <View style={{ flexDirection: 'row', padding: 2 }}>
+                  <View style={{ flex: 1 }}>
+                    <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 15, fontWeight: "bold", textTransform: 'uppercase'}}>{item.firstname+" "+item.lastname}</Text>
+                  </View>
+                  <View style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'flex-end'}}>
+                  {item.status == 'Active' ? (
+                    <Text adjustsFontSizeToFit style={{ color: 'green', fontSize: 12, fontWeight: "bold", textTransform: 'uppercase', marginRight: 2}}>{item.status}</Text>
+                  ) : (
+                    <Text adjustsFontSizeToFit style={{ color: 'red', fontSize: 12, fontWeight: "bold", textTransform: 'uppercase', marginRight: 2}}>{item.status}</Text>
+                  )}
                   </View>
                 </View>
-                <View style={styles.item}>
-                  <View style={{flex: 1}}>
-                    <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>ACCESS: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{item.access_level}</Text></Text>
-                  </View>
+              </View>
+              <View style={styles.item}>
+                <View style={{flex: 1}}>
+                  <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>ACCESS: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{item.access_level}</Text></Text>
                 </View>
-                <View style={styles.item}>
-                  <View style={{flex: 1}}>
-                    <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>ADDRES: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{item.address}</Text></Text>
-                  </View>
+              </View>
+              <View style={styles.item}>
+                <View style={{flex: 1}}>
+                  <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>ADDRES: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{item.address}</Text></Text>
                 </View>
-              </TouchableOpacity>
-            </Card>
+              </View>
+            </TouchableOpacity>
           )
         })}
         </ScrollView>

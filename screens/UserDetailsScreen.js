@@ -1,10 +1,10 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, SafeAreaView, TextInput, TouchableOpacity, ScrollView} from 'react-native';
+import {View, Text, SafeAreaView, TextInput, TouchableOpacity, ScrollView, StyleSheet} from 'react-native';
 import {Card, Title, Paragraph, Divider, Button} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Loader from './Components/loader';
 import { useFocusEffect } from '@react-navigation/native';
-const UserDetailsScreen = ({route, navigation}) => {
+const UserDetailsScreen = ({navigation, route}) => {
 
   const [details, setUserDetails] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -45,17 +45,29 @@ const UserDetailsScreen = ({route, navigation}) => {
 
     return (
       <ScrollView style={{padding: 5}}>
-        <Card style={{ margin: 2, padding: 5, elevation: 3 }}>
-          <Card.Title titleStyle={{textTransform: 'uppercase'}} title={details.firstname+" "+details.middlename+" "+details.lastname}/>
-            <Card.Content>
-              <Text variant="titleLarge" style={{color: 'black', fontSize: 15}}>ADDRESS: 
-                <Text style={{color: 'black', textTransform: 'uppercase', fontWeight: 'bold'}}> {details.address}</Text>
-              </Text>
-              <Text variant="titleLarge" style={{color: 'black', fontSize: 15}}>AGE: <Text style={{color: 'black', textTransform: 'uppercase', fontWeight: 'bold'}}> {details.age}</Text></Text>
-              <Text variant="titleLarge" style={{color: 'black', fontSize: 15}}>ACCESS: <Text style={{color: 'black', textTransform: 'uppercase', fontWeight: 'bold'}}> {details.access_level}</Text></Text>
-              <Text variant="titleLarge" style={{color: 'black', fontSize: 15}}>CONTACT #: <Text style={{color: 'black', textTransform: 'uppercase', fontWeight: 'bold'}}> {details.contact_number}</Text></Text>
-              <Text variant="titleLarge" style={{color: 'black', fontSize: 15}}>ADDED BY: <Text style={{color: 'black', textTransform: 'uppercase', fontWeight: 'bold'}}> {details.created_by}</Text></Text>
-              <Text variant="titleLarge" style={{color: 'black', fontSize: 15}}>STATUS: <Text style={{color: 'black', textTransform: 'uppercase', fontWeight: 'bold'}}> {details.status}</Text></Text>
+        <Card style={{ margin: 2, padding: 5, elevation: 3,backgroundColor: '#fff' }}>
+          <Card.Title titleStyle={{textTransform: 'uppercase', color: "#000"}} title={details.firstname+" "+details.middlename+" "+details.lastname}/>
+            <Card.Content style={{backgroundColor: '#fff'}}>
+              <View style={{flexDirection: 'row', marginBottom: 3}}>
+                <Text style={styles.col_title}>Address </Text>
+                <Text style={styles.col_content}>{details.address ? details.address : 'N/A'}</Text>
+              </View>
+              <View style={{flexDirection: 'row', marginBottom: 3}}>
+                <Text style={styles.col_title}>Access </Text>
+                <Text style={styles.col_content}>{details.access_level ? details.access_level : 'N/A'}</Text>
+              </View>
+              <View style={{flexDirection: 'row', marginBottom: 3}}>
+                <Text style={styles.col_title}>Contact # </Text>
+                <Text style={styles.col_content}>{details.contact_number ? details.contact_number : 'N/A'}</Text>
+              </View>
+              <View style={{flexDirection: 'row', marginBottom: 3}}>
+                <Text style={styles.col_title}>Added by </Text>
+                <Text style={styles.col_content}>{details.created_by ? details.created_by : 'N/A'}</Text>
+              </View>
+              <View style={{flexDirection: 'row', marginBottom: 3}}>
+                <Text style={styles.col_title}>Status </Text>
+                <Text style={styles.col_content}>{details.status ? details.status : 'N/A'}</Text>
+              </View>
             </Card.Content>
             <Card.Actions style={{justifyContent: 'flex-end', marginTop: 10}}>
               <Button icon="pencil" mode="contained" style={{marginRight: 5}} onPress={() => navigation.navigate("UpdateUsersScreen", details)}>Update</Button>
@@ -66,4 +78,8 @@ const UserDetailsScreen = ({route, navigation}) => {
     )  
 };
  
+const styles = StyleSheet.create({ 
+  col_title: {color: '#73706e', width: '45%', fontSize: 16, fontWeight: '400', fontFamily: 'Roboto'},
+  col_content: {color: '#000', textTransform: 'uppercase', fontSize: 16, width: '55%', textAlign: 'right', fontFamily: 'Roboto'}
+})
 export default UserDetailsScreen;

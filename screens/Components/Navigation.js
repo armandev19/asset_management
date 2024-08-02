@@ -20,6 +20,7 @@ import { FAB, Portal } from 'react-native-paper';
 import AssetScreen from './../DrawerScreens/AssetScreen';
 import HomeScreen from './../DrawerScreens/HomeScreen';
 import ReportScreen from './../DrawerScreens/ReportScreen';
+import UsersScreen from './../DrawerScreens/UsersScreen';
 import DetailScreen from '../DetailScreen';
 import AssetDetailsScreen from '../AssetDetailsScreen';
 import AssetMaintenanceScreen from '../AssetMaintenanceScreen';
@@ -30,6 +31,9 @@ import UpdateAssetScreen from '../UpdateAssetScreen';
 import AddAssetScreen from '../AddAssetScreen';
 import AddAssetTransferScreen from '../AddAssetTransferScreen';
 import ViewNotifScreen from '../ViewNotifScreen';
+import UserDetailsScreen from '../UserDetailsScreen';
+import UpdateUsersScreen from '../UpdateUsersScreen';
+import AddUsersScreen from '../AddUsersScreen';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { selectUserData, setUserData } from '../redux/navSlice';
@@ -114,6 +118,73 @@ const Navigation = (props) => {
           }}
         />
         
+      </Stack.Navigator>
+    );
+  };
+
+  const UsersStack = ({navigation}) => {
+    return (
+      <Stack.Navigator initialRouteName="UsersScreen">
+        <Stack.Screen
+          name="Users"
+          component={UsersScreen}
+          options={{
+            title: 'Users',
+            headerStyle: {
+              backgroundColor: '#fc8953',
+              elevation: 0
+            },
+            headerTintColor: '#ffffff',
+            headerTitleStyle: {
+              fontWeight: 'bold',
+            },
+          }}
+        />
+        <Stack.Screen
+          name="UserDetailsScreen"
+          component={UserDetailsScreen}
+          options={{
+            title: 'User Details',
+            headerStyle: {
+              backgroundColor: '#fc8953',
+              elevation: 0
+            },
+            headerTintColor: '#ffffff',
+            headerTitleStyle: {
+              fontWeight: 'bold',
+            },
+          }}
+        />
+        <Stack.Screen
+          name="UpdateUsersScreen"
+          component={UpdateUsersScreen}
+          options={{
+            title: 'Update User Details',
+            headerStyle: {
+              backgroundColor: '#fc8953',
+              elevation: 0
+            },
+            headerTintColor: '#ffffff',
+            headerTitleStyle: {
+              fontWeight: 'bold',
+            },
+          }}
+        />
+        <Stack.Screen
+          name="AddUsersScreen"
+          component={AddUsersScreen}
+          options={{
+            title: 'Add User',
+            headerStyle: {
+              backgroundColor: '#fc8953',
+              elevation: 0
+            },
+            headerTintColor: '#ffffff',
+            headerTitleStyle: {
+              fontWeight: 'bold',
+            },
+          }}
+        />
       </Stack.Navigator>
     );
   };
@@ -292,7 +363,7 @@ const Navigation = (props) => {
               ),
             }}
           />
-          <Tab.Screen name="Assets" component={AssetStack} 
+          <Tab.Screen name="AssetsScreen" component={AssetStack} 
             options={{
               tabBarLabel: 'Assets',
               tabBarIcon: ({ color }) => (
@@ -300,7 +371,7 @@ const Navigation = (props) => {
               ),
             }}
           />
-          <Tab.Screen name="Reports" component={ReportStack} 
+          <Tab.Screen name="ReportsScreen" component={ReportStack} 
             options={{
               tabBarLabel: 'Reports',
               tabBarIcon: ({ color }) => (
@@ -308,12 +379,21 @@ const Navigation = (props) => {
               ),
             }}
           />
-          <Tab.Screen name="asdasd" component={NotificationStack} 
+          <Tab.Screen name="NotificationsScreen" component={NotificationStack} 
             options={{
               headerShown: false,
               tabBarLabel: 'Notifications',
               tabBarIcon: ({ color }) => (
                 <Icon name="bell" color={color} size={26} />
+              ),
+            }}
+          />
+          <Tab.Screen name="UsersScreen" component={UsersStack} 
+            options={{
+              headerShown: false,
+              tabBarLabel: 'Users',
+              tabBarIcon: ({ color }) => (
+                <Icon name="account" color={color} size={26} />
               ),
             }}
           />
