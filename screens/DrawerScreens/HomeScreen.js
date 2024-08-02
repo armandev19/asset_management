@@ -261,16 +261,16 @@ const HomeScreen = ({navigation, props}) => {
   return (
     <Provider>
     <ScrollView style={{flex: 1, backgroundColor: '#ffffff'}}>
-      <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between', padding: 16, borderBottomLeftRadius: 25, borderBottomRightRadius: 25, backgroundColor: '#F05924', height: 60}}>
+      <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between', padding: 16, borderBottomLeftRadius: 25, borderBottomRightRadius: 25, backgroundColor: '#fc8953', height: 60}}>
         <Text style={{color: "white", fontSize: 14, fontWeight: '500', marginTop: 5}}>Welcome {currentUserData?.firstname}</Text>
         <Text style={{color: "white", fontSize: 14, fontWeight: '500', marginTop: 5}}>Sat, July 20</Text>
       </View>
       <View style={{flexDirection: 'row', justifyContent: 'space-evenly', marginTop: 15, marginHorizontal: 20}}>
-        <View style={{borderColor: "#F05924", borderWidth: 1, borderRadius: 5, width: 150, height: 90, padding: 5, backgroundColor: '#F05924'}}>
+        <View style={{borderColor: "#F05924", borderWidth: 1, borderRadius: 5, width: 150, height: 90, padding: 5, backgroundColor: '#fc8953'}}>
           <Text style={{color: "white", fontSize: 14, fontWeight: '500', textAlign: 'center', marginTop: 10}} onPress={()=>logout()}>Assets</Text>
           <Text style={{color: "white", fontSize: 25, textAlign: 'center', fontWeight: 'bold'}}>{newAssets}</Text>
         </View>
-        <View style={{borderColor: "#F05924", borderWidth: 1, borderRadius: 5, width: 150, height: 90, padding: 5, backgroundColor: '#F05924'}}>
+        <View style={{borderColor: "#F05924", borderWidth: 1, borderRadius: 5, width: 150, height: 90, padding: 5, backgroundColor: '#fc8953'}}>
           <Text style={{color: "white", fontSize: 14, fontWeight: '500', textAlign: 'center', marginTop: 10}}>Operational</Text>
           <Text style={{color: "white", fontSize: 25, textAlign: 'center', fontWeight: 'bold'}}>{operationalAssets}</Text>
         </View>

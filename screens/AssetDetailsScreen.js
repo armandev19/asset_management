@@ -59,6 +59,8 @@ const AssetDetailsScreen = ({navigation, route}) => {
     }, []),
   );
 
+  console.log(details.asset_code)
+
   return (
       <ScrollView style={{}}>
         <Portal>
@@ -69,30 +71,30 @@ const AssetDetailsScreen = ({navigation, route}) => {
               containerStyle={{color: 'red'}}
               icon={open ? 'cog' : 'more'}
               color="white"
-              fabStyle={{backgroundColor: '#f5571d'}}
+              fabStyle={{backgroundColor: '#fc8953'}}
               actions={[
                 {
                   icon: 'qrcode-scan',
                   label: 'QR Code',
-                  labelTextColor: '#fff',
-                  labelStyle: { backgroundColor: '#f5571d'},
-                  style: { backgroundColor: '#f5571d' },
+                  labelTextColor: '#000',
+                  labelStyle: { backgroundColor: '#fff'},
+                  style: { backgroundColor: '#fff' },
                   onPress: () => setModalVisible(true),
                 },
                 {
                   icon: 'wrench',
                   label: 'Maintenance',
-                  labelTextColor: '#fff',
-                  labelStyle: { backgroundColor: '#f5571d'},
-                  style: { backgroundColor: '#f5571d' },
+                  labelTextColor: '#000',
+                  labelStyle: { backgroundColor: '#fff'},
+                  style: { backgroundColor: '#fff' },
                   onPress: () => navigation.navigate("AssetMaintenanceScreen", details),
                 },
                 {
                   icon: 'pencil',
                   label: 'Update',
-                  labelTextColor: '#fff',
-                  labelStyle: { backgroundColor: '#f5571d'},
-                  style: { backgroundColor: '#f5571d' },
+                  labelTextColor: '#000',
+                  labelStyle: { backgroundColor: '#fff'},
+                  style: { backgroundColor: '#fff' },
                   onPress: () => navigation.navigate("UpdateAssetScreen", details),
                 },
               ]}

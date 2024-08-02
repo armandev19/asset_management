@@ -109,30 +109,30 @@ useEffect(()=>{
               containerStyle={{color: 'red'}}
               icon={open ? 'cog' : 'more'}
               color="white"
-              fabStyle={{backgroundColor: '#f5571d'}}
+              fabStyle={{backgroundColor: '#fc8953'}}
               actions={[
                 {
                   icon: 'plus',
                   label: 'Add',
-                  labelTextColor: '#fff',
-                  labelStyle: { backgroundColor: '#f5571d'},
-                  style: { backgroundColor: '#f5571d' },
+                  labelTextColor: '#000',
+                  labelStyle: { backgroundColor: '#fff'},
+                  style: { backgroundColor: '#fff' },
                   onPress: () => navigation.navigate("AddAssetScreen"),
                 },
                 {
                   icon: 'truck',
                   label: 'Transfer',
-                  labelTextColor: '#fff',
-                  labelStyle: { backgroundColor: '#f5571d'},
-                  style: { backgroundColor: '#f5571d' },
+                  labelTextColor: '#000',
+                  labelStyle: { backgroundColor: '#fff'},
+                  style: { backgroundColor: '#fff' },
                   onPress: () => navigation.navigate("AssetTransferScreen"),
                 },
                 {
                   icon: 'qrcode-scan',
                   label: 'Scan',
-                  labelTextColor: '#fff',
-                  labelStyle: { backgroundColor: '#f5571d'},
-                  style: { backgroundColor: '#f5571d' },
+                  labelTextColor: '#000',
+                  labelStyle: { backgroundColor: '#fff'},
+                  style: { backgroundColor: '#fff' },
                   onPress: () => navigation.navigate("TrackerScreen"),
                 },
               ]}

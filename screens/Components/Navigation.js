@@ -80,7 +80,7 @@ const Navigation = (props) => {
           options={{
             title: 'Home',
             headerStyle: {
-              backgroundColor: '#F05924',
+              backgroundColor: '#fc8953',
               elevation: 0
             },
             headerTintColor: '#ffffff',
@@ -104,7 +104,7 @@ const Navigation = (props) => {
           options={{
             title: 'Reports',
             headerStyle: {
-              backgroundColor: '#F05924',
+              backgroundColor: '#fc8953',
               elevation: 0
             },
             headerTintColor: '#ffffff',
@@ -128,7 +128,7 @@ const Navigation = (props) => {
           options={{
             title: 'Notifications',
             headerStyle: {
-              backgroundColor: '#F05924',
+              backgroundColor: '#fc8953',
               elevation: 0
             },
             headerTintColor: '#ffffff',
@@ -144,7 +144,7 @@ const Navigation = (props) => {
           options={{
             title: 'Notifications',
             headerStyle: {
-              backgroundColor: '#F05924',
+              backgroundColor: '#fc8953',
               elevation: 0
             },
             headerTintColor: '#ffffff',
@@ -167,7 +167,7 @@ const Navigation = (props) => {
           options={{
             title: 'Assets',
             headerStyle: {
-              backgroundColor: '#F05924',
+              backgroundColor: '#fc8953',
             },
             headerTintColor: '#ffffff',
             headerTitleStyle: {
@@ -181,7 +181,7 @@ const Navigation = (props) => {
           options={{
             title: 'Assets Details',
             headerStyle: {
-              backgroundColor: '#F05924',
+              backgroundColor: '#fc8953',
             },
             headerTintColor: '#ffffff',
             headerTitleStyle: {
@@ -195,7 +195,7 @@ const Navigation = (props) => {
           options={{
             title: 'Assets Maintenance',
             headerStyle: {
-              backgroundColor: '#F05924',
+              backgroundColor: '#fc8953',
             },
             headerTintColor: '#ffffff',
             headerTitleStyle: {
@@ -209,7 +209,7 @@ const Navigation = (props) => {
           options={{
             title: 'Update Asset',
             headerStyle: {
-              backgroundColor: '#F05924',
+              backgroundColor: '#fc8953',
             },
             headerTintColor: '#ffffff',
             headerTitleStyle: {
@@ -223,7 +223,7 @@ const Navigation = (props) => {
           options={{
             title: 'Add Asset',
             headerStyle: {
-              backgroundColor: '#F05924',
+              backgroundColor: '#fc8953',
             },
             headerTintColor: '#ffffff',
             headerTitleStyle: {
@@ -237,7 +237,7 @@ const Navigation = (props) => {
           options={{
             title: 'Transfer Asset',
             headerStyle: {
-              backgroundColor: '#F05924',
+              backgroundColor: '#fc8953',
             },
             headerTintColor: '#ffffff',
             headerTitleStyle: {
@@ -251,7 +251,7 @@ const Navigation = (props) => {
           options={{
             title: 'Transfer Asset',
             headerStyle: {
-              backgroundColor: '#F05924',
+              backgroundColor: '#fc8953',
             },
             headerTintColor: '#ffffff',
             headerTitleStyle: {
@@ -265,7 +265,7 @@ const Navigation = (props) => {
           options={{
             title: 'Track Asset',
             headerStyle: {
-              backgroundColor: '#F05924', 
+              backgroundColor: '#fc8953', 
             },
             headerTintColor: '#ffffff', 
             headerTitleStyle: {
@@ -281,8 +281,8 @@ const Navigation = (props) => {
         <Tab.Navigator
           initialRouteName="Home"
           activeColor="#fff"
-          inactiveColor="#875229"
-          barStyle={{ backgroundColor: '#F05924' }}
+          inactiveColor="#573f34"
+          barStyle={{ backgroundColor: '#fc8953' }}
         >
           <Tab.Screen name="Home" component={HomeStack} 
             options={{
