@@ -11,12 +11,11 @@ import {
   TextInput
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import {Card, Title, Paragraph, Divider, Button} from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { setUserData, setFCMToken } from './redux/navSlice';
 import { useDispatch } from 'react-redux';
 import Loader from './Components/loader';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { Input, Icon, BottomSheet, ListItem, Dialog, Button, Divider } from '@rneui/themed';
 
 import * as firebase from '@react-native-firebase/app';
 import messaging from '@react-native-firebase/messaging';
@@ -26,17 +25,22 @@ import messaging from '@react-native-firebase/messaging';
 const LoginScreen = ({navigation}) => {
   const [userEmail, setUserEmail] = useState('');
   const [userPassword, setUserPassword] = useState('');
+  const [deviceToken, setDeviceToken] = useState()
   const [loading, setLoading] = useState(false);
   const [errortext, setErrortext] = useState('');
- 
+  const [showPassword, setShowPassword] = useState(false);
   const passwordInputRef = createRef();
   
   const dispatch = useDispatch();
 
+  const toggleShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
   const getFcmToken = async () => {
     const fcmToken = await messaging().getToken();
     if (fcmToken) {
       dispatch(setFCMToken(fcmToken));
+      setDeviceToken(fcmToken);
       console.log('FCM Token:', fcmToken);
     } else {
       console.log('Failed to get FCM token');
@@ -54,7 +58,7 @@ const LoginScreen = ({navigation}) => {
       return;
     }
     setLoading(true);
-    let dataToSend = {email: userEmail, password: userPassword};
+    let dataToSend = {email: userEmail, password: userPassword, deviceToken: deviceToken};
     let formBody = [];
     for (let key in dataToSend) {
       let encodedKey = encodeURIComponent(key);
@@ -66,7 +70,8 @@ const LoginScreen = ({navigation}) => {
     fetch(global.url+'loginValidation.php', {
       method: 'POST',
       body: formBody,
-      headers: {
+      headers: { 
+        "bypass-tunnel-reminder": "true",
         'Content-Type':
         'application/x-www-form-urlencoded;charset=UTF-8',
       },
@@ -90,7 +95,6 @@ const LoginScreen = ({navigation}) => {
   };
 
   useEffect(()=>{
-    
     getFcmToken();
   }, [])
  
@@ -114,7 +118,8 @@ const LoginScreen = ({navigation}) => {
           source={require('../assets/amslogo.png')}
           style={{width: 150, height: 150, justifyContent: 'center', alignSelf: 'center' ,borderRadius: 5}}
         />
-        <Text style={{textAlign: 'center', fontSize: 25, fontWeight: 'bold', marginBottom: 10, color: '#f5571d'}}>AMS</Text>
+        <Text style={{textAlign: 'center', fontSize: 27, fontWeight: 'bold', color: '#f5571d'}}>ASSET & PROPERTY</Text>
+        <Text style={{textAlign: 'center', fontSize: 23, fontWeight: 'bold', marginBottom: 10, color: '#f5571d'}}>Management System</Text>
         <View style={{
           backgroundColor: 'transparent', 
           marginLeft: 20,
@@ -123,46 +128,30 @@ const LoginScreen = ({navigation}) => {
           justifyContent: 'center',
         }}>
           <KeyboardAvoidingView enabled>
-            <View style={styles.SectionStyle}>
-              <TextInput
-                style={{
-                  width: '70%', 
-                  backgroundColor: 'white', 
-                  color: '#000',
-                  borderRadius: 20,
-                  paddingLeft: 20,
-                  fontSize: 18,
-                  elevation: 5
-                }}
-                placeholder="Username"
-                placeholderTextColor={"gray"}
+            <View>
+              <Input
+                labelStyle={{ fontWeight: '400', fontSize: 13 }}
+                inputContainerStyle={{ borderBottomColor: 'transparent', borderRadius: 20, height: 40, backgroundColor: 'white', elevation: 1, width: '70%', alignSelf: 'center', marginBottom: -10}}
+                inputStyle={{ fontSize: 15 }}
+                placeholder={"Username"}
                 value={userEmail}
                 onChangeText={userEmail => setUserEmail(userEmail)}
-							/>
-            </View>
-            <View style={styles.SectionStyle}>
-              <TextInput
-                style={{
-                  width: '70%', 
-                  backgroundColor: 'white', 
-                  color: '#000',
-                  borderRadius: 20,
-                  paddingLeft: 20,
-                  fontSize: 18,
-                  elevation: 5
-                }}
-                placeholder="Password"
-                placeholderTextColor={"gray"}
+                leftIcon={{type: "feather", name: "user", color: '#f5571d', size: 17, marginLeft: 10}}
+              />
+              <Input
+                labelStyle={{ fontWeight: '400', fontSize: 13 }}
+                inputContainerStyle={{ borderBottomColor: 'transparent', borderRadius: 20, height: 40, backgroundColor: 'white', elevation: 1, width: '70%', alignSelf: 'center'}}
+                inputStyle={{ fontSize: 15 }}
+                placeholder={"Password"}
                 value={userPassword}
                 onChangeText={userPassword => setUserPassword(userPassword)}
-                secureTextEntry={true}
+                leftIcon={{type: "feather", name: "key", color: '#f5571d', size: 17, marginLeft: 10}}
+                rightIcon={{type: "feather", name: showPassword ? "eye-off" : "eye", color: '#f5571d', size: 17, marginRight: 10, onPress: ()=>toggleShowPassword()}}
+                secureTextEntry={!showPassword}
+                errorMessage={errortext}
+                errorStyle={{textAlign: 'center'}}
               />
             </View>
-            {errortext != '' ? (
-              <Text style={styles.errorTextStyle}>
-                {errortext}
-              </Text>
-            ) : null}
             <View style={[styles.SectionStyle, {
                 alignSelf: 'center',
                 width: '50%',

@@ -36,7 +36,7 @@ const UpdateLocationScreen = ({route, navigation}) => {
 		fetch(global.url+'updateLocation.php', {
 			method: 'POST',
 			body: formBody,
-			headers: {
+			headers: { "bypass-tunnel-reminder": "true",
 				'Content-Type':
 				'application/x-www-form-urlencoded;charset=UTF-8',
 			},
@@ -71,7 +71,7 @@ const UpdateLocationScreen = ({route, navigation}) => {
 		fetch(global.url+'getLocationDetails.php', {
 			method: 'POST',
 			body: formBody,
-			headers: {
+			headers: { "bypass-tunnel-reminder": "true",
 				'Content-Type':
 				'application/x-www-form-urlencoded;charset=UTF-8',
 			},

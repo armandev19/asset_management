@@ -63,7 +63,7 @@ const AddAssetMaintenanceScreen = ({route, navigation}) => {
 		fetch(global.url+'saveAsset.php', {
 			method: 'POST',
 			body: formBody,
-			headers: {
+			headers: { "bypass-tunnel-reminder": "true",
         'Content-Type': 'multipart/form-data',
 			},
 		})
@@ -88,7 +88,7 @@ const AddAssetMaintenanceScreen = ({route, navigation}) => {
 		setLoading(true)
 		fetch(global.url+'getLocationDropdown.php', {
 			method: 'POST',
-			headers: {
+			headers: { "bypass-tunnel-reminder": "true",
 				'Content-Type':
 				'application/x-www-form-urlencoded;charset=UTF-8',
 			},
@@ -133,7 +133,7 @@ const AddAssetMaintenanceScreen = ({route, navigation}) => {
     const response = await fetch(global.url+'upload.php', {
       method: 'POST',
       body: formData,
-      headers: {
+      headers: { "bypass-tunnel-reminder": "true",
         'Content-Type': 'multipart/form-data',
       },
     });

@@ -8,12 +8,13 @@ import {
   ThemeProvider,
 } from "react-native-paper";
 import {View, Text, SafeAreaView, ScrollView, KeyboardAvoidingView, StyleSheet} from 'react-native';
-import {Card, Title, Paragraph, Divider, TextInput, Button, IconButton} from 'react-native-paper';
 import Loader from './Components/loader';
 import { selectUserData, setUserData } from './redux/navSlice';
 import { useSelector } from 'react-redux';
 import DropDown from "react-native-paper-dropdown";
 import DateTimePicker from '@react-native-community/datetimepicker';
+
+import { Input, Icon, BottomSheet, ListItem, Dialog, Button } from '@rneui/themed';
 
 
 const UpdateUsersScreen = ({route, navigation}) => {
@@ -60,7 +61,7 @@ const UpdateUsersScreen = ({route, navigation}) => {
 		fetch(global.url+'updateUser.php', {
 			method: 'POST',
 			body: formBody,
-			headers: {
+			headers: { "bypass-tunnel-reminder": "true",
 				'Content-Type':
 				'application/x-www-form-urlencoded;charset=UTF-8',
 			},
@@ -97,8 +98,8 @@ const UpdateUsersScreen = ({route, navigation}) => {
 						justifyContent: 'center',
 						alignContent: 'center',
 					}}>
-            <KeyboardAvoidingView enabled style={{padding: 10}}>
-              <DropDown
+            <KeyboardAvoidingView enabled style={{paddingVertical: 20, marginTop: 10}}>
+              {/* <DropDown
                 dropDownStyle={{borderRadius: 5, marginTop: 20}}
 								label={"Access"}
 								mode={"outlined"}
@@ -119,81 +120,126 @@ const UpdateUsersScreen = ({route, navigation}) => {
 								value={status}
 								setValue={setStatus}
 								list={status_list}
-							/>
-              <TextInput
-								mode="outlined"
+							/> */}
+              
+              <Input
+                label="Access Level"
+                labelStyle={styles.label}
+                inputContainerStyle={styles.inputContainer}
+                inputStyle={{ fontSize: 15 }}
+                placeholder={"Select Access Level"}
+                value={access_level}
+                onChangeText={firstname => setFirstname(firstname)}
+                editable={false}
+              />
+              
+              <Input
+                label="Status"
+                labelStyle={styles.label}
+                inputContainerStyle={styles.inputContainer}
+                inputStyle={{ fontSize: 15 }}
+                placeholder={"Select Status"}
+                value={status}
+                onChangeText={firstname => setFirstname(firstname)}
+                editable={false}
+              />
+              <Input
                 label="Firstname"
-								activeOutlineColor='#348ceb'
+                labelStyle={styles.label}
+                inputContainerStyle={styles.inputContainer}
+                inputStyle={{ fontSize: 15 }}
+                placeholder={"John"}
                 value={firstname}
                 onChangeText={firstname => setFirstname(firstname)}
-							/>
-              <TextInput
-								mode="outlined"
+              />
+              <Input
                 label="Middlename"
-								activeOutlineColor='#348ceb'
+                labelStyle={styles.label}
+                inputContainerStyle={styles.inputContainer}
+                inputStyle={{ fontSize: 15 }}
+                placeholder={"John"}
                 value={middlename}
                 onChangeText={middlename => setMiddlename(middlename)}
-							/>
-              <TextInput
-								mode="outlined"
+              />
+              <Input
                 label="Lastname"
-								activeOutlineColor='#348ceb'
+                labelStyle={styles.label}
+                inputContainerStyle={styles.inputContainer}
+                inputStyle={{ fontSize: 15 }}
+                placeholder={"John"}
                 value={lastname}
                 onChangeText={lastname => setLastname(lastname)}
-							/>
-              <TextInput
-								mode="outlined"
+              />
+              <Input
                 label="Age"
-								activeOutlineColor='#348ceb'
+                labelStyle={styles.label}
+                inputContainerStyle={styles.inputContainer}
+                inputStyle={{ fontSize: 15 }}
+                placeholder={"John"}
                 value={age}
-                keyboardType='numeric'
                 onChangeText={age => setAge(age)}
-							/>
-              <TextInput
-								mode="outlined"
+              />
+              <Input
                 label="Address"
-								activeOutlineColor='#348ceb'
+                labelStyle={styles.label}
+                inputContainerStyle={styles.inputContainer}
+                inputStyle={{ fontSize: 15 }}
+                placeholder={"example address"}
                 value={address}
                 onChangeText={address => setAddress(address)}
-							/>
-							<TextInput
-								mode="outlined"
+              />
+              <Input
                 label="Contact #"
-								activeOutlineColor='#348ceb'
+                labelStyle={styles.label}
+                inputContainerStyle={styles.inputContainer}
+                inputStyle={{ fontSize: 15 }}
+                placeholder={"+123456790"}
                 value={contact_num}
-                keyboardType='numeric'
                 onChangeText={contact_num => setContactNum(contact_num)}
-							/>
-              <TextInput
-								mode="outlined"
+              />
+              <Input
                 label="Username"
-								activeOutlineColor='#348ceb'
+                labelStyle={styles.label}
+                inputContainerStyle={styles.inputContainer}
+                inputStyle={{ fontSize: 15 }}
+                placeholder={"example username"}
                 value={username}
                 onChangeText={username => setUsername(username)}
-							/>
-              <TextInput
-								mode="outlined"
+              />
+              <Input
                 label="Password"
-								activeOutlineColor='#348ceb'
+                labelStyle={styles.label}
+                inputContainerStyle={styles.inputContainer}
+                inputStyle={{ fontSize: 15 }}
+                placeholder={"example password"}
                 value={password}
                 onChangeText={password => setPassword(password)}
-							/>
-              {/* <View style={{}}>
-                <Button style={{marginTop: 10}} icon="camera" mode="contained" onPress={() => console.log('Pressed')}>
-                  Image
-                </Button>
-                <View style={{marginTop: 5}}>
-
-                </View>
-              </View> */}
-							<View style={{}}>
-								<Button style={{marginTop: 15}} icon="check" color='green' mode="contained" onPress={() => saveUser()}>
-									SAVE
-								</Button>
-                <Button style={{marginTop: 5}} icon="close" color='red' mode="contained" onPress={() => navigation.goBack()}>
-									Cancel
-								</Button>
-							</View>
+              />
+							<View style={{flexDirection: 'row', justifyContent: 'flex-end', marginHorizontal: 10}}>
+                <Button 
+                  title="Cancel"  
+                  
+                  icon={{
+                    name: 'x-circle',
+                    type: 'feather',
+                    size: 20,
+                    color: 'white',
+                  }} 
+                  onPress={() => navigation.goBack()}
+                  buttonStyle={{ backgroundColor: 'rgba(214, 61, 57, 1)', borderRadius: 5, marginRight: 10 }}
+                />
+                <Button 
+                  title="Save"  
+                  icon={{
+                    name: 'check-circle',
+                    type: 'feather',
+                    size: 20,
+                    color: 'white',
+                  }} 
+                  buttonStyle={{ backgroundColor: '#20ab3f', borderRadius: 5 }}
+                  onPress={() => saveUser()}
+                />
+              </View>
             </KeyboardAvoidingView>
         	</ScrollView>
 					</View>
@@ -206,6 +252,20 @@ const UpdateUsersScreen = ({route, navigation}) => {
 export default UpdateUsersScreen;
 
 const styles = StyleSheet.create({
+    label: {
+      fontWeight: '400', 
+      fontSize: 13, 
+      marginTop: -15,
+      color: '#0d0c0c'
+    },
+    inputContainer: {
+      height: 35,
+      padding: 5, 
+      borderColor: 'grey',
+      borderWidth: 0.5,
+      borderBottomWidth: 0.5,
+      borderRadius: 8,
+    },
     selectDropdown: {
       paddingLeft: 15,
       paddingRight: 15,

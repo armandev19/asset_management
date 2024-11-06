@@ -48,7 +48,7 @@ const EditProfileScreen = ({navigation, route}) => {
         fetch(global.url+'updateProfile.php', {
           method: 'POST',
           body: formBody,
-          headers: {
+          headers: { "bypass-tunnel-reminder": "true",
             'Content-Type':
             'application/x-www-form-urlencoded;charset=UTF-8',
           },

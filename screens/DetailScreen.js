@@ -29,8 +29,7 @@ const DetailScreen = ({route, navigation}) => {
     fetch(global.url+'insertDonation.php', {
       method: 'POST',
       body: formBody,
-      headers: {
-        //Header Defination
+      headers: { "bypass-tunnel-reminder": "true",
         'Content-Type':
         'application/x-www-form-urlencoded;charset=UTF-8',
       },
@@ -64,8 +63,7 @@ const DetailScreen = ({route, navigation}) => {
     fetch(global.url+'fetchBloodRequestData.php', {
       method: 'POST',
       body: formBody,
-      headers: {
-        //Header Defination
+      headers: { "bypass-tunnel-reminder": "true",
         'Content-Type':
         'application/x-www-form-urlencoded;charset=UTF-8',
       },

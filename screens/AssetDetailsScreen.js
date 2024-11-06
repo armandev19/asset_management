@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, StyleSheet, KeyboardAvoidingView, TouchableOpacity, Image} from 'react-native';
+import {View, Text, StyleSheet, KeyboardAvoidingView, TouchableOpacity, Image, Dim} from 'react-native';
 import {Card, Title, Paragraph, Divider, Button, Modal, FAB, Portal} from 'react-native-paper';
 import QRCode from 'react-native-qrcode-svg';
 import Loader from './Components/loader';
@@ -9,9 +9,10 @@ import Moment from 'moment';
 import { ScrollView } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
-
+import Swiper from 'react-native-swiper';
 const AssetDetailsScreen = ({navigation, route}) => {
   const params = route.params;
+
   const [details, setAssetDetails] = useState([]);
   const [loading, setLoading] = useState(false);
   const isFocused = useIsFocused();
@@ -20,8 +21,8 @@ const AssetDetailsScreen = ({navigation, route}) => {
   const onStateChange = ({ open }) => setOpen(open);
   const [modalVisible, setModalVisible] = useState(false);
 
-  const getAssetDetails = () => {
-    setLoading(true);
+  const getAssetDetails = async () => {
+    // setLoading(true);
 		let dataToSend = { id: params };
 		let formBody = [];
 		for (let key in dataToSend) {
@@ -30,10 +31,11 @@ const AssetDetailsScreen = ({navigation, route}) => {
 			formBody.push(encodedKey + '=' + encodedValue);
 		}
 		formBody = formBody.join('&');
-		fetch(global.url+'getAssetDetails.php', {
+    
+		await fetch(global.url+'getAssetDetails.php', {
 			method: 'POST',
 			body: formBody,
-			headers: {
+			headers: { 
 				'Content-Type':
 				'application/x-www-form-urlencoded;charset=UTF-8',
 			},
@@ -42,7 +44,7 @@ const AssetDetailsScreen = ({navigation, route}) => {
 		.then((responseJson) => {
       setAssetDetails(responseJson.data[0]);
 			setLoading(false);
-      console.log("responseJson", responseJson)
+      console.log('rawr',responseJson.data[0]);
 		})
 		.catch((error) => {
       console.log("error", error)
@@ -58,8 +60,6 @@ const AssetDetailsScreen = ({navigation, route}) => {
       getAssetDetails();
     }, []),
   );
-
-  console.log(details.asset_code)
 
   return (
       <ScrollView style={{}}>
@@ -104,12 +104,39 @@ const AssetDetailsScreen = ({navigation, route}) => {
           )}
         </Portal>
       <View style={{ marginHorizontal: 10, marginVertical: 10, padding: 5, marginBottom: 10}}>
-        <View style={{ borderWidth: 0.5, borderColor: 'gray', marginBottom: 5, elevation: 2}}>
-          <Image
-            source={require('../assets/amslogo.png')}
-            style={{width: 100, height: 100, alignSelf: 'center', borderRadius: 5}}
-          />
-        </View>
+            {/* <View style={{ marginBottom: 5, elevation: 1, height: 200}}>
+              <Swiper showsPagination={true}>
+                {details?.images?.map((image, index) => (
+                  <View key={index}>
+                    <Image source={{ uri : global.url + image?.image_location }} style={{
+                        width: '100%',
+                        height: '100%',
+                      }} />
+                  </View>
+                ))}
+              </Swiper>
+            </View> */}
+          {details?.images?.length > 0 ? 
+            <View style={{ marginBottom: 5, elevation: 1, height: 200}}>
+              <Swiper showsPagination={true}>
+                {details.images?.map((image, index) => (
+                  <View key={index}>
+                    <Image source={{ uri : global.url + image?.image_location }} style={{
+                        width: '100%',
+                        height: '100%',
+                      }} />
+                  </View>
+                ))}
+              </Swiper>
+            </View>
+           :
+          <View style={{ marginBottom: 5, elevation: 1, height: 200}}>
+            <Image
+              source={require('../assets/noimage.jpg')}
+              style={{width: '100%', height: '100%', borderRadius: 5}}
+            /> 
+          </View>
+          }
         <View style={{flexDirection: 'row', marginBottom: 3}}>
           <Text style={styles.col_title}>Asset Code </Text>
           <Text style={styles.col_content}>{details.asset_code ? details.asset_code : 'N/A'}</Text>

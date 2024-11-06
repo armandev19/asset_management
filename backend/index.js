@@ -4,15 +4,21 @@ const moment = require('moment');
 const app = express();
 
 
-const admin = require('firebase-admin');
+// const admin = require('firebase-admin');
+// const cron = require('node-cron');
 
-const serviceAccount = require('./asset-54ae3-firebase-adminsdk-df262-3ec329e5a7.json');
+// const serviceAccount = require('./asset-54ae3-firebase-adminsdk-df262-3ec329e5a7.json');
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
+// admin.initializeApp({
+//   credential: admin.credential.cert(serviceAccount),
+// });
+
+// app.use(express.json());
+
+app.get('/rawr', (req, res) => {
+  res.send('Hello World!');
 });
-
-app.use(express.json());
+console.log("rawr rawr");
 // sql313.epizy.com', 'epiz_34224108', 'aHJM0oI8Ttl7
 // const db = mysql.createConnection({
 //   host: 'app-ams.online',
@@ -21,22 +27,22 @@ app.use(express.json());
 //   database: 'u278714988_ams',
 // });
 
-const db = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: '',
-  database: 'asset_management',
-});
+// const db = mysql.createConnection({
+//   host: 'localhost',
+//   user: 'root',
+//   password: '',
+//   database: 'asset_management',
+// });
 
-// localhost', 'root', 'YgtDGdmoEn'
+// // localhost', 'root', 'YgtDGdmoEn'
 
-db.connect((err) => {
-  if (err) {
-    console.error('Error connecting to MySQL:', err);
-    return;
-  }
-  console.log('Connected to MySQL');
-});
+// db.connect((err) => {
+//   if (err) {
+//     console.error('Error connecting to MySQL:', err);
+//     return;
+//   }
+//   console.log('Connected to MySQL');
+// });
 
 // db.connect(function (err) {
 //   if(err){
@@ -89,66 +95,126 @@ db.connect((err) => {
 //   });
 // });
 
-app.get('/api/locations', (req, res) => {
+// app.get('/api/locations', (req, res) => {
 
-  let query = 'SELECT * FROM assets';
-  if (searchTerm) {
-    // Modify the query to include a WHERE clause for filtering
-    query = `SELECT * FROM locations WHERE name LIKE '%${searchTerm}%' OR address LIKE '%${searchTerm}%'`;
-  }
+//   let query = 'SELECT * FROM assets';
+//   if (searchTerm) {
+//     // Modify the query to include a WHERE clause for filtering
+//     query = `SELECT * FROM locations WHERE name LIKE '%${searchTerm}%' OR address LIKE '%${searchTerm}%'`;
+//   }
 
-  db.query(query, (err, results) => {
-    if (err) {
-      console.error('Error querying MySQL:', err);
-      return res.status(500).send('Error fetching data');
-    }
-    res.json(results);
-  });
-});
+//   db.query(query, (err, results) => {
+//     if (err) {
+//       console.error('Error querying MySQL:', err);
+//       return res.status(500).send('Error fetching data');
+//     }
+//     res.json(results);
+//   });
+// });
+
+
+
+// const sendPushNotification = (token, title, body) => {
+//   admin.messaging().send({
+//     token: token,
+//     notification: {
+//       title: title,
+//       body: body,
+//     },
+//   })
+//   .then(() => {
+//     console.log('Push notification sent successfully');
+//   })
+//   .catch((error) => {
+//     console.error('Error sending push notification:', error);
+//   });
+// };
+
+
+// function getYearDifference(date1, date2) {
+//   const year1 = date1.getFullYear();
+//   const year2 = date2.getFullYear();
+
+//   const month1 = date1.getMonth();
+//   const month2 = date2.getMonth();
+
+//   const day1 = date1.getDate();
+//   const day2 = date2.getDate();
+
+//   let yearDifference = year2 - year1;
+
+//   // Adjust for months and days
+//   if (month2 < month1 || (month2 === month1 && day2 < day1)) {
+//       yearDifference--;
+//   }
+  
+//   return yearDifference;
+// }
+
+// function dailyTask() {
+//   try{
+//     // const query = `SELECT * FROM assets`;
+//     // db.query(query, (err, results) => {
+      
+//     //   if (err) {
+//     //     console.error('Error executing query:', err);
+//     //     return;
+//     //   }
+//     //   const currentYear = new Date();
+//     //   results.forEach(row => {
+//     //     let diff = getYearDifference(row.purchase_date,currentYear)
+//     //     // if (diff >= 1) {
+//         db.query("SELECT * FROM users WHERE notif_token != '' ", (err, results) => {
+//           const body = `You have assets scheduled for maintenance today rawr.`;
+//           results.forEach(row => {
+//             sendPushNotification(row.notif_token, 'Maintenance', body);
+//           })
+//         })
+           
+//         // }
+//     // });
+
+//     // });
+//   }catch(error){
+//     console.log("error", error)
+//   }
+//     console.log('This task runs once every day at midnight');
+//     // Add your task logic here
+// }
+// // dailyTask();
+
+// // Schedule the task to run every day at midnight
+// cron.schedule('21 04 * * *', dailyTask, {
+//     scheduled: true,
+//     timezone: "Asia/Kuala_Lumpur" // Optional: specify your timezone
+// });
 
 // app.post('/asset-maintenance', (req, res) => {
 //   try{
-    
-//     const { device_token } = req.body;
+//     const device_token = "eVjv2-tRQSeyNueiq1yhBM:APA91bFxTpgmffswnzuMpkrSP_nf2u-n2AM57hRvpe3Y2eL_cys_R7Ax1KCpzc3g01Xa2WQAuhlSvN7o_se5u8ysXCLOVjg_q3ziMK4qmyTJfvkt6X-HKcqdNAjtRsi3Q_Wxg73WWTIi"
 
-//     const query = `SELECT item.asset_name, am.schedule as schedule, count(am.id) as m_count FROM asset_maintenance as am LEFT JOIN assets as item ON item.id = am.asset_id WHERE YEAR(am.schedule) ='2023'`;
-//     db.query(query, (err, results) => {
-//       if (err) {
-//         console.error('Error querying MySQL:', err);
-//         return res.status(500).send('Error fetching data');
-//       }
-//       res.json(results);
-//       let description;
-//       let body = 'You have ' + results[0].m_count + ' assets scheduled for maintenance today.';
+//     // const query = `SELECT item.asset_name, am.schedule as schedule, count(am.id) as m_count FROM asset_maintenance as am LEFT JOIN assets as item ON item.id = am.asset_id WHERE YEAR(am.schedule) ='2023'`;
+//     // db.query(query, (err, results) => {
+//     //   if (err) {
+//     //     console.error('Error querying MySQL:', err);
+//     //     return res.status(500).send('Error fetching data');
+//     //   }
+//     //   res.json(results);
+//     //   let description;
+//       let body = 'You have assets scheduled for maintenance today.';
 //       sendPushNotification(device_token, 'Maintenance', body);
-//     });
+//     // });
 //   }catch(error){
 //     console.log("error", error)
 //   }
 // });
 
-const sendPushNotification = (token, title, body) => {
-  admin.messaging().send({
-    token: token,
-    notification: {
-      title: title,
-      body: body,
-    },
-  })
-  .then(() => {
-    console.log('Push notification sent successfully');
-  })
-  .catch((error) => {
-    console.error('Error sending push notification:', error);
-  });
-};
-
-// Example endpoint to send push notification
-app.post('/send-notification', (req, res) => {
-  const { device_token, title, body } = req.body;
-  sendPushNotification(device_token, 'asdasdasdasd', 'ari na');
-  res.send('Push notification sent');
-});
+// // Example endpoint to send push notification
+// app.post('/send-notification', (req, res) => {
+//   const { device_token, title, body } = req.body;
+//   sendPushNotification(device_token, 'asdasdasdasd', 'ari na');
+//   res.send('Push notification sent');
+// });
 
 
 app.listen(5000, () => {

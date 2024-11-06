@@ -8,13 +8,13 @@ import {
   ThemeProvider,
 } from "react-native-paper";
 import {View, Text, SafeAreaView, ScrollView, KeyboardAvoidingView, StyleSheet} from 'react-native';
-import {Card, Title, Paragraph, Divider, TextInput, Button, IconButton} from 'react-native-paper';
 import Loader from './Components/loader';
 import { selectUserData, setUserData } from './redux/navSlice';
 import { useSelector } from 'react-redux';
 import DropDown from "react-native-paper-dropdown";
 import DateTimePicker from '@react-native-community/datetimepicker';
 
+import { Input, Icon, BottomSheet, ListItem, Dialog, Button, Divider } from '@rneui/themed';
 
 const AddUsersScreen = ({route, navigation}) => {
 	const [loading, setLoading] = useState(false);
@@ -55,7 +55,7 @@ const AddUsersScreen = ({route, navigation}) => {
       fetch(global.url+'saveUser.php', {
         method: 'POST',
         body: formBody,
-        headers: {
+        headers: { "bypass-tunnel-reminder": "true",
           'Content-Type':
           'application/x-www-form-urlencoded;charset=UTF-8',
         },
@@ -83,18 +83,10 @@ const AddUsersScreen = ({route, navigation}) => {
 
 	}, [])
     return (
-			<Provider theme={DefaultTheme}>
-        <View style={{flex: 1, backgroundColor: 'white'}}>
+      <ScrollView style={{ backgroundColor: '#ffffff' }}>
+			<View style={{ marginTop: 35 }}>
           <Loader loading={loading} />
-          <SafeAreaView
-            keyboardShouldPersistTaps="handled"
-            contentContainerStyle={{
-						justifyContent: 'center',
-						alignContent: 'center',
-            alignItems: 'center'
-					}}>
-            <KeyboardAvoidingView enabled style={{padding: 5}}>
-							<DropDown
+							{/* <DropDown
 								label={"Access"}
 								mode={"outlined"}
 								visible={showDropDown}
@@ -104,85 +96,108 @@ const AddUsersScreen = ({route, navigation}) => {
 								value={access_level}
 								setValue={setAccessLevel}
 								list={access}
-							/>
-              <TextInput
-								mode="outlined"
+							/> */}
+              <Input
                 label="Firstname"
-								activeOutlineColor='#348ceb'
+                labelStyle={styles.label}
+                inputContainerStyle={styles.inputContainer}
+                inputStyle={{ fontSize: 15 }}
+                placeholder={"John"}
                 value={firstname}
                 onChangeText={firstname => setFirstname(firstname)}
-							/>
-              <TextInput
-								mode="outlined"
+              />
+              <Input
                 label="Middlename"
-								activeOutlineColor='#348ceb'
+                labelStyle={styles.label}
+                inputContainerStyle={styles.inputContainer}
+                inputStyle={{ fontSize: 15 }}
+                placeholder={"Doe"}
                 value={middlename}
                 onChangeText={middlename => setMiddlename(middlename)}
-							/>
-              <TextInput
-								mode="outlined"
+              />
+              <Input
                 label="Lastname"
-								activeOutlineColor='#348ceb'
+                labelStyle={styles.label}
+                inputContainerStyle={styles.inputContainer}
+                inputStyle={{ fontSize: 15 }}
+                placeholder={"Smith"}
                 value={lastname}
                 onChangeText={lastname => setLastname(lastname)}
-							/>
-              <TextInput
-								mode="outlined"
+              />
+              <Input
                 label="Age"
-								activeOutlineColor='#348ceb'
+                labelStyle={styles.label}
+                inputContainerStyle={styles.inputContainer}
+                inputStyle={{ fontSize: 15 }}
+                placeholder={"18"}
                 value={age}
-                keyboardType='numeric'
                 onChangeText={age => setAge(age)}
-							/>
-              <TextInput
-								mode="outlined"
+                keyboardType='numeric'
+              />
+              <Input
                 label="Address"
-								activeOutlineColor='#348ceb'
+                labelStyle={styles.label}
+                inputContainerStyle={styles.inputContainer}
+                inputStyle={{ fontSize: 15 }}
+                placeholder={"Bacolod City"}
                 value={address}
                 onChangeText={address => setAddress(address)}
-							/>
-							<TextInput
-								mode="outlined"
+              />
+              <Input
                 label="Contact #"
-								activeOutlineColor='#348ceb'
+                labelStyle={styles.label}
+                inputContainerStyle={styles.inputContainer}
+                inputStyle={{ fontSize: 15, }}
+                placeholder={"123456789"}
                 value={contact_num}
-                keyboardType='numeric'
                 onChangeText={contact_num => setContactNum(contact_num)}
-							/>
-              <TextInput
-								mode="outlined"
+                keyboardType='numeric'
+              />
+              <Input
                 label="Username"
-								activeOutlineColor='#348ceb'
+                labelStyle={styles.label}
+                inputContainerStyle={styles.inputContainer}
+                inputStyle={{ fontSize: 15 }}
+                placeholder={"exampleusername"}
                 value={username}
                 onChangeText={username => setUsername(username)}
-							/>
-              <TextInput
-								mode="outlined"
+             />
+             <Input
                 label="Password"
-								activeOutlineColor='#348ceb'
+                labelStyle={styles.label}
+                inputContainerStyle={styles.inputContainer}
+                inputStyle={{ fontSize: 15 }}
+                placeholder={"examplepassword"}
                 value={password}
                 onChangeText={password => setPassword(password)}
-							/>
-              {/* <View style={{}}>
-                <Button style={{marginTop: 10}} icon="camera" mode="contained" onPress={() => console.log('Pressed')}>
-                  Image
-                </Button>
-                <View style={{marginTop: 5}}>
-
-                </View>
-              </View> */}
-							<View style={{}}>
-								<Button style={{marginTop: 15}} icon="check" color='green' mode="contained" onPress={() => saveUser()}>
-									SAVE
-								</Button>
-                <Button style={{marginTop: 5}} icon="close" color='red' mode="contained">
-									Cancel
-								</Button>
-							</View>
-            </KeyboardAvoidingView>
-        	</SafeAreaView>
-					</View>
-					</Provider>
+              />
+              <View style={{flexDirection: 'row', justifyContent: 'flex-end', marginHorizontal: 10}}>
+                <Button 
+                  title="Cancel"  
+                  
+                  icon={{
+                    name: 'x-circle',
+                    type: 'feather',
+                    size: 20,
+                    color: 'white',
+                  }} 
+                  onPress={() => navigation.goBack()}
+                  buttonStyle={{ backgroundColor: 'rgba(214, 61, 57, 1)', borderRadius: 5, marginRight: 10 }}
+                />
+                <Button 
+                  title="Save"  
+                  icon={{
+                    name: 'check-circle',
+                    type: 'feather',
+                    size: 20,
+                    color: 'white',
+                  }} 
+                  buttonStyle={{ backgroundColor: '#20ab3f', borderRadius: 5 }}
+                  onPress={() => saveUser()}
+                />
+              </View>
+            </View>
+        	</ScrollView>
     )
 };
 
@@ -191,6 +206,20 @@ const AddUsersScreen = ({route, navigation}) => {
 export default AddUsersScreen;
 
 const styles = StyleSheet.create({
+    label: {
+      fontWeight: '400', 
+      fontSize: 13, 
+      marginTop: -15,
+      color: '#0d0c0c'
+    },
+    inputContainer: {
+      height: 35,
+      padding: 5, 
+      borderColor: 'grey',
+      borderWidth: 0.5,
+      borderBottomWidth: 0.5,
+      borderRadius: 8,
+    },
     selectDropdown: {
       paddingLeft: 15,
       paddingRight: 15,

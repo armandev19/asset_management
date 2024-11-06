@@ -33,7 +33,7 @@ const getLocations = () => {
   fetch(global.url+'getLocations.php', {
     method: 'POST',
     body: formBody,
-    headers: {
+    headers: { "bypass-tunnel-reminder": "true",
       'Content-Type':
       'application/x-www-form-urlencoded;charset=UTF-8',
     },
@@ -97,18 +97,20 @@ useFocusEffect(
     <View style={{justifyContent: 'center', backgroundColor: '#f2f3f8',}}>
       <Loader loading={loading} />
       <View styles={{flex: 1, padding: 6, alignSelf: 'center'}}>
-        <Card style={{ margin: 6, padding: 6}}>
-          <View style={{flexDirection: 'row', alignItems: 'center' }}>
+        <View style={{ padding: 6, borderRadius: 20}}>
+          <View style={{flexDirection: 'row'}}>
             <Searchbar
               placeholder="Search"
               onChangeText={handleSearchQueryChange}
               value={search}
-              style={{ marginHorizontal: 5, flex: 6}}
+              style={{ margin: 2, flex: 1, borderRadius: 5, backgroundColor: 'white'}}
+              placeholderTextColor={"black"}
+              iconColor='black'
             />
             <Button style={{marginHorizontal: 5, marginTop: 1, padding: 5}} labelStyle={{fontWeight: 'bold'}} icon="plus" compact="true" mode="contained" onPress={() => navigation.navigate('AddAssetTransferScreen')}>
             </Button>
           </View>
-        </Card>
+        </View>
         <FlatList
           data={locations}
           contentContainerStyle={{paddingBottom: 20, padding: 5}}

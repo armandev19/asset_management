@@ -76,7 +76,7 @@ const onChangeSearch = () => {
   fetch(global.url+'getAssetMaintenance.php', {
     method: 'POST',
     body: formBody,
-    headers: {
+    headers: { "bypass-tunnel-reminder": "true",
       'Content-Type':
       'application/x-www-form-urlencoded;charset=UTF-8',
     },
@@ -111,7 +111,7 @@ const getAssetsMaintenance = () => {
   fetch(global.url+'getAssetMaintenance.php', {
     method: 'POST',
     body: formBody,
-    headers: {
+    headers: { "bypass-tunnel-reminder": "true",
       'Content-Type':
       'application/x-www-form-urlencoded;charset=UTF-8',
     },
@@ -152,7 +152,7 @@ const saveMaintenance = () => {
   fetch(global.url+'saveMaintenance.php', {
     method: 'POST',
     body: formBody,
-    headers: {
+    headers: { "bypass-tunnel-reminder": "true",
       'Content-Type':
       'application/x-www-form-urlencoded;charset=UTF-8',
     },

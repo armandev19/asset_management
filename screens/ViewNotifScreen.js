@@ -21,7 +21,7 @@ const ViewNotifScreen = ({route, navigation}) => {
 		fetch(global.url+'getNotificationDetails.php', {
 			method: 'POST',
 			body: formBody,
-			headers: {
+			headers: { "bypass-tunnel-reminder": "true",
 				'Content-Type':
 				'application/x-www-form-urlencoded;charset=UTF-8',
 			},

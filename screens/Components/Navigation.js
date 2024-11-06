@@ -34,6 +34,9 @@ import ViewNotifScreen from '../ViewNotifScreen';
 import UserDetailsScreen from '../UserDetailsScreen';
 import UpdateUsersScreen from '../UpdateUsersScreen';
 import AddUsersScreen from '../AddUsersScreen';
+import AddLocationScreen from '../AddLocationScreen';
+import LocationScreen from '../DrawerScreens/LocationsScreen';
+import UpdateLocationScreen from '../UpdateLocationScreen';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { selectUserData, setUserData } from '../redux/navSlice';
@@ -265,6 +268,48 @@ const Navigation = (props) => {
           component={AssetMaintenanceScreen}
           options={{
             title: 'Assets Maintenance',
+            headerStyle: {
+              backgroundColor: '#fc8953',
+            },
+            headerTintColor: '#ffffff',
+            headerTitleStyle: {
+              fontWeight: 'bold',
+            },
+          }}
+        />
+        <Stack.Screen
+          name="LocationScreen"
+          component={LocationScreen}
+          options={{
+            title: 'Locations',
+            headerStyle: {
+              backgroundColor: '#fc8953',
+            },
+            headerTintColor: '#ffffff',
+            headerTitleStyle: {
+              fontWeight: 'bold',
+            },
+          }}
+        />
+        <Stack.Screen
+          name="AddLocationScreen"
+          component={AddLocationScreen}
+          options={{
+            title: 'Add Location',
+            headerStyle: {
+              backgroundColor: '#fc8953',
+            },
+            headerTintColor: '#ffffff',
+            headerTitleStyle: {
+              fontWeight: 'bold',
+            },
+          }}
+        />
+        <Stack.Screen
+          name="UpdateLocationScreen"
+          component={UpdateLocationScreen}
+          options={{
+            title: 'Update Location',
             headerStyle: {
               backgroundColor: '#fc8953',
             },

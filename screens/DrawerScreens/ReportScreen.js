@@ -93,7 +93,7 @@ const ReportScreen = ({navigation, route}) => {
       fetch(global.url+'generateReports.php', {
         method: 'POST',
         body: formBody,
-        headers: {
+        headers: { "bypass-tunnel-reminder": "true",
           'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
         },
       })

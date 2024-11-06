@@ -15,19 +15,24 @@ import DropDown from 'react-native-paper-dropdown';
 import { Button, Modal, Provider } from 'react-native-paper';
 import LinearGradient from 'react-native-linear-gradient';
 import SendSMS from 'react-native-sms'
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import moment from 'moment/moment';
+import messaging from '@react-native-firebase/messaging';
+import PushNotification from 'react-native-push-notification';
+import { Input, Icon, BottomSheet, ListItem, Dialog, Divider } from '@rneui/themed';
 
 const HomeScreen = ({navigation, props}) => {
   // const [userData, setUserData] = useState({});
-  let currentDate = moment().format('ddd, MMM DD');
+  let currentDate = moment().format('dddd MMM DD, YYYY');
   const [users, setUsers] = useState({});
   const currentUserData = useSelector(selectUserData);
   const fbKey = useSelector(selectFCMToken);
+  
   const [loading, setLoading] = useState(false);
   const screenWidth = Dimensions.get("window").width;
   const [newAssets, setNewAssets] = useState(0);
   const [operationalAssets, setOperationalAssets] = useState(0);
+  const [assetTransfer, setAssetTransfer] = useState(0);
+  const [totalValue, setTotalValue] = useState('');
   const [forMaintenanceAssets, setForMaintenanceAssets] = useState(0);
   const [xData, setXData] = useState([]);
   const [yData, setYData] = useState([]);
@@ -36,7 +41,7 @@ const HomeScreen = ({navigation, props}) => {
   const [showDropDown, setShowDropDown] = useState(false);
   const [filter, setFilter] = useState('Today');
   const [filterShow, setFilterShow] = useState(false);
-  
+  const [device_token, setDeviceToken] = useState(fbKey);
   const dispatch = useDispatch();
 
 
@@ -51,6 +56,62 @@ const HomeScreen = ({navigation, props}) => {
         console.log('SMS Callback: completed: ' + completed + ' cancelled: ' + cancelled + 'error: ' + error);
 
     });
+  }
+
+  const requestUserPermission = async () => {
+    const authStatus = await messaging().requestPermission();
+    if (authStatus === messaging.AuthorizationStatus.AUTHORIZED) {
+      console.log('User granted messaging permissions');
+    } else {
+      console.log('User denied messaging permissions');
+    }
+  }
+
+    // PushNotification.createChannel(
+    //   {
+    //     channelId: 'your-channel-id', // (required)
+    //     channelName: 'Your channel name', // (required)
+    //     channelDescription: 'A channel to categorise your notifications', // (optional) default: undefined.
+    //     soundName: 'default', // (optional) See `soundName` parameter of `localNotification` function
+    //     importance: 4, // (optional) default: 4. Int value of the Android notification importance
+    //     vibrate: true, // (optional) default: true. Creates the default vibration pattern if true.
+    //   },
+    //   (created) => console.log(`createChannel returned '${created}'`), // (optional) callback returns whether the channel was created, false means it already existed.
+    // );
+  
+  
+
+  // PushNotification.createChannel(
+  //   {
+  //     channelId: 'test123', // Unique ID for the channel
+  //     channelName: 'Default Channel', // Display name of the channel
+  //     channelDescription: 'A default channel for notifications', // Description of the channel
+  //     soundName: 'default', // Sound to play for notifications (optional)
+  //     importance: 4, // Importance level of the channel (0-4, with 4 being highest)
+  //     vibrate: true, // Whether to enable vibration for notifications (optional)
+  //   },
+  //   (created) => console.log(`Channel created: ${created}`)
+  // );
+
+  const messageSubscription = messaging().onMessage(async remoteMessage => {
+    const notificationData = remoteMessage.notification; // Extract notification data
+    if (notificationData) {
+      const title = notificationData.title;
+      const body = notificationData.body;
+      PushNotification.localNotification({
+        title: title,
+        message: body,
+        channelId: 'test123', // Specify the channel ID for the notification
+      });
+    }
+  });
+
+  const testFunction = async () => {
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      console.log('A new FCM message arrived!', JSON.stringify(remoteMessage));
+    });
+
+    return unsubscribe;
   }
 
 
@@ -84,7 +145,8 @@ const HomeScreen = ({navigation, props}) => {
     fetch(global.url+'dashboard.php', {
       method: 'POST',
       body: formBody,
-      headers: {
+      headers: { 
+        "bypass-tunnel-reminder": "true",
         'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
       },
     })
@@ -93,6 +155,37 @@ const HomeScreen = ({navigation, props}) => {
       setOperationalAssets(data.operational);
       setNewAssets(data.newAssets);
       setForMaintenanceAssets(data.forMaintenance);
+      setTotalValue(data.totalValue);
+      setAssetTransfer(data.assetTransfers);
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+      
+  }
+
+  const saveDeviceToken = () => {
+    let dataToSend = { fbKey: fbKey };
+    let formBody = [];
+
+    for (let key in dataToSend) {
+      let encodedKey = encodeURIComponent(key);
+      let encodedValue = encodeURIComponent(dataToSend[key]);
+      formBody.push(encodedKey + '=' + encodedValue);
+    }
+    
+    formBody = formBody.join('&');
+    fetch(global.url+'saveDeviceToken.php', {
+      method: 'POST',
+      body: formBody,
+      headers: { 
+        "bypass-tunnel-reminder": "true",
+        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+      },
+    })
+    .then((response) => response.json())
+    .then(data => {
+
     })
     .catch(error => {
       console.error('Error:', error);
@@ -114,7 +207,8 @@ const HomeScreen = ({navigation, props}) => {
     fetch(global.url+'getNewAssetChart.php', {
       method: 'POST',
       body: formBody,
-      headers: {
+      headers: { 
+        "bypass-tunnel-reminder": "true",
         'Content-Type': 'application/json'
       },
     })
@@ -132,17 +226,48 @@ const HomeScreen = ({navigation, props}) => {
   
   const sendNotif = () => {
     let dataToSend = { token: serverkey, device_token: fbKey };
-    fetch('http://192.168.1.7:5000/asset-maintenance', {
+    fetch('http://192.168.1.3:5000/asset-maintenance', {
       method: 'POST',
       body: JSON.stringify(dataToSend),
-      headers: {
+      headers: { 
+        "bypass-tunnel-reminder": "true",
         'Content-Type': 'application/json'
       },
     })
-    .then((response) => response.text())
+    .then((response) => response.json())
     .then(data => {
       console.log(data);
     
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+  }
+
+  const updateDeviceToken = () => {
+    let dataToSend = { device_token: fbKey, id: currentUserData.id };
+    let formBody = [];
+
+    for (let key in dataToSend) {
+      let encodedKey = encodeURIComponent(key);
+      let encodedValue = encodeURIComponent(dataToSend[key]);
+      formBody.push(encodedKey + '=' + encodedValue);
+    }
+
+    console.log("dataTosend", dataToSend)
+
+    formBody = formBody.join('&');
+    fetch(global.url+'saveDeviceToken.php', {
+      method: 'POST',
+      body: formBody,
+      headers: { 
+        "bypass-tunnel-reminder": "true",
+        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+      },
+    })
+    .then((response) => response.json())
+    .then(data => {
+      console.log("device token",data);
     })
     .catch(error => {
       console.error('Error:', error);
@@ -163,7 +288,8 @@ const HomeScreen = ({navigation, props}) => {
     fetch(global.url+'getAssetsByStatusChart.php', {
       method: 'POST',
       body: formBody,
-      headers: {
+      headers: { 
+        "bypass-tunnel-reminder": "true",
         'Content-Type': 'application/json'
       },
     })
@@ -250,6 +376,9 @@ const HomeScreen = ({navigation, props}) => {
     getNewAssets();
     getAssetsByStatus();
     test();
+    if(currentUserData.notif_token === ""){
+      updateDeviceToken();  
+    }
   }, [])
 
   const closeModal = (val) => {
@@ -264,16 +393,26 @@ const HomeScreen = ({navigation, props}) => {
     <Provider>
     <ScrollView style={{flex: 1, backgroundColor: '#ffffff'}}>
       <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between', padding: 16, borderBottomLeftRadius: 25, borderBottomRightRadius: 25, backgroundColor: '#fc8953', height: 60}}>
-        <Text style={{color: "white", fontSize: 14, fontWeight: '500', marginTop: 5}}>Welcome {currentUserData?.firstname}</Text>
+        <Text style={{color: "white", fontSize: 14, fontWeight: '500', marginTop: 5}} onPress={()=>sendNotif()}>Welcome {currentUserData?.firstname}</Text>
         <Text style={{color: "white", fontSize: 14, fontWeight: '500', marginTop: 5}}>{currentDate}</Text>
       </View>
-      <View style={{flexDirection: 'row', justifyContent: 'space-evenly', marginTop: 15, marginHorizontal: 20}}>
-        <View style={{borderColor: "#F05924", borderWidth: 1, borderRadius: 5, width: 150, height: 90, padding: 5, backgroundColor: '#fc8953'}}>
-          <Text style={{color: "white", fontSize: 18, fontWeight: '500', textAlign: 'center', marginTop: 10}} onPress={()=>logout()}>Assets</Text>
+      <View style={{flexDirection: 'row', justifyContent: 'space-evenly', marginTop: 15, marginHorizontal: 10}}>
+        <View style={{borderRadius: 5, width: 150, height: 100, padding: 5, backgroundColor: '#fc8953'}}>
+          <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
+            <Icon type="ionicon" name="cash-outline" color={"white"} style={{marginRight: 5, marginTop: 8}}/>
+            <Text style={{color: "white", fontSize: 18, fontWeight: '500', textAlign: 'center', marginTop: 10}}>
+              Assets
+            </Text>
+          </View>
           <Text style={{color: "white", fontSize: 35, textAlign: 'center', fontWeight: 'bold'}}>{newAssets}</Text>
         </View>
-        <View style={{borderColor: "#F05924", borderWidth: 1, borderRadius: 5, width: 150, height: 90, padding: 5, backgroundColor: '#fc8953'}}>
-          <Text style={{color: "white", fontSize: 18, fontWeight: '500', textAlign: 'center', marginTop: 10}}>Operational</Text>
+        <View style={{borderRadius: 5, width: 150, height: 100, padding: 5, backgroundColor: '#fc8953'}}>
+          <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
+            <Icon type="ionicon" name="business-outline" color={"white"} style={{marginRight: 5, marginTop: 8}}/>
+            <Text style={{color: "white", fontSize: 18, fontWeight: '500', textAlign: 'center', marginTop: 10}}>
+              Properties
+            </Text>
+          </View>
           <Text style={{color: "white", fontSize: 35, textAlign: 'center', fontWeight: 'bold'}}>{operationalAssets}</Text>
         </View>
       </View>
@@ -283,10 +422,60 @@ const HomeScreen = ({navigation, props}) => {
             justifyContent: 'center',
             alignItems: 'center',
             padding: 15,
-            marginTop: 5
+            // marginTop: 5
           }}>
+            <View style={styles.cardDataContainer}>
+              <View style={{padding: 10, marginHorizontal: 5, marginVertical: 5}}>
+                {/* <Icon
+                  type="feather"
+                  name='dollar-sign'
+                  size={35}
+                  color={"#fc8953"}
+                /> */}
+                <Text style={{fontSize: 35, color: "#fc8953"}}>₱</Text>
+              </View>
+              <View style={{padding: 5, alignItems: 'flex-end'}}>
+                <Text style={styles.cardDataDescription}>Total Value</Text>
+                <Text style={styles.cardData}>{totalValue}</Text>
+              </View>
+            </View>
+            <View style={styles.cardDataContainer}>
+              <View style={{padding: 10, marginHorizontal: 5, marginVertical: 5}}>
+                <Icon
+                  type="feather"
+                  name='truck'
+                  size={35}
+                  color={"#fc8953"}
+                />
+              </View>
+              <View style={{padding: 5, alignItems: 'flex-end'}}>
+                <Text style={styles.cardDataDescription}>Asset Transfers</Text>
+                <Text style={styles.cardData}>{assetTransfer}</Text>
+              </View>
+            </View>
+            <View style={styles.cardDataContainer}>
+              <View style={{padding: 10, marginHorizontal: 5, marginVertical: 5}}>
+                <Icon
+                  type="feather"
+                  name='tool'
+                  size={35}
+                  color={"#fc8953"}
+                />
+              </View>
+              <View style={{padding: 5, alignItems: 'flex-end'}}>
+                <Text style={styles.cardDataDescription}>Under Maintenance</Text>
+                <Text style={styles.cardData}>{forMaintenanceAssets}</Text>
+              </View>
+            </View>
+            <View style={styles.cardDataContainerLarge}>
+              <View style={{padding: 5, marginVertical: 5}}>
+                <Text style={{color: '#fc8953'}}>Assets for Depreciation</Text>
+              </View>
+              <View style={{padding: 5, alignItems: 'flex-end'}}>
+              </View>
+            </View>
             
-            <View style={{width: '100%', padding: 10, borderRadius: 5, elevation: 2, backgroundColor: '#f5ede4'}}>
+            {/* <View style={{width: '100%', padding: 10, borderRadius: 5, elevation: 2, backgroundColor: '#f5ede4'}}>
               <Text style={{color: "#000", fontSize: 16, textAlign: 'left', fontWeight: '400', marginTop: 4}}>Operational</Text>
               <LineChart style={styles.chart}
                 data={dataStatus}
@@ -304,7 +493,7 @@ const HomeScreen = ({navigation, props}) => {
                 yAxis={yAxis}
                 animation={{ durationX: 2000 }}
               />
-            </View>
+            </View> */}
             {/* <View style={{borderColor: "#1970cf", borderWidth: 1, borderRadius: 5, width: '100%', padding: 5, marginTop: 10}}>
               <PieChart
                 style={styles.chart}
@@ -373,19 +562,14 @@ const styles = StyleSheet.create({
     width: 200,
   },
   chart: {
-    // width: 350,
     height: 280,
   },
   centeredView: {
     flex: 1,
     justifyContent: 'center',
-    // marginTop: 22,
     alignItems: 'center'
   },
   modalView: {
-    // alignContent: 'center',
-    // alignItems: 'center',
-    // justifyContent: 'center',
     height: 190,
     width: 150,
     backgroundColor: 'white',
@@ -402,6 +586,39 @@ const styles = StyleSheet.create({
     shadowRadius: 20,
     elevation: 20,
   },
+  cardData: {
+    alignContent: 'flex-end', 
+    fontSize: 20,
+    color: "#fc8953", 
+    fontWeight: 'bold'
+  },
+  cardDataDescription: {
+    alignContent: 'flex-end', 
+    fontSize: 15,
+    color: "#fc8953", 
+    fontWeight: '500'
+  },
+  cardDataContainer: {
+    elevation: 5,
+    backgroundColor: 'white', 
+    borderRadius: 5, 
+    width: '90%', 
+    height: 80, 
+    padding: 5, 
+    flexDirection: 'row', 
+    marginTop: 10, 
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  cardDataContainerLarge: {
+    elevation: 5,
+    backgroundColor: 'white', 
+    borderRadius: 5, 
+    width: '90%', 
+    height: 200, 
+    padding: 5, 
+    marginTop: 10, 
+  }
 });
  
 export default HomeScreen;

@@ -36,7 +36,7 @@ const getUsers = () => {
   fetch(global.url+'getUsers.php', {
     method: 'POST',
     body: formBody,
-    headers: {
+    headers: { "bypass-tunnel-reminder": "true",
       'Content-Type':
       'application/x-www-form-urlencoded;charset=UTF-8',
     },
@@ -74,19 +74,18 @@ useFocusEffect(
   return (
     <View style={{justifyContent: 'center', backgroundColor: '#f2f3f8'}}>
       <Loader loading={loading} />
-      <View styles={{flex: 1, padding: 6, alignSelf: 'center'}}>
-        <Card style={{ margin: 6, padding: 6, backgroundColor: '#fff'}}>
-          <View style={{flexDirection: 'row', alignItems: 'center' }}>
-            <Searchbar
-              placeholder="Search"
-              placeholderTextColor={"#fff"}
-              onChangeText={handleSearchQueryChange}
-              value={search}
-              style={{ marginHorizontal: 5, flex: 6, backgroundColor: "lightgray"}}
-            />
-            <Button onPress={()=>navigation.navigate('AddUsersScreen')} style={{marginHorizontal: 5, marginTop: 1, padding: 5}} labelStyle={{fontWeight: 'bold'}} icon="plus" compact="true" mode="contained"/>
-          </View>
-        </Card>
+        <View style={{ padding: 6, borderRadius: 20}}>
+          <View style={{flexDirection: 'row'}}>
+          <Searchbar
+            placeholder="Search"
+            onChangeText={handleSearchQueryChange}
+            value={search}
+            style={{ margin: 2, flex: 1, borderRadius: 5, backgroundColor: 'white'}}
+            placeholderTextColor={"black"}
+            iconColor='black'
+          />
+          <Button onPress={()=>navigation.navigate('AddUsersScreen')} style={{marginHorizontal: 5, marginTop: 1, padding: 5}} labelStyle={{fontWeight: 'bold'}} icon="plus" compact="true" mode="contained"/>
+        </View>
       </View>
         <ScrollView style={{padding: 5, paddingBottom: 40, marginBottom: 50}}>
         {users && users?.map((item, index)=>{

@@ -8,11 +8,14 @@ import {
   ThemeProvider,
 } from "react-native-paper";
 import {View, Text, SafeAreaView, ScrollView, KeyboardAvoidingView, StyleSheet} from 'react-native';
-import {Card, Title, Paragraph, Divider, TextInput, Button} from 'react-native-paper';
+import {} from 'react-native-paper';
 import Loader from './Components/loader';
 import { selectUserData, setUserData } from './redux/navSlice';
 import { useSelector } from 'react-redux';
 import DropDown from "react-native-paper-dropdown";
+import { Input, Icon, BottomSheet, ListItem, Dialog, Button, Overlay } from '@rneui/themed';
+import { TouchableOpacity } from 'react-native';
+
 
 const AddAssetTransferScreen = ({route, navigation}) => {
 	const currentUserData = useSelector(selectUserData);
@@ -24,12 +27,33 @@ const AddAssetTransferScreen = ({route, navigation}) => {
 	const [remarks, setRemarks] = useState("");
   const [assetList, setAssetList] = useState([]);
 	const [locationList, setLocationList] = useState([]);
+  const [selectedAssets, setSelectedAssets] = useState([])
+  const [visible, setVisible] = useState(false);
+  const [visibleLocation, setVisibleLocation] = useState(false);
+
+  const [selectedItems, setSelectedItems] = useState([]);
+
+  const toggleCheckbox = (item) => {
+    setSelectedItems((prevSelectedItems) => {
+      if (prevSelectedItems.includes(item.value)) {
+        // Remove item if it's already selected
+        return prevSelectedItems.filter((selectedItem) => selectedItem !== item.value);
+      } else {
+        // Add item if it's not selected
+        return [...prevSelectedItems, item.value];
+      }
+    });
+  };
+
+  const selectedAssetLabels = assetList
+    .filter((asset) => selectedItems.includes(asset.value))
+    .map((asset) => asset.label);
 
   const getAssets = () => {
     setLoading(true)
     fetch(global.url+'getAssetsDropdown.php', {
       method: 'POST',
-      headers: {
+      headers: { "bypass-tunnel-reminder": "true",
         'Content-Type':
         'application/x-www-form-urlencoded;charset=UTF-8',
       },
@@ -59,7 +83,7 @@ const AddAssetTransferScreen = ({route, navigation}) => {
 		fetch(global.url+'saveAssetTransfer.php', {
 			method: 'POST',
 			body: formBody,
-			headers: {
+			headers: { "bypass-tunnel-reminder": "true",
 				'Content-Type':
 				'application/x-www-form-urlencoded;charset=UTF-8',
 			},
@@ -85,7 +109,7 @@ const AddAssetTransferScreen = ({route, navigation}) => {
 		setLoading(true)
 		fetch(global.url+'getLocationDropdown.php', {
 			method: 'POST',
-			headers: {
+			headers: { "bypass-tunnel-reminder": "true",
 				'Content-Type':
 				'application/x-www-form-urlencoded;charset=UTF-8',
 			},
@@ -103,7 +127,7 @@ const AddAssetTransferScreen = ({route, navigation}) => {
 	}
 
   
-
+  console.log('selectedItems', selectedItems);
   useEffect(()=>{
     getAssets();
     getLocationDropdown();
@@ -118,8 +142,8 @@ const AddAssetTransferScreen = ({route, navigation}) => {
 						justifyContent: 'center',
 						alignContent: 'center',
 					}}>
-            <KeyboardAvoidingView enabled style={{padding: 5}}>
-              <DropDown
+            <KeyboardAvoidingView enabled style={{paddingVertical: 20, marginTop: 10}}>
+              {/* <DropDown
 								label={"Asset"}
 								mode={"outlined"}
 								visible={showDropDownAsset}
@@ -140,23 +164,101 @@ const AddAssetTransferScreen = ({route, navigation}) => {
 								value={targetLocation}
 								setValue={setTargetLocation}
 								list={locationList}
-							/>
-              <TextInput
-								mode="outlined"
+							/> */}
+              <TouchableOpacity onPress={()=>setVisible(true)}>
+              <Input
+                label="Asset"
+                labelStyle={styles.label}
+                inputContainerStyle={styles.inputContainer}
+                inputStyle={{ fontSize: 15 }}
+                placeholder={"Select asset"}
+                value={selectedAssetLabels?.join(', ')}
+                // onChangeText={selectedAssets => setSelectedAssets(selectedAssets)}
+                // editable={false}
+                rightIcon={{ type: 'simple-line-icon', name: 'arrow-down', size: 15 }}
+              />
+              </TouchableOpacity>
+              
+              <TouchableOpacity onPress={()=>setVisibleLocation(true)}>
+                <Input
+                  label="Transfer To"
+                  labelStyle={styles.label}
+                  inputContainerStyle={styles.inputContainer}
+                  inputStyle={{ fontSize: 15 }}
+                  placeholder={"Select transfer location"}
+                  value={targetLocation}
+                  onChangeText={remarks => setRemarks(remarks)}
+                  editable={false}
+                  rightIcon={{ type: 'simple-line-icon', name: 'arrow-down', size: 15 }}
+                />
+              </TouchableOpacity>
+              <Input
                 label="Remarks"
-								activeOutlineColor='#348ceb'
+                labelStyle={styles.label}
+                inputContainerStyle={{...styles.inputContainer, height: 100}}
+                inputStyle={{ fontSize: 15, textAlignVertical: 'top' }}
+                placeholder={"Additional instructions"}
+                multiline={true}           // Allows multiple lines
+                numberOfLines={4}          // Sets the visible number of lines
                 value={remarks}
                 onChangeText={remarks => setRemarks(remarks)}
-							/>
-							<View style={{marginTop: 5, padding: 10, flexDirection: 'row', justifyContent: 'space-evenly'}}>
-								<Button style={{margin: 1, width: '45%'}} icon="check" color={"#2eb82e"} mode="contained" onPress={() => saveAssetTransfer()}>
-									SAVE
-								</Button>
-								<Button style={{margin: 1, width: '45%'}} icon="close" color='red' mode="contained" onPress={() => navigation.goBack()}>
-									CANCEL
-								</Button>
-							</View>
+              />
+              <View style={{flexDirection: 'row', justifyContent: 'flex-end', marginHorizontal: 10}}>
+                <Button 
+                  title="Cancel"  
+                  
+                  icon={{
+                    name: 'x-circle',
+                    type: 'feather',
+                    size: 20,
+                    color: 'white',
+                  }} 
+                  onPress={() => navigation.goBack()}
+                  buttonStyle={{ backgroundColor: 'rgba(214, 61, 57, 1)', borderRadius: 5, marginRight: 10 }}
+                />
+                <Button 
+                  title="Save"  
+                  icon={{
+                    name: 'check-circle',
+                    type: 'feather',
+                    size: 20,
+                    color: 'white',
+                  }} 
+                  buttonStyle={{ backgroundColor: '#20ab3f', borderRadius: 5 }}
+                  onPress={() => saveAssetTransfer()}
+                />
+              </View>
             </KeyboardAvoidingView>
+            <Overlay isVisible={visible} onBackdropPress={() => setVisible(false)} overlayStyle={{height: '50%', width: '80%'}}>
+              <Text>Select Asset</Text>
+              <ScrollView>
+              {assetList?.map((item, index) => {
+                return (
+                  <ListItem key={index} bottomDivider style={{height: 'auto'}}>
+                      <ListItem.CheckBox checked={selectedItems.includes(item.value)} onPress={() => toggleCheckbox(item)} size={18}/>
+                      <ListItem.Content >
+                        <ListItem.Title style={{fontSize: 14}}>{item.label || "No name"}</ListItem.Title>
+                      </ListItem.Content>
+                  </ListItem>
+                )
+              })}
+              </ScrollView>
+            </Overlay>
+            <Overlay isVisible={visibleLocation} onBackdropPress={() => setVisibleLocation(false)} overlayStyle={{height: '50%', width: '80%'}}>
+              <Text>Select Location</Text>
+              <ScrollView>
+              {locationList?.map((item, index) => {
+                return (
+                  <ListItem key={index} bottomDivider style={{height: 'auto'}} onPress={()=>alert(item.value)}>
+                      <Icon name="location-pin" type="simple-line-icon" size={15} />
+                      <ListItem.Content >
+                        <ListItem.Title style={{fontSize: 14}}>{item.label || "No name"}</ListItem.Title>
+                      </ListItem.Content>
+                  </ListItem>
+                )
+              })}
+              </ScrollView>
+            </Overlay>
         	</SafeAreaView>
 					</View>
 					</Provider>
@@ -168,6 +270,20 @@ const AddAssetTransferScreen = ({route, navigation}) => {
 export default AddAssetTransferScreen;
 
 const styles = StyleSheet.create({
+    label: {
+      fontWeight: '400', 
+      fontSize: 13, 
+      marginTop: -15,
+      color: '#0d0c0c'
+    },
+    inputContainer: {
+      height: 35,
+      padding: 5, 
+      borderColor: 'grey',
+      borderWidth: 0.5,
+      borderBottomWidth: 0.5,
+      borderRadius: 8,
+    },
     selectDropdown: {
       paddingLeft: 15,
       paddingRight: 15,

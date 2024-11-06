@@ -10,13 +10,17 @@ import {
 import {View, Text, SafeAreaView, ScrollView, KeyboardAvoidingView, StyleSheet, TouchableOpacity, Image} from 'react-native';
 import {Card, Title, Paragraph, Divider, TextInput, IconButton, Button} from 'react-native-paper';
 import Loader from './Components/loader';
-import { selectUserData, setUserData } from './redux/navSlice';
+import { selectUserData, setUserData, setAssetData, selectAssetData } from './redux/navSlice';
 import { useSelector } from 'react-redux';
 import DropDown from "react-native-paper-dropdown";
 import DateTimePicker from '@react-native-community/datetimepicker';
-import DocumentPicker from 'react-native-document-picker';
+// import DocumentPicker from 'react-native-document-picker';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
+import { useDispatch } from 'react-redux';
+import { width } from 'deprecated-react-native-prop-types/DeprecatedImagePropType';
 
 const AddAssetScreen = ({route, navigation}) => {
+  const dispatch = useDispatch();
 	const [loading, setLoading] = useState(false);
   const [showDropDown, setShowDropDown] = useState(false);
   const [showDropDownType, setShowDropDownType] = useState(false);
@@ -35,6 +39,9 @@ const AddAssetScreen = ({route, navigation}) => {
   const [selectedFile, setSelectedFile] = useState([]);
   const [imageUri, setImageUri] = useState(null);
   const [imageName, setImageName] = useState('');
+  const [reference, setReference] = useState('');
+
+  const assetDeets = useSelector(selectAssetData);
 
 	const showPicker = () => {
     setIsPickerShow(true);
@@ -47,13 +54,13 @@ const AddAssetScreen = ({route, navigation}) => {
 	
   const statusList = [
     {id:"Operational", value: "Operational"},
-    {id:"In Repair", value: "In Repair"},
+    {id:"Under Repair", value: "Under Repair"},
     {id:"Disposed/Destroyed", value: "Disposed/Destroyed"}
   ]
 
 	const saveAsset = () => {
-		setLoading(true);
-		let dataToSend = { name: name, description : description, qty: qty, type: type, price: price, purchaseDate: date, location: location, created_by: currentUserData.id, imageName: imageName, imageUri: imageUri };
+		// setLoading(true);
+		let dataToSend = { name: name, description : description, qty: qty, type: type, price: price, purchaseDate: date, location: location, created_by: currentUserData.id, images: JSON.stringify(assetDeets?.images) };
 		let formBody = [];
 
 		for (let key in dataToSend) {
@@ -62,23 +69,18 @@ const AddAssetScreen = ({route, navigation}) => {
 			formBody.push(encodedKey + '=' + encodedValue);
 		}
 
-    // formBody.append('file', {
-    //   uri: selectedFile[0].uri,
-    //   type: selectedFile[0].type,
-    //   name: selectedFile[0].name,
-    // });
-
 		formBody = formBody.join('&');
+    
 		fetch(global.url+'saveAsset.php', {
 			method: 'POST',
 			body: formBody,
-			headers: {
+			headers: { "bypass-tunnel-reminder": "true",
         'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
 			},
 		})
 		.then((response) => response.json())
 		.then((responseJson) => {
-      console.log("responseJson", responseJson)
+      dispatch(setAssetData(null));
 			if(responseJson.status == 'success'){
 				alert('Success!');
 			}else{
@@ -96,10 +98,10 @@ const AddAssetScreen = ({route, navigation}) => {
 	}
   
 	const getLocationDropdown = () => {
-		setLoading(true)
+		// setLoading(true)
 		fetch(global.url+'getLocationDropdown.php', {
 			method: 'POST',
-			headers: {
+			headers: { "bypass-tunnel-reminder": "true",
 				'Content-Type':
 				'application/x-www-form-urlencoded;charset=UTF-8',
 			},
@@ -116,11 +118,29 @@ const AddAssetScreen = ({route, navigation}) => {
 			});
 	}
 
+  const getRefNumber = () => {
+		fetch(global.url+'generateRefNum.php', {
+			method: 'POST',
+			headers: { 
+				'Content-Type':
+				'application/x-www-form-urlencoded;charset=UTF-8',
+			},
+		})
+			.then((response) => response.json())
+			.then((responseJson) => {
+        setReference(responseJson);
+			})
+			.catch((error) => {
+				alert(error);
+				console.error(error);
+			});
+	}
+
   const getAssetType = () => {
-		setLoading(true)
+		// setLoading(true)
 		fetch(global.url+'getAssetType.php', {
 			method: 'POST',
-			headers: {
+			headers: { "bypass-tunnel-reminder": "true",
 				'Content-Type':
 				'application/x-www-form-urlencoded;charset=UTF-8',
 			},
@@ -137,56 +157,88 @@ const AddAssetScreen = ({route, navigation}) => {
 			});
 	}
 
-  const pickDocument = async () => {
-    try {
-      const res = await DocumentPicker.pick({
-        type: [DocumentPicker.types.images],
-      });
-
-      if(res){
-        setSelectedFile(res);
-        setImageUri(res[0].uri);
-        setImageName(res[0].name);
-        console.log("res", res[0].uri)
+  const captureImage = () => {
+    launchCamera(
+      {
+        mediaType: 'photo',
+        saveToPhotos: true,  // Saves image to the gallery
+        cameraType: 'back',  // Use the back camera
+      },
+      (response) => {
+        if (response.didCancel) {
+          console.log('User cancelled camera');
+        } else if (response.errorCode) {
+          console.log('Camera Error: ', response.errorMessage);
+        } else if (response.assets) {
+          console.log('Captured image: ', response.assets);
+        }
       }
-    } catch (err) {
-      if (DocumentPicker.isCancel(err)) {
-        console.log('User canceled the picker');
-      } else {
-        console.log('Error: ' + err);
-      }
-    }
+    );
   };
 
-  const upload = async () => {
-    const formData = new FormData();
-    formData.append('file', {
-      uri: res[0].uri,
-      type: res[0].type,
-      name: res[0].name,
-    });
-    const response = await fetch(global.url+'upload.php', {
-      method: 'POST',
-      body: formData,
-      headers: {
-        'Content-Type': 'multipart/form-data',
+  const pickDocument = async () => {
+    launchImageLibrary(
+      {
+        mediaType: 'photo',
+        // includeBase64: true,
+        saveToPhotos: false,
+        selectionLimit: 0,
       },
+      (response) => {
+        if (response.didCancel) {
+          console.log('User cancelled image picker');
+        } else if (response.error) {
+          console.log('ImagePicker Error: ', response.error);
+        } else {
+          const imageData = response.assets;
+          console.log("response.assets", imageData)
+          dispatch(setAssetData({name: name, description: description, price: price, purchaseDate: purchaseDate, location: location, type: type, qty: qty, images: imageData}));
+           // Save all selected images
+          uploadImages(response.assets); // Upload the selected images
+        }
+      }
+    );
+  };
+
+  const uploadImages = async (selectedImages) => {
+    const formData = new FormData();
+    selectedImages.forEach((image, index) => {
+      formData.append(`files[]`, {
+        uri: image.uri,
+        name: image.fileName || `image_${index}.jpg`,
+        type: image.type,
+      });
     });
 
-    if (response.ok) {
-      const responseData = await response.json();
-      console.log(responseData);
-    } else {
-      console.log('File upload failed.');
+    formData.append('meta', JSON.stringify({
+      reference: reference,
+    }));
+
+    try {
+      fetch(global.url+'upload.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        },
+        body: formData
+      }).then((response) => response.json())
+			.then((responseJson) => {
+        console.log(responseJson);
+			})
+			.catch((error) => {
+				console.error(error);
+			});
+    } catch (error) {
+      console.error('Error uploading images: ', error);
     }
-
-  }
-
+  };
 
 	useEffect(() => {
 		getLocationDropdown();
     getAssetType();
+    getRefNumber();
 	}, [])
+
 
     return (
 			<Provider theme={DefaultTheme}>
@@ -199,37 +251,32 @@ const AddAssetScreen = ({route, navigation}) => {
 						alignContent: 'center',
 					}}>
             <KeyboardAvoidingView enabled style={{padding: 10, marginHorizontal: 10}}>
-              <View style={{marginTop: 10}}>
-                <View style={{borderColor: 'gray', borderWidth: 1, borderRadius: 5, minHeight: 270}}>
-                  <View>
-                    
-                    {imageUri ? <Image source={{ uri: imageUri }} style={styles.image} /> 
-                    : <Text style={{textAlign: 'center', fontSize: 20, color: '#000', justifyContent: 'center'}}>No Image Selected</Text>}
-                  </View>
-                  <Button style={{width: '50%', alignSelf: 'center', justifyContent: 'flex-end'}} icon="upload" mode="contained" onPress={pickDocument}>
-                    Upload Image
-                  </Button>
-                </View>
-              </View>
+              <TextInput
+								mode="outlined"
+                label="Ref #"
+								activeOutlineColor='#348ceb'
+                value={reference}
+                onChangeText={reference => setReference(reference)}
+							/>
               <TextInput
 								mode="outlined"
                 label="Name"
 								activeOutlineColor='#348ceb'
-                value={name}
+                value={name ? name : assetDeets?.name}
                 onChangeText={name => setName(name)}
 							/>
 							<TextInput
 								mode="outlined"
                 label="Description"
 								activeOutlineColor='#348ceb'
-                value={description}
+                value={description ? description : assetDeets?.description}
                 onChangeText={description => setDescription(description)}
 							/>
               <TextInput
 								mode="outlined"
                 label="Quantity"
 								activeOutlineColor='#348ceb'
-                value={qty}
+                value={qty ? qty : assetDeets?.qty}
                 onChangeText={qty => setQty(qty)}
 							/>
               <View style={{ zIndex: 9999 }}>
@@ -261,14 +308,14 @@ const AddAssetScreen = ({route, navigation}) => {
                 label="Price"
 								activeOutlineColor='#348ceb'
 								keyboardType='numeric'
-                value={price}
+                value={price ? price : assetDeets?.price}
                 onChangeText={price => setPrice(price)}
 							/>
 
 							{/* The date picker */}
 							  {isPickerShow && (
                   <DateTimePicker
-                    value={date}
+                    value={date ? date : assetDeets?.purchaseDate}
                     mode={'date'}
                     onChange={onChange}
                     style={styles.datePicker}
@@ -292,11 +339,35 @@ const AddAssetScreen = ({route, navigation}) => {
                     right={<TextInput.Icon name="calendar" onPress={showPicker} />}
                   />
                 </View>
-							<View style={{}}>
-								<Button style={{marginTop: 15}} icon="check" color='green' mode="contained" onPress={() => saveAsset()}>
+                <View style={{marginTop: 10}}>
+                  <View style={{borderColor: 'gray'}}>
+                    {/* <Button style={{width: '48%'}} icon="camera" mode="contained" onPress={captureImage}>
+                      Take Photo
+                    </Button> */}
+                    <Button icon="upload" mode="contained" onPress={pickDocument}>
+                      Upload Images
+                    </Button>
+                    </View>
+                      <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+                        {assetDeets?.images?.flat().map((image, index) => {
+                          return(
+                          <View key={index} style={{ margin: 5 }}>
+                            <Image
+                              source={{ uri: image.uri }}  // Use the image's uri for the source
+                              style={{ width: 100, height: 100 }}
+                            />
+                            <Text style={{color: 'black'}}>{image.fileName}</Text>  
+                          </View>
+                          )
+                          }
+                        )}
+                      </View>
+                  </View>
+							<View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+								<Button style={{marginTop: 5, width: '49%'}} icon="check" color='green' mode="contained" onPress={() => saveAsset()}>
 									SAVE
 								</Button>
-                <Button style={{marginTop: 5}} icon="close" color='red' mode="contained" onPress={() => saveAsset()}>
+                <Button style={{marginTop: 5, width: '49%'}} icon="close" color='red' mode="contained" onPress={() => saveAsset()}>
 									Cancel
 								</Button>
 							</View>

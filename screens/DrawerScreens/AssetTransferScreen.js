@@ -36,7 +36,8 @@ const getAssets = () => {
   fetch(global.url+'getAssetsTransfer.php', {
     method: 'POST',
     body: formBody,
-    headers: {
+    headers: { 
+      "bypass-tunnel-reminder": "true",
       'Content-Type':
       'application/x-www-form-urlencoded;charset=UTF-8',
     },
@@ -76,7 +77,8 @@ const updateStatus = () => {
 		fetch(global.url+'updateTransferStatus.php', {
 			method: 'POST',
 			body: formBody,
-			headers: {
+			headers: { 
+        "bypass-tunnel-reminder": "true",
 				'Content-Type':
 				'application/x-www-form-urlencoded;charset=UTF-8',
 			},
@@ -114,7 +116,8 @@ const deleteTransfer = (id) => {
 		fetch(global.url+'deleteTransfer.php', {
 			method: 'POST',
 			body: formBody,
-			headers: {
+			headers: { 
+        "bypass-tunnel-reminder": "true",
 				'Content-Type':
 				'application/x-www-form-urlencoded;charset=UTF-8',
 			},
@@ -141,7 +144,7 @@ const deleteTransfer = (id) => {
 const handleSearchQueryChange = (query) => {
   setSearch(query);
   setTimeout(()=>{
-    getUsers();
+    getAssets();
   }, 1000)
 };
 
@@ -174,31 +177,36 @@ useFocusEffect(
   return (
       <View style={{justifyContent: 'center', backgroundColor: '#f2f3f8',}}>
         <View styles={{flex: 1, padding: 6, alignSelf: 'center'}}>
-          <View style={{flexDirection: 'row', alignItems: 'center', marginTop: 5 }}>
-            <Searchbar
-              placeholder="Search"
-              placeholderTextColor={"#fff"}
-              onChangeText={handleSearchQueryChange}
-              value={search}
-              style={{ marginHorizontal: 5, flex: 6, backgroundColor: 'lightgrey'}}
-            />
-            <Button style={{marginHorizontal: 5, marginTop: 1, padding: 5}} labelStyle={{fontWeight: 'bold'}} icon="plus" compact="true" mode="contained" onPress={() => navigation.navigate('AddAssetTransferScreen')}>
-            </Button>
+          <View style={{ padding: 6, borderRadius: 20}}>
+            <View style={{flexDirection: 'row'}}>
+              <Searchbar
+                placeholder="Search"
+                onChangeText={handleSearchQueryChange}
+                value={search}
+                style={{ margin: 2, flex: 1, borderRadius: 5, backgroundColor: 'white'}}
+                placeholderTextColor={"black"}
+                iconColor='black'
+              />
+              <Button style={{marginHorizontal: 5, marginTop: 1, padding: 5}} labelStyle={{fontWeight: 'bold'}} icon="plus" compact="true" mode="contained" onPress={() => navigation.navigate('AddAssetTransferScreen')}>
+              </Button>
+            </View>
           </View>
           <ScrollView style={{padding: 5}}>
             {assets && assets?.map((item, index)=>{
               return (
                 <TouchableOpacity
-                style={{
-                  backgroundColor: 'white', 
-                  borderColor: 'lightgrey', 
-                  borderWidth: 1, 
-                  elevation: 2, 
-                  borderRadius: 5,
-                  marginVertical: 2
-                }}
+                  style={{
+                    backgroundColor: 'white', 
+                    borderColor: 'lightgrey', 
+                    borderWidth: 1, 
+                    elevation: 2, 
+                    borderRadius: 5,
+                    marginVertical: 2
+                  }}
                 onLongPress={()=>handleLongPress(item.ref_no)}
-                onPress={() => updateTransferStatus(item.id)}
+                onPress={
+                  item.status !== 'DELIVERED' ?
+                  () =>  updateTransferStatus(item.id) : ''}
                 >
                   <View style={{borderBottomColor: 'lightgray', borderBottomWidth: 1 }}>
                     <View style={{ flexDirection: 'row', padding: 5, marginLeft: 3 }}>
