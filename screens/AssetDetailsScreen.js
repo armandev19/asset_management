@@ -146,16 +146,20 @@ const AssetDetailsScreen = ({navigation, route}) => {
           <Text style={styles.col_content}>{details.asset_description ? details.asset_description : 'N/A'}</Text>
         </View>
         <View style={{flexDirection: 'row', marginBottom: 3}}>
+          <Text style={styles.col_title}>Type </Text>
+          <Text style={styles.col_content}>{details.type ? details.type : 'N/A'}</Text>
+        </View>
+        <View style={{flexDirection: 'row', marginBottom: 3}}>
           <Text style={styles.col_title}>Qty </Text>
           <Text style={styles.col_content}>{details.qty ? details.qty : 'N/A'}</Text>
         </View>
         <View style={{flexDirection: 'row', marginBottom: 3}}>
           <Text style={styles.col_title}>Original Location </Text>
-          <Text style={styles.col_content}>{details.name ? details.name : 'N/A'}</Text>
+          <Text style={styles.col_content}>{details.curr_loc ? details.curr_loc : 'N/A'}</Text>
         </View>
         <View style={{flexDirection: 'row', marginBottom: 3}}>
           <Text style={styles.col_title}>Current Location </Text>
-          <Text style={styles.col_content}>{details.name ? details.name : 'N/A'}</Text>
+          <Text style={styles.col_content}>{details.curr_loc ? details.curr_loc : 'N/A'}</Text>
         </View>
         <View style={{flexDirection: 'row', marginBottom: 3}}>
           <Text style={styles.col_title}>Original Price </Text>
@@ -163,7 +167,7 @@ const AssetDetailsScreen = ({navigation, route}) => {
         </View>
         <View style={{flexDirection: 'row', marginBottom: 3}}>
           <Text style={styles.col_title}>Current Price </Text>
-          <Text style={styles.col_content}>{details.current_price ? details.original_price : 'N/A'}</Text>
+          <Text style={styles.col_content}>{details.current_price ? details.current_price : 'N/A'}</Text>
         </View>
         <View style={{flexDirection: 'row', marginBottom: 3}}>
           <Text style={styles.col_title}>Status </Text>
@@ -252,5 +256,5 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   col_title: {color: '#73706e', width: '45%', fontSize: 16, fontWeight: '400', fontFamily: 'Roboto'},
-  col_content: {color: '#000', textTransform: 'uppercase', fontSize: 16, width: '55%', textAlign: 'right', fontFamily: 'Roboto'}
+  col_content: {color: '#000', fontSize: 16, width: '55%', textAlign: 'right', fontFamily: 'Roboto'}
 });

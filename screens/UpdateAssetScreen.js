@@ -5,7 +5,7 @@ import Loader from './Components/loader';
 import { selectUserData, setUserData } from './redux/navSlice';
 import { useSelector } from 'react-redux';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { Input, Icon, BottomSheet, ListItem, Dialog, Button, Divider } from '@rneui/themed';
+import { Input, Icon, BottomSheet, ListItem, Dialog, Button, Divider, Overlay } from '@rneui/themed';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 
@@ -20,20 +20,23 @@ const UpdateAssetScreen = ({ route, navigation }) => {
 	const [showDropDownStatus, setShowDropDownStatus] = useState(false);
 	const [name, setName] = useState('');
 	const [description, setDescription] = useState('');
-	const [location, setLocation] = useState({label: '', id: ''});
-	const [price, setPrice] = useState('');
+	const [location, setLocation] = useState({ label: '', id: '' });
+	const [price, setPrice] = useState(0);
 	const [status, setStatus] = useState('');
-	const [qty, setQty] = useState('');
+	const [qty, setQty] = useState(1);
+	const [type, setType] = useState({ label: '', id: '' });
 	const [locationList, setLocationList] = useState([]);
+	const [typeList, setTypeList] = useState([]);
 	const [isPickerShow, setIsPickerShow] = useState(false);
-	const [date, setDate] = useState(new Date(Date.now()));
+	const [date, setDate] = useState('');
 	const [visible1, setVisible1] = useState(false);
-	const [selectedImage, setSelectedImage]= useState({
+	const [selectedImage, setSelectedImage] = useState({
 		id: "",
 		filename: '',
 	});
 	const [isVisible, setIsVisible] = useState(false);
 	const [isVisibleStatus, setIsVisibleStatus] = useState(false);
+	const [isVisibleType, setIsVisibleType] = useState(false);
 
 	const showPicker = () => {
 		setIsPickerShow(true);
@@ -42,16 +45,17 @@ const UpdateAssetScreen = ({ route, navigation }) => {
 	const onChange = (event, value) => {
 		setIsPickerShow(false);
 		setDate(value);
+		console.log('update', value)
 	};
 
 	const viewImage = (id, filename) => {
 		setVisible1(!visible1);
-		setSelectedImage({id: id, filename: filename});
+		setSelectedImage({ id: id, filename: filename });
 	}
 
 	const updateAsset = () => {
 		setLoading(true);
-		let dataToSend = { name: name, description: description, price: price, purchaseDate: date, location: location.value, id: params.id, status: status, created_by: currentUserData.id, qty: qty };
+		let dataToSend = { name: name, description: description, price: price, purchaseDate: date, location: location.value, id: params.id, status: status, created_by: currentUserData.id, qty: qty, type: type.value };
 		let formBody = [];
 		for (let key in dataToSend) {
 			let encodedKey = encodeURIComponent(key);
@@ -86,9 +90,15 @@ const UpdateAssetScreen = ({ route, navigation }) => {
 	}
 
 	const dropdownStatus = [
-		{ value: "Operational", label: "Operational" },
-		{ value: "Under Repair", label: "Under Repair" },
-		{ value: "Retired/Disposed", label: "Retired/Disposed" },
+		{ value: "Operational", label: "Operational", icon: 'check', color: 'green' },
+		{ value: "Under Repair", label: "Under Repair", icon: 'wrench', color: 'orange'  },
+		{ value: "Retired/Disposed", label: "Retired/Disposed", icon: 'trash', color: 'red'  },
+	]
+
+	const dropdownType = [
+		{ value: 1, label: "Operational" },
+		{ value: 2, label: "Under Repair" },
+		{ value: 3, label: "Retired/Disposed" },
 	]
 
 	const getAssetDetails = async () => {
@@ -104,16 +114,20 @@ const UpdateAssetScreen = ({ route, navigation }) => {
 		await fetch(global.url + 'getAssetDetails.php', {
 			method: 'POST',
 			body: formBody,
-			headers: { 
+			headers: {
 				'Content-Type':
-				'application/x-www-form-urlencoded;charset=UTF-8',
+					'application/x-www-form-urlencoded;charset=UTF-8',
 			},
 		})
 			.then((response) => response.json())
 			.then((responseJson) => {
 				setAssetDetails(responseJson?.data[0])
 				setQty(responseJson?.data[0].qty);
-				setLocation(responseJson?.data[0].curr_loc)
+				setLocation(responseJson?.data[0].curr_loc);
+				setName(responseJson.data[0].asset_name)
+				setDescription(responseJson.data[0].asset_description)
+				setPrice(responseJson.data[0].current_price);
+				setDate(responseJson.data[0].purchase_date);
 			})
 			.catch((error) => {
 				console.log("test", error)
@@ -143,8 +157,30 @@ const UpdateAssetScreen = ({ route, navigation }) => {
 			});
 	}
 
+	const getTypeList = () => {
+		setLoading(true)
+		fetch(global.url + 'getTypeDropdown.php', {
+			method: 'POST',
+			headers: {
+				"bypass-tunnel-reminder": "true",
+				'Content-Type':
+					'application/x-www-form-urlencoded;charset=UTF-8',
+			},
+		})
+			.then((response) => response.json())
+			.then((responseJson) => {
+				setLoading(false);
+				setTypeList(responseJson.data);
+			})
+			.catch((error) => {
+				alert(error);
+				setLoading(false);
+				console.error(error);
+			});
+	}
+
 	const onSelectLocation = (location) => {
-		setLocation({label: location.label, value: location.value})
+		setLocation({ label: location.label, value: location.value })
 		setIsVisible(!isVisible);
 	}
 
@@ -153,48 +189,74 @@ const UpdateAssetScreen = ({ route, navigation }) => {
 		setIsVisibleStatus(!isVisibleStatus);
 	}
 
-	console.log("Status", status)
-	
+	const onSelectType = (type) => {
+		setType({ label: type.label, value: type.value })
+		setIsVisibleType(!isVisibleType);
+	}
+
 	useEffect(() => {
 		// getAssetDetails();
+		getTypeList();
 		getLocationDropdown();
 	}, [])
 
 	useFocusEffect(
 		React.useCallback(() => {
-		  getAssetDetails();
+			getAssetDetails();
 		}, []),
-	    );
+	);
 
 	return (
 		<ScrollView style={{ backgroundColor: 'white' }}>
 			<View style={{ padding: 5 }}>
-				<BottomSheet isVisible={isVisible} onBackdropPress={()=>setIsVisible(!isVisible)}>
-					<View style={styles.bottomSheetContent}>
-						{locationList.map((item, index) => (
-							<ListItem key={index} onPress={()=>onSelectLocation(item)} containerStyle={styles.listItem}>
-								<ListItem.Content>
-									<ListItem.Title>{item.label}</ListItem.Title>
-								</ListItem.Content>
-							</ListItem>
-						))}
-					</View>
-				</BottomSheet>
-				<BottomSheet isVisible={isVisibleStatus} onBackdropPress={()=>setIsVisibleStatus(!isVisibleStatus)}>
-					<View style={styles.bottomSheetContent}>
-						{dropdownStatus.map((item, index) => (
-							<ListItem key={index} onPress={()=>onSelectStatus(item.value)} containerStyle={styles.listItem}>
-								<ListItem.Content>
-									<ListItem.Title>{item.label}</ListItem.Title>
-								</ListItem.Content>
-							</ListItem>
-						))}
-					</View>
-				</BottomSheet>
-				{/* <InputText label="Asset Code" placeholder={"Enter Text Here"} value={name} disabled={true}/> */}
+				<Overlay isVisible={isVisible} onBackdropPress={() => setIsVisible(!isVisible)} overlayStyle={{ height: '50%', width: '80%' }}>
+					<Text>Select Location</Text>
+					<ScrollView>
+						{locationList?.map((item, index) => {
+							return (
+								<ListItem key={index} bottomDivider style={{ height: 'auto' }} onPress={() => onSelectLocation(item)}>
+									<Icon name="location-pin" type="simple-line-icon" size={15} />
+									<ListItem.Content >
+										<ListItem.Title style={{ fontSize: 14 }}>{item.label || "No name"}</ListItem.Title>
+									</ListItem.Content>
+								</ListItem>
+							)
+						})}
+					</ScrollView>
+				</Overlay>
+				<Overlay isVisible={isVisibleStatus} onBackdropPress={() => setIsVisibleStatus(!isVisibleStatus)} overlayStyle={{ height: '50%', width: '80%' }}>
+					<Text>Select Status</Text>
+					<ScrollView>
+						{dropdownStatus?.map((item, index) => {
+							return (
+								<ListItem key={index} bottomDivider style={{ height: 'auto' }} onPress={() => onSelectStatus(item.label)}>
+									<Icon name={item.icon} color={item.color} type="simple-line-icon" size={15} />
+									<ListItem.Content >
+										<ListItem.Title style={{ fontSize: 14 }}>{item.label || "No name"}</ListItem.Title>
+									</ListItem.Content>
+								</ListItem>
+							)
+						})}
+					</ScrollView>
+				</Overlay>
+				<Overlay isVisible={isVisibleType} onBackdropPress={() => setIsVisibleType(!isVisibleType)} overlayStyle={{ height: '50%', width: '80%' }}>
+					<Text>Select Type</Text>
+					<ScrollView>
+						{typeList?.map((item, index) => {
+							return (
+								<ListItem key={index} bottomDivider style={{ height: 'auto' }} onPress={() => onSelectType(item)}>
+									<Icon name="flag" type="simple-line-icon" size={15} />
+									<ListItem.Content >
+										<ListItem.Title style={{ fontSize: 14 }}>{item.label || "No name"}</ListItem.Title>
+									</ListItem.Content>
+								</ListItem>
+							)
+						})}
+					</ScrollView>
+				</Overlay>
 				<Input
 					label="Asset Code"
-					labelStyle={{ fontWeight: '400', fontSize: 13 }}
+					labelStyle={{ ...styles.label, marginTop: 5 }}
 					inputContainerStyle={styles.inputContainer}
 					inputStyle={{ fontSize: 15 }}
 					placeholder={"Enter Text Here"}
@@ -216,9 +278,21 @@ const UpdateAssetScreen = ({ route, navigation }) => {
 					inputContainerStyle={styles.inputContainer}
 					inputStyle={{ fontSize: 15 }}
 					placeholder={"Enter Text Here"}
-					value={details.description}
+					value={description}
 					onChangeText={description => setDescription(description)}
 				/>
+				<TouchableOpacity
+					onPress={() => setIsVisibleType(true)}>
+					<Input
+						label="Type"
+						labelStyle={styles.label}
+						inputContainerStyle={styles.inputContainer}
+						inputStyle={{ fontSize: 15 }}
+						placeholder={"Selecte type"}
+						value={type.label ? type.label : details.type}
+						editable={false}
+					/>
+				</TouchableOpacity>
 				<Input
 					label="Qty"
 					labelStyle={styles.label}
@@ -235,28 +309,27 @@ const UpdateAssetScreen = ({ route, navigation }) => {
 					inputContainerStyle={styles.inputContainer}
 					inputStyle={{ fontSize: 15 }}
 					placeholder={"Enter Text Here"}
-					value={details.current_price}
+					value={price}
 					onChangeText={price => setPrice(price)}
-					leftIcon={{type: 'feather', name: 'dollar-sign', size: 16}}
+					leftIcon={{ type: 'feather', name: 'dollar-sign', size: 16 }}
 					keyboardType='numeric'
 				/>
-				
-				<TouchableOpacity 
-					onPress={()=>setIsVisible(true)}>
+
+				<TouchableOpacity
+					onPress={() => setIsVisible(true)}>
 					<Input
 						label="Location"
 						labelStyle={styles.label}
 						inputContainerStyle={styles.inputContainer}
 						inputStyle={{ fontSize: 15 }}
 						placeholder={"Select Location"}
-						value={location}
+						value={location.label}
 						editable={false}
-						onChangeText={(location)=>setLocation(location)}
 						rightIcon={{ type: 'feather', name: 'chevron-down', size: 15 }}
-						leftIcon={{ type: 'feather', name: 'map-pin', size: 15  }}
+						leftIcon={{ type: 'feather', name: 'map-pin', size: 15 }}
 					/>
 				</TouchableOpacity>
-				<TouchableOpacity 
+				<TouchableOpacity
 					onPress={showPicker}>
 					<Input
 						label="Purcase Date"
@@ -266,22 +339,21 @@ const UpdateAssetScreen = ({ route, navigation }) => {
 						placeholder={"Enter Text Here"}
 						value={details.purchase_date}
 						editable={false}
-						leftIcon={{type: 'feather', name: 'calendar', size: 16}}
+						leftIcon={{ type: 'feather', name: 'calendar', size: 16 }}
 					/>
 				</TouchableOpacity>
-				<TouchableOpacity 
-					onPress={()=>setIsVisibleStatus(true)}>
+				<TouchableOpacity
+					onPress={() => setIsVisibleStatus(true)}>
 					<Input
 						label="Status"
 						labelStyle={styles.label}
 						inputContainerStyle={styles.inputContainer}
 						inputStyle={{ fontSize: 15 }}
 						placeholder={"Select Status"}
-						onChangeText={(status)=>setStatus(status)}
-						value={status}
-						// editable={false}
+						value={status ? status : details.status}
+						editable={false}
 						rightIcon={{ type: 'feather', name: 'chevron-down', size: 15 }}
-						leftIcon={{ type: 'feather', name: 'activity', size: 15  }}
+						leftIcon={{ type: 'feather', name: 'activity', size: 15 }}
 					/>
 				</TouchableOpacity>
 				<View>
@@ -299,13 +371,13 @@ const UpdateAssetScreen = ({ route, navigation }) => {
 									</TouchableOpacity>
 								)
 							})
-					
-						: 
-						<View>
-							<Text style={{color: '#000', fontSize: 15, marginLeft: 5}}>No images available.</Text>
-						</View>
+
+							:
+							<View>
+								<Text style={{ color: '#000', fontSize: 15, marginLeft: 5 }}>No images available.</Text>
+							</View>
 						}
-						
+
 					</View>
 				</View>
 				<Dialog
@@ -314,12 +386,12 @@ const UpdateAssetScreen = ({ route, navigation }) => {
 				>
 					<View style={{ alignItems: 'center' }}>
 						<Image
-							source={{uri : selectedImage.filename}}
+							source={{ uri: selectedImage.filename }}
 							style={{ width: 280, height: 250, borderRadius: 5, borderWidth: 1, borderColor: 'grey', marginHorizontal: 4 }}
 						/>
 					</View>
 					<Dialog.Actions>
-						<Dialog.Button title="Remove" icon="trashcan" onPress={() => console.log('Secondary Action Clicked!')}/>
+						<Dialog.Button title="Remove" icon="trashcan" onPress={() => console.log('Secondary Action Clicked!')} />
 					</Dialog.Actions>
 				</Dialog>
 				{/* The date picker */}
@@ -332,31 +404,31 @@ const UpdateAssetScreen = ({ route, navigation }) => {
 						format='MM DD YYYY'
 					/>
 				)}
-				 <Divider />
-				<View style={{flexDirection: 'row', justifyContent: 'space-evenly'}}>
-				<Button 
-					title="Save"  
-					icon={{
-						name: 'check-circle',
-						type: 'feather',
-						size: 20,
-						color: 'white',
-					}} 
-					onPress={() => updateAsset()}
-					buttonStyle={{marginTop: 20}}
-				/>
-				<Button 
-					title="Cancel"  
-					
-					icon={{
-						name: 'x-circle',
-						type: 'feather',
-						size: 20,
-						color: 'white',
-					}} 
-					onPress={() => updateAsset()}
-					buttonStyle={{ backgroundColor: 'rgba(214, 61, 57, 1)', marginTop: 20 }}
-				/>
+				<Divider />
+				<View style={{ flexDirection: 'row', justifyContent: 'space-evenly' }}>
+					<Button
+						title="Save"
+						icon={{
+							name: 'check-circle',
+							type: 'feather',
+							size: 20,
+							color: 'white',
+						}}
+						onPress={() => updateAsset()}
+						buttonStyle={{ marginTop: 20 }}
+					/>
+					<Button
+						title="Cancel"
+
+						icon={{
+							name: 'x-circle',
+							type: 'feather',
+							size: 20,
+							color: 'white',
+						}}
+						onPress={() => updateAsset()}
+						buttonStyle={{ backgroundColor: 'rgba(214, 61, 57, 1)', marginTop: 20 }}
+					/>
 				</View>
 			</View>
 		</ScrollView>
@@ -367,14 +439,14 @@ export default UpdateAssetScreen;
 
 const styles = StyleSheet.create({
 	label: {
-		fontWeight: '400', 
-		fontSize: 13, 
+		fontWeight: '400',
+		fontSize: 13,
 		marginTop: -15,
 		color: '#0d0c0c'
 	},
 	inputContainer: {
 		height: 35,
-		padding: 5, 
+		padding: 5,
 		borderColor: 'grey',
 		borderWidth: 0.5,
 		borderBottomWidth: 0.5,

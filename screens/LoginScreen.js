@@ -145,8 +145,8 @@ const LoginScreen = ({navigation}) => {
                 placeholder={"Password"}
                 value={userPassword}
                 onChangeText={userPassword => setUserPassword(userPassword)}
-                leftIcon={{type: "feather", name: "key", color: '#f5571d', size: 17, marginLeft: 10}}
-                rightIcon={{type: "feather", name: showPassword ? "eye-off" : "eye", color: '#f5571d', size: 17, marginRight: 10, onPress: ()=>toggleShowPassword()}}
+                leftIcon={{type: "feather", name: "lock", color: '#f5571d', size: 17, marginLeft: 10}}
+                rightIcon={{type: "feather", name: showPassword ? "eye" : "eye-off", color: '#f5571d', size: 17, marginRight: 10, onPress: ()=>toggleShowPassword()}}
                 secureTextEntry={!showPassword}
                 errorMessage={errortext}
                 errorStyle={{textAlign: 'center'}}

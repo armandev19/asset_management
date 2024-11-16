@@ -43,6 +43,8 @@ const UserDetailsScreen = ({navigation, route}) => {
     }, []),
   );
 
+  const statusColor = details.status === 'Active' ? "green" : "red";
+
     return (
       <ScrollView style={{padding: 5, backgroundColor: '#fff'}}>
         <Card style={{ margin: 2, padding: 5, elevation: 3, backgroundColor: '#fff' }}>
@@ -60,13 +62,14 @@ const UserDetailsScreen = ({navigation, route}) => {
                 <Text style={styles.col_title}>Contact # </Text>
                 <Text style={styles.col_content}>{details.contact_number ? details.contact_number : 'N/A'}</Text>
               </View>
-              <View style={{flexDirection: 'row', marginBottom: 3}}>
+              {/* <View style={{flexDirection: 'row', marginBottom: 3}}>
                 <Text style={styles.col_title}>Added by </Text>
                 <Text style={styles.col_content}>{details.created_by ? details.created_by : 'N/A'}</Text>
-              </View>
+              </View> */}
               <View style={{flexDirection: 'row', marginBottom: 3}}>
                 <Text style={styles.col_title}>Status </Text>
-                <Text style={styles.col_content}>{details.status ? details.status : 'N/A'}</Text>
+                <Text style={{...styles.col_content, color: statusColor}}>
+                  {details.status ? details.status : 'N/A'}</Text>
               </View>
             </Card.Content>
             <View style={{flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', marginVertical: 10, marginHorizontal: 10}}>
@@ -79,6 +82,7 @@ const UserDetailsScreen = ({navigation, route}) => {
                   color: 'white',
                 }} 
                 buttonStyle={{ backgroundColor: 'rgba(214, 61, 57, 1)', borderRadius: 5, marginRight: 10}}
+                onPress={() => navigation.goBack()}
               />
               <Button 
                   title="Update"  
@@ -99,6 +103,12 @@ const UserDetailsScreen = ({navigation, route}) => {
  
 const styles = StyleSheet.create({ 
   col_title: {color: '#73706e', width: '45%', fontSize: 16, fontWeight: '400', fontFamily: 'Roboto'},
-  col_content: {color: '#000', textTransform: 'uppercase', fontSize: 16, width: '55%', textAlign: 'right', fontFamily: 'Roboto'}
+  col_content: {
+    color: '#000', 
+    fontSize: 16, 
+    width: '55%', 
+    textAlign: 'right', 
+    fontFamily: 'Roboto'
+  }
 })
 export default UserDetailsScreen;

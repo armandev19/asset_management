@@ -1,8 +1,8 @@
 import React, {useState, useEffect} from 'react';
 import {View, Text, SafeAreaView, FlatList, StyleSheet, TouchableOpacity, Modal, ToastAndroid, Alert, TextInput, RefreshControl} from 'react-native';
-import {Card, Title, Paragraph, Divider, List, Button, IconButton, Searchbar} from 'react-native-paper';
+import {Card, Title, Paragraph, Divider, List, IconButton, Searchbar} from 'react-native-paper';
 
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import { Icon, Button } from '@rneui/themed';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Loader from './../Components/loader';
 
@@ -72,12 +72,12 @@ function RowItem({ navigation, name, address, id }) {
       >
         <View>
           <View style={{ flexDirection: 'row', padding: 5, marginLeft: 3 }}>
-            <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 15, fontWeight: "bold", textTransform: 'uppercase'}}>{name}</Text>
+            <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 15, fontWeight: "bold"}}>{name}</Text>
           </View>
         </View>
         <View style={styles.item}>
           <View style={{flex: 1}}>
-            <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12, textTransform: 'uppercase',}}>ADDRESS: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, textTransform: 'uppercase', fontWeight: 'bold' }}>{address}</Text></Text>
+            <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 12}}>Address: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 12, fontWeight: 'bold' }}>{address}</Text></Text>
           </View>
         </View>
       </TouchableOpacity>
@@ -107,7 +107,8 @@ useFocusEffect(
               placeholderTextColor={"black"}
               iconColor='black'
             />
-            <Button style={{marginHorizontal: 5, marginTop: 1, padding: 5}} labelStyle={{fontWeight: 'bold'}} icon="plus" compact="true" mode="contained" onPress={() => navigation.navigate('AddAssetTransferScreen')}>
+            <Button buttonStyle={{ marginVertical: 5, marginLeft: 5, borderRadius: 5}} onPress={() => navigation.navigate('AddLocationScreen')}>
+              <Icon name="add" color="white" />
             </Button>
           </View>
         </View>

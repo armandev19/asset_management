@@ -2,23 +2,67 @@ const express = require('express');
 const mysql = require('mysql');
 const moment = require('moment');
 const app = express();
+const nodemailer = require('nodemailer');
 
+const admin = require('firebase-admin');
+const cron = require('node-cron');
 
-// const admin = require('firebase-admin');
-// const cron = require('node-cron');
+const serviceAccount = require('./asset-54ae3-firebase-adminsdk-df262-e76605c701.json');
 
-// const serviceAccount = require('./asset-54ae3-firebase-adminsdk-df262-3ec329e5a7.json');
-
-// admin.initializeApp({
-//   credential: admin.credential.cert(serviceAccount),
-// });
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+});
 
 // app.use(express.json());
 
-app.get('/rawr', (req, res) => {
-  res.send('Hello World!');
+const emailSender = (from, to, subject, text) => {
+  var transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: 'arman.jacolbe19@gmail.com',
+      pass: 'nrcwafsbaptmovzc'
+    }
+  });
+  
+  var mailOptions = {
+    from: from,
+    to: to,
+    subject: subject,
+    text: text
+  };
+  
+  transporter.sendMail(mailOptions, function(error, info){
+    if (error) {
+      console.log(error);
+    } else {
+      console.log('Email sent: ' + info.response);
+    }
+  });
+}
+
+
+const sendPushNotification = (token, title, body) => {
+  admin.messaging().send({
+    token: token,
+    notification: {
+      title: title,
+      body: body,
+    },
+  })
+  .then(() => {
+    console.log('Push notification sent successfully');
+  })
+  .catch((error) => {
+    console.error('Error sending push notification:', error);
+  });
+};
+
+const token = "eusFNRCYQDuW-YFbNjIjrY:APA91bHGcGVTaqHyzjTb02QKuiE88630P_8Yp9Fjf5FYrLD59-YhINtHRCRX5P2LnKRoobFkpPcR_8BQ2VYnlq55fUUw9ML2_7oph9gyxi9an6M6rYFxKipDLCDti2ha9jC8c4szjpDL"
+
+app.post('/testEmail', (req, res) => {
+  // emailSender("test123@gmail.com", "arman.jacolbe19@gmail.com", "Test subject", "Test email content");
+  sendPushNotification(token, 'test 123', 'rawr');
 });
-console.log("rawr rawr");
 // sql313.epizy.com', 'epiz_34224108', 'aHJM0oI8Ttl7
 // const db = mysql.createConnection({
 //   host: 'app-ams.online',
@@ -114,21 +158,6 @@ console.log("rawr rawr");
 
 
 
-// const sendPushNotification = (token, title, body) => {
-//   admin.messaging().send({
-//     token: token,
-//     notification: {
-//       title: title,
-//       body: body,
-//     },
-//   })
-//   .then(() => {
-//     console.log('Push notification sent successfully');
-//   })
-//   .catch((error) => {
-//     console.error('Error sending push notification:', error);
-//   });
-// };
 
 
 // function getYearDifference(date1, date2) {

@@ -206,12 +206,12 @@ useFocusEffect(
                     </View>
                     <View style={styles.item}>
                       <View style={{}}>
-                        <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 14, fontWeight: '500'}}>Type: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 14, fontWeight: 'bold' }}>{item.type }</Text></Text>
+                        <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 14, fontWeight: '500'}}>Type: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 14, fontWeight: 'bold' }}>{item.asset_type }</Text></Text>
                       </View>
                     </View>
                     <View style={styles.item}>
                       <View style={{}}>
-                        <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 14, fontWeight: '500'}}>Current Value: <Text adjustsFontSizeToFit style={{ color: 'green', fontSize: 14, fontWeight: 'bold' }}>{item.type }</Text></Text>
+                        <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 14, fontWeight: '500'}}>Current Value: <Text adjustsFontSizeToFit style={{ color: 'green', fontSize: 14, fontWeight: 'bold' }}>₱ {item.current_price }</Text></Text>
                       </View>
                     </View>
                     </View>

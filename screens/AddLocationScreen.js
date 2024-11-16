@@ -8,11 +8,10 @@ import {
   ThemeProvider,
 } from "react-native-paper";
 import {View, Text, SafeAreaView, ScrollView, KeyboardAvoidingView, StyleSheet} from 'react-native';
-import {Card, Title, Paragraph, Divider, TextInput, Button} from 'react-native-paper';
 import Loader from './Components/loader';
 import { selectUserData, setUserData } from './redux/navSlice';
 import { useSelector } from 'react-redux';
-import DropDown from "react-native-paper-dropdown";
+import { Input, Icon, BottomSheet, ListItem, Dialog, Button, Overlay } from '@rneui/themed';
 
 const AddLocationScreen = ({route, navigation}) => {
 	const currentUserData = useSelector(selectUserData);
@@ -62,29 +61,50 @@ const AddLocationScreen = ({route, navigation}) => {
 						justifyContent: 'center',
 						alignContent: 'center',
 					}}>
-            <KeyboardAvoidingView enabled style={{padding: 5}}>
-              <TextInput
-								mode="outlined"
+            <KeyboardAvoidingView enabled style={{paddingVertical: 20, marginTop: 10}}>
+              <Input
                 label="Name"
-								activeOutlineColor='#348ceb'
+                labelStyle={styles.label}
+                inputContainerStyle={{...styles.inputContainer}}
+                inputStyle={{ fontSize: 15}}
+                placeholder={"Example location"}
                 value={name}
                 onChangeText={name => setName(name)}
-							/>
-							<TextInput
-								mode="outlined"
+              />
+              <Input
                 label="Address"
-								activeOutlineColor='#348ceb'
+                labelStyle={styles.label}
+                inputContainerStyle={{...styles.inputContainer}}
+                inputStyle={{ fontSize: 15}}
+                placeholder={"Example address"}
                 value={address}
                 onChangeText={address => setAddress(address)}
-							/>
-							<View style={{marginTop: 5}}>
-								<Button style={{margin: 1}} icon="check" color='green' mode="contained" onPress={() => saveLocation()}>
-									SAVE
-								</Button>
-								<Button style={{margin: 1}} icon="close" color='red' mode="contained" onPress={() => console.log('Pressed')}>
-									CANCEL
-								</Button>
-							</View>
+              />
+							<View style={{flexDirection: 'row', justifyContent: 'flex-end', marginHorizontal: 10}}>
+                <Button 
+                  title="Cancel"  
+                  
+                  icon={{
+                    name: 'x-circle',
+                    type: 'feather',
+                    size: 20,
+                    color: 'white',
+                  }} 
+                  onPress={() => navigation.goBack()}
+                  buttonStyle={{ backgroundColor: 'rgba(214, 61, 57, 1)', borderRadius: 5, marginRight: 10 }}
+                />
+                <Button 
+                  title="Save"  
+                  icon={{
+                    name: 'check-circle',
+                    type: 'feather',
+                    size: 20,
+                    color: 'white',
+                  }} 
+                  buttonStyle={{ backgroundColor: '#20ab3f', borderRadius: 5 }}
+                  onPress={() => saveLocation()}
+                />
+              </View>
             </KeyboardAvoidingView>
         	</SafeAreaView>
 					</View>
@@ -97,6 +117,20 @@ const AddLocationScreen = ({route, navigation}) => {
 export default AddLocationScreen;
 
 const styles = StyleSheet.create({
+    label: {
+      fontWeight: '400', 
+      fontSize: 13, 
+      marginTop: -15,
+      color: '#0d0c0c'
+    },
+    inputContainer: {
+      height: 35,
+      padding: 5, 
+      borderColor: 'grey',
+      borderWidth: 0.5,
+      borderBottomWidth: 0.5,
+      borderRadius: 8,
+    },
     selectDropdown: {
       paddingLeft: 15,
       paddingRight: 15,
