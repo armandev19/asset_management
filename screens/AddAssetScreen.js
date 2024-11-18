@@ -19,6 +19,7 @@ import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { useDispatch } from 'react-redux';
 
 import { Input, Icon, Button, Overlay, ListItem } from '@rneui/themed';
+import { stat } from 'react-native-fs';
 
 const AddAssetScreen = ({ route, navigation }) => {
   const dispatch = useDispatch();
@@ -43,6 +44,7 @@ const AddAssetScreen = ({ route, navigation }) => {
   const [reference, setReference] = useState('');
   const [typeList, setTypeList] = useState([]);
   const [status, setStatus] = useState('');
+  const [utilizationPurpose, setUtilizationPurpose] = useState('');
 
   const assetDeets = useSelector(selectAssetData);
 
@@ -85,12 +87,13 @@ const AddAssetScreen = ({ route, navigation }) => {
   const statusList = [
     { id: "Operational", value: "Operational" },
     { id: "Under Repair", value: "Under Repair" },
-    { id: "Disposed/Destroyed", value: "Disposed/Destroyed" }
+    { id: "Disposed/Destroyed", value: "Disposed/Destroyed" },
+    { id: "Currently Used", value: "Currently Used" }
   ]
 
   const saveAsset = () => {
     // setLoading(true);
-    let dataToSend = { name: name, description: description, qty: qty, type: type, price: price, purchaseDate: date, location: location, created_by: currentUserData.id, images: JSON.stringify(assetDeets?.images) };
+    let dataToSend = { name: name, description: description, qty: qty, type: type, price: price, purchaseDate: date, location: location, created_by: currentUserData.id, utilizationPurpose: utilizationPurpose, status: status, images: JSON.stringify(assetDeets?.images) };
     let formBody = [];
 
     for (let key in dataToSend) {
@@ -111,6 +114,7 @@ const AddAssetScreen = ({ route, navigation }) => {
     })
       .then((response) => response.json())
       .then((responseJson) => {
+        console.log("responseJson", responseJson)
         dispatch(setAssetData(null));
         if (responseJson.status == 'success') {
           alert('Success!');
@@ -267,7 +271,8 @@ const AddAssetScreen = ({ route, navigation }) => {
   };
 
   const dropdownStatus = [
-    { value: "Operational", label: "Operational", icon: 'check', color: 'green' },
+    { value: "Active", label: "Active", icon: 'control-play', color: 'green' },
+    { value: "Idle", label: "Idle", icon: 'control-pause', color: 'blue' },
     { value: "Under Repair", label: "Under Repair", icon: 'wrench', color: 'orange' },
     { value: "Retired/Disposed", label: "Retired/Disposed", icon: 'trash', color: 'red' },
   ]
@@ -452,6 +457,18 @@ const AddAssetScreen = ({ route, navigation }) => {
                 leftIcon={{ type: 'feather', name: 'activity', size: 15 }}
               />
             </TouchableOpacity>
+            {status === 'Active' && (
+              <Input
+                  label="Utilization Purpose"
+                  labelStyle={styles.label}
+                  inputContainerStyle={styles.inputContainer}
+                  inputStyle={{ fontSize: 15 }}
+                  placeholder={"Usage Reason"}
+                  value={utilizationPurpose}
+                />
+              )
+            }
+
             {/* The date picker */}
             {isPickerShow && (
               <DateTimePicker

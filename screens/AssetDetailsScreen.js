@@ -1,16 +1,16 @@
-import React, {useState, useEffect} from 'react';
-import {View, Text, StyleSheet, KeyboardAvoidingView, TouchableOpacity, Image, Dim} from 'react-native';
-import {Card, Title, Paragraph, Divider, Button, Modal, FAB, Portal} from 'react-native-paper';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, KeyboardAvoidingView, TouchableOpacity, Image, Dim } from 'react-native';
+import { Card, Title, Paragraph, Divider, Modal, FAB, Portal } from 'react-native-paper';
 import QRCode from 'react-native-qrcode-svg';
 import Loader from './Components/loader';
 import { selectUserData, setUserData } from './redux/navSlice';
 import { useSelector } from 'react-redux';
 import Moment from 'moment';
 import { ScrollView } from 'react-native-gesture-handler';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import Swiper from 'react-native-swiper';
-const AssetDetailsScreen = ({navigation, route}) => {
+import { Input, Icon, Overlay, ListItem, Button } from '@rneui/themed';
+const AssetDetailsScreen = ({ navigation, route }) => {
   const params = route.params;
 
   const [details, setAssetDetails] = useState([]);
@@ -23,36 +23,36 @@ const AssetDetailsScreen = ({navigation, route}) => {
 
   const getAssetDetails = async () => {
     // setLoading(true);
-		let dataToSend = { id: params };
-		let formBody = [];
-		for (let key in dataToSend) {
-			let encodedKey = encodeURIComponent(key);
-			let encodedValue = encodeURIComponent(dataToSend[key]);
-			formBody.push(encodedKey + '=' + encodedValue);
-		}
-		formBody = formBody.join('&');
-    
-		await fetch(global.url+'getAssetDetails.php', {
-			method: 'POST',
-			body: formBody,
-			headers: { 
-				'Content-Type':
-				'application/x-www-form-urlencoded;charset=UTF-8',
-			},
-		})
-		.then((response) => response.json())
-		.then((responseJson) => {
-      setAssetDetails(responseJson.data[0]);
-			setLoading(false);
-      console.log('rawr',responseJson.data[0]);
-		})
-		.catch((error) => {
-      console.log("error", error)
-			setLoading(false);
-		});
-	}
+    let dataToSend = { id: params };
+    let formBody = [];
+    for (let key in dataToSend) {
+      let encodedKey = encodeURIComponent(key);
+      let encodedValue = encodeURIComponent(dataToSend[key]);
+      formBody.push(encodedKey + '=' + encodedValue);
+    }
+    formBody = formBody.join('&');
 
-  useEffect(()=>{
+    await fetch(global.url + 'getAssetDetails.php', {
+      method: 'POST',
+      body: formBody,
+      headers: {
+        'Content-Type':
+          'application/x-www-form-urlencoded;charset=UTF-8',
+      },
+    })
+      .then((response) => response.json())
+      .then((responseJson) => {
+        setAssetDetails(responseJson.data[0]);
+        setLoading(false);
+        console.log('rawr', responseJson.data[0]);
+      })
+      .catch((error) => {
+        console.log("error", error)
+        setLoading(false);
+      });
+  }
+
+  useEffect(() => {
   }, [])
 
   useFocusEffect(
@@ -62,49 +62,49 @@ const AssetDetailsScreen = ({navigation, route}) => {
   );
 
   return (
-      <ScrollView style={{}}>
-        <Portal>
-          {isFocused && (
-            <FAB.Group
-              open={open}
-              style={{ top: 0, right: 0, bottom: 50}}
-              containerStyle={{color: 'red'}}
-              icon={open ? 'cog' : 'more'}
-              color="white"
-              fabStyle={{backgroundColor: '#fc8953'}}
-              actions={[
-                {
-                  icon: 'qrcode-scan',
-                  label: 'QR Code',
-                  labelTextColor: '#000',
-                  labelStyle: { backgroundColor: '#fff'},
-                  style: { backgroundColor: '#fff' },
-                  onPress: () => setModalVisible(true),
-                },
-                {
-                  icon: 'wrench',
-                  label: 'Maintenance',
-                  labelTextColor: '#000',
-                  labelStyle: { backgroundColor: '#fff'},
-                  style: { backgroundColor: '#fff' },
-                  onPress: () => navigation.navigate("AssetMaintenanceScreen", details),
-                },
-                {
-                  icon: 'pencil',
-                  label: 'Update',
-                  labelTextColor: '#000',
-                  labelStyle: { backgroundColor: '#fff'},
-                  style: { backgroundColor: '#fff' },
-                  onPress: () => navigation.navigate("UpdateAssetScreen", details),
-                },
-              ]}
-              
-              onStateChange={onStateChange}
-            />
-          )}
-        </Portal>
-      <View style={{ marginHorizontal: 10, marginVertical: 10, padding: 5, marginBottom: 10}}>
-            {/* <View style={{ marginBottom: 5, elevation: 1, height: 200}}>
+    <ScrollView style={{}}>
+      <Portal>
+        {isFocused && (
+          <FAB.Group
+            open={open}
+            style={{ top: 0, right: 0, bottom: 50 }}
+            containerStyle={{ color: 'red' }}
+            icon={open ? 'cog' : 'more'}
+            color="white"
+            fabStyle={{ backgroundColor: '#fc8953' }}
+            actions={[
+              {
+                icon: 'qrcode-scan',
+                label: 'QR Code',
+                labelTextColor: '#000',
+                labelStyle: { backgroundColor: '#fff' },
+                style: { backgroundColor: '#fff' },
+                onPress: () => setModalVisible(true),
+              },
+              {
+                icon: 'wrench',
+                label: 'Maintenance',
+                labelTextColor: '#000',
+                labelStyle: { backgroundColor: '#fff' },
+                style: { backgroundColor: '#fff' },
+                onPress: () => navigation.navigate("AssetMaintenanceScreen", details),
+              },
+              {
+                icon: 'pencil',
+                label: 'Update',
+                labelTextColor: '#000',
+                labelStyle: { backgroundColor: '#fff' },
+                style: { backgroundColor: '#fff' },
+                onPress: () => navigation.navigate("UpdateAssetScreen", details),
+              },
+            ]}
+
+            onStateChange={onStateChange}
+          />
+        )}
+      </Portal>
+      <View style={{ marginHorizontal: 10, marginVertical: 10, padding: 5, marginBottom: 10 }}>
+        {/* <View style={{ marginBottom: 5, elevation: 1, height: 200}}>
               <Swiper showsPagination={true}>
                 {details?.images?.map((image, index) => (
                   <View key={index}>
@@ -116,122 +116,132 @@ const AssetDetailsScreen = ({navigation, route}) => {
                 ))}
               </Swiper>
             </View> */}
-          {details?.images?.length > 0 ? 
-            <View style={{ marginBottom: 5, elevation: 1, height: 200}}>
-              <Swiper showsPagination={true}>
-                {details.images?.map((image, index) => (
-                  <View key={index}>
-                    <Image source={{ uri : global.url + image?.image_location }} style={{
-                        width: '100%',
-                        height: '100%',
-                      }} />
-                  </View>
-                ))}
-              </Swiper>
-            </View>
-           :
-          <View style={{ marginBottom: 5, elevation: 1, height: 200}}>
+        {details?.images?.length > 0 ?
+          <View style={{ marginBottom: 5, elevation: 1, height: 200 }}>
+            <Swiper showsPagination={true}>
+              {details.images?.map((image, index) => (
+                <View key={index}>
+                  <Image source={{ uri: global.url + image?.image_location }} style={{
+                    width: '100%',
+                    height: '100%',
+                  }} />
+                </View>
+              ))}
+            </Swiper>
+          </View>
+          :
+          <View style={{ marginBottom: 5, elevation: 1, height: 200 }}>
             <Image
               source={require('../assets/noimage.jpg')}
-              style={{width: '100%', height: '100%', borderRadius: 5}}
-            /> 
+              style={{ width: '100%', height: '100%', borderRadius: 5 }}
+            />
           </View>
-          }
-        <View style={{flexDirection: 'row', marginBottom: 3}}>
+        }
+        <View style={{ flexDirection: 'row', marginBottom: 3 }}>
           <Text style={styles.col_title}>Asset Code </Text>
           <Text style={styles.col_content}>{details.asset_code ? details.asset_code : 'N/A'}</Text>
         </View>
-        <View style={{flexDirection: 'row', marginBottom: 3}}>
+        <View style={{ flexDirection: 'row', marginBottom: 3 }}>
           <Text style={styles.col_title}>Description </Text>
           <Text style={styles.col_content}>{details.asset_description ? details.asset_description : 'N/A'}</Text>
         </View>
-        <View style={{flexDirection: 'row', marginBottom: 3}}>
+        <View style={{ flexDirection: 'row', marginBottom: 3 }}>
           <Text style={styles.col_title}>Type </Text>
           <Text style={styles.col_content}>{details.type ? details.type : 'N/A'}</Text>
         </View>
-        <View style={{flexDirection: 'row', marginBottom: 3}}>
+        <View style={{ flexDirection: 'row', marginBottom: 3 }}>
           <Text style={styles.col_title}>Qty </Text>
           <Text style={styles.col_content}>{details.qty ? details.qty : 'N/A'}</Text>
         </View>
-        <View style={{flexDirection: 'row', marginBottom: 3}}>
+        <View style={{ flexDirection: 'row', marginBottom: 3 }}>
           <Text style={styles.col_title}>Original Location </Text>
           <Text style={styles.col_content}>{details.curr_loc ? details.curr_loc : 'N/A'}</Text>
         </View>
-        <View style={{flexDirection: 'row', marginBottom: 3}}>
+        <View style={{ flexDirection: 'row', marginBottom: 3 }}>
           <Text style={styles.col_title}>Current Location </Text>
           <Text style={styles.col_content}>{details.curr_loc ? details.curr_loc : 'N/A'}</Text>
         </View>
-        <View style={{flexDirection: 'row', marginBottom: 3}}>
+        <View style={{ flexDirection: 'row', marginBottom: 3 }}>
           <Text style={styles.col_title}>Original Price </Text>
           <Text style={styles.col_content}>{details.original_price ? details.original_price : 'N/A'}</Text>
         </View>
-        <View style={{flexDirection: 'row', marginBottom: 3}}>
+        <View style={{ flexDirection: 'row', marginBottom: 3 }}>
           <Text style={styles.col_title}>Current Price </Text>
           <Text style={styles.col_content}>{details.current_price ? details.current_price : 'N/A'}</Text>
         </View>
-        <View style={{flexDirection: 'row', marginBottom: 3}}>
+        <View style={{ flexDirection: 'row', marginBottom: 3 }}>
           <Text style={styles.col_title}>Status </Text>
-            <View style={{flex: 1, alignItems: "flex-end"}}>
-            {details.status === 'Operational' ? 
-              <View 
-              style={{flex: 1, padding: 3, backgroundColor: '#2eb82e', flexDirection: 'row', borderRadius: 5, justifyContent: 'center'}}>
-                <Icon name='check-circle' size={13} color={'#ffffff'} ></Icon>
-                <Text adjustsFontSizeToFit style={{ color: '#ffffff', fontSize: 13, fontWeight: "bold", textTransform: 'uppercase', marginRight: 2}}> {details.status ? details.status : 'N/A'}</Text>
+          <View style={{ flex: 1, alignItems: "flex-end" }}>
+            {details.status === 'Active' ?
+              <View
+                style={{ flex: 1, padding: 3, flexDirection: 'row', borderRadius: 5, justifyContent: 'center' }}>
+                <Icon name='control-play' type="simple-line-icon" size={13} style={{ marginTop: 2 }} color={'green'} ></Icon>
+                <Text adjustsFontSizeToFit style={{ color: 'green', fontSize: 13, fontWeight: "bold", textTransform: 'uppercase', marginRight: 2 }}> {details.status ? details.status : 'N/A'}</Text>
               </View>
-            : details.status === 'Under Repair' ? 
-            <View 
-            style={{flex: 1, padding: 3, backgroundColor: '#ffcc00', flexDirection: 'row', borderRadius: 5, justifyContent: 'center'}}>
-                <Icon name='check-circle' size={13} color={'#ffffff'} ></Icon>
-                <Text adjustsFontSizeToFit style={{ color: '#ffffff', fontSize: 13, fontWeight: "bold", textTransform: 'uppercase', marginRight: 2}}> {details.status ? details.status : 'N/A'}</Text>
-              </View>
-            :  
-            <View 
-              style={{flex: 1, padding: 3, backgroundColor: '#fc4747', flexDirection: 'row', borderRadius: 5, justifyContent: 'center'}}>
-              <Icon name='check-circle' size={13} color={'#ffffff'} ></Icon>
-              <Text adjustsFontSizeToFit style={{ color: '#ffffff', fontSize: 13, fontWeight: "bold", textTransform: 'uppercase', marginRight: 2}}> {details.status ? details.status : 'N/A'}</Text>
-            </View>
-          }
+              : details.status === 'Idle' ?
+                <View
+                  style={{ flex: 1, padding: 3, flexDirection: 'row', borderRadius: 5, justifyContent: 'center' }}>
+                  <Icon name='control-pause' size={13} style={{ marginTop: 2 }} color={'blue'} ></Icon>
+                  <Text adjustsFontSizeToFit style={{ color: 'blue', fontSize: 13, fontWeight: "bold", textTransform: 'uppercase', marginRight: 2 }}> {details.status ? details.status : 'N/A'}</Text>
+                </View>
+                : details.status === 'Under Repair' ?
+                  <View
+                    style={{ flex: 1, padding: 3, flexDirection: 'row', borderRadius: 5, justifyContent: 'center' }}>
+                    <Icon name='wrench' size={13} style={{ marginTop: 2 }} color={'orange'} ></Icon>
+                    <Text adjustsFontSizeToFit style={{ color: 'orange', fontSize: 13, fontWeight: "bold", textTransform: 'uppercase', marginRight: 2 }}> {details.status ? details.status : 'N/A'}</Text>
+                  </View>
+                  :
+                  <View
+                    style={{ flex: 1, padding: 3, flexDirection: 'row', borderRadius: 5, justifyContent: 'center' }}>
+                    <Icon name='trash' type="simple-line-icon" style={{ marginTop: 2 }} size={13} color={'red'} ></Icon>
+                    <Text adjustsFontSizeToFit style={{ color: 'red', fontSize: 13, fontWeight: "bold", textTransform: 'uppercase', marginRight: 2 }}> {details.status ? details.status : 'N/A'}</Text>
+                  </View>
+            }
           </View>
         </View>
-        <View style={{flexDirection: 'row', marginBottom: 3}}>
+        {details.status === 'Active' &&
+        <View style={{ flexDirection: 'row', marginBottom: 3 }}>
+          <Text style={styles.col_title}>Purpose </Text>
+          <Text style={styles.col_content}>{details.utilizationPurpose ? details.utilizationPurpose : 'N/A'}</Text>
+        </View>
+        }
+        <View style={{ flexDirection: 'row', marginBottom: 3 }}>
           <Text style={styles.col_title}>Purchased Date </Text>
           <Text style={styles.col_content}>{details.purchase_date ? details.purchase_date : 'N/A'}</Text>
         </View>
-        <View style={{flexDirection: 'row', marginBottom: 3}}>
+        <View style={{ flexDirection: 'row', marginBottom: 3 }}>
           <Text style={styles.col_title}>Added by</Text>
           <Text style={styles.col_content}>{details.access_level ? details.access_level : 'N/A'}</Text>
         </View>
-        </View>
-        
-      <Modal
-        animationType="fade"
+      </View>
+
+      <Overlay
         transparent={true}
-        centeredView={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          Alert.alert('Modal has been closed.');
+        isVisible={modalVisible}
+        onBackdropPress={() => {
           setModalVisible(!modalVisible);
         }}>
         <View style={styles.centeredView}>
           <KeyboardAvoidingView enabled style={styles.modalView}>
-            <View style={{padding: 10}}>
-              <View style={{flexDirection: 'row', justifyContent: 'center'}}>
-                <Text style={{color: '#404040', fontSize: 20, fontWeight: 'bold'}}>{details.asset_code}</Text>
+            <View style={{ padding: 10 }}>
+              <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+                <Text style={{ color: '#404040', fontSize: 20, fontWeight: 'bold' }}>{details.asset_code}</Text>
               </View>
-              <View style={{alignSelf: 'center', marginTop: 10}}>
+              <View style={{ alignSelf: 'center', marginTop: 10 }}>
                 <QRCode size={300}
                   value={details.asset_code}
                 />
               </View>
             </View>
-            <Button icon="close" compact="true" mode="contained" style={{marginTop: 10}} onPress={() => setModalVisible(false)}><Text>Close</Text></Button>
+            <Button title="Close" buttonStyle={{ marginTop: 10 }} onPress={() => setModalVisible(false)}>
+            </Button>
           </KeyboardAvoidingView>
         </View>
-      </Modal>
+      </Overlay>
     </ScrollView>
   )
 };
- 
+
 export default AssetDetailsScreen;
 
 const styles = StyleSheet.create({
@@ -255,6 +265,6 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
-  col_title: {color: '#73706e', width: '45%', fontSize: 16, fontWeight: '400', fontFamily: 'Roboto'},
-  col_content: {color: '#000', fontSize: 16, width: '55%', textAlign: 'right', fontFamily: 'Roboto'}
+  col_title: { color: '#73706e', width: '45%', fontSize: 16, fontWeight: '400', fontFamily: 'Roboto' },
+  col_content: { color: '#000', fontSize: 16, width: '55%', textAlign: 'right', fontFamily: 'Roboto' }
 });

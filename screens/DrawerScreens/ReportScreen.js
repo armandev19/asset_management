@@ -47,10 +47,86 @@ const ReportScreen = ({ navigation, route }) => {
     { item: "Item 2", details: "Details about Item 2" },
     { item: "Item 3", details: "Details about Item 3" },
   ];
+
+  console.log('report type', reportType)
+
+  const headersMapping = {
+    Asset: ['Asset Code', 'Asset Name', 'Status', 'Purchase Date'],
+    Maintenance: ['Asset Name', 'Description', 'Status', 'Scheduled Date'],
+    'Asset Transfer': ['Asset Name', 'From', 'To', 'Transfer Date'],
+    Depreciation: ['Asset Name', 'Original Price', 'Purchased Date', 'Current Value'],
+  };
+
+  const headers = headersMapping[reportType]?.map(header => `<th>${header}</th>`).join('') || '';
+
+  const reports = [
+    { value: "Asset", label: "Asset" },
+    { value: "Maintenance", label: "Maintenance" },
+    { value: "Asset Transfer", label: "Asset Transfer" },
+    { value: "Depreciation", label: "Depreciation" },
+    { value: "Audit Trail", label: "Audit Trail"},
+    { value: "Asset Utilization", label: "Asset Utilization" },
+    { value: "Asset Performance", label: "Asset Performance"},
+  ]
   
-  const rows = dynamicData
-    .map(data => `<tr><td>${data.item}</td><td>${data.details}</td></tr>`)
-    .join('');
+  const rows = 
+  (reportType === 'Asset') ? 
+    reportData.map(data => `<tr><td>${data.asset_code}</td><td>${data.asset_name}</td><td>${data.status}</td><td>${data.purchase_date}</td></tr>`).join('') : 
+  (reportType === "Maintenance") ? 
+    reportData.map(data => `<tr><td>${data.asset_name}</td><td>${data.desc}</td><td>${data.status}</td><td>${data.sched}</td></tr>`).join('') : 
+  (reportType === "Asset Transfer") ?
+    reportData.map(data => `<tr><td>${data.asset_name}</td><td>${data.from}</td><td>${data.to}</td><td>${data.transfer_date}</td></tr>`).join('') : 
+  (reportType === "Depreciation") ?
+  reportData.map(data => {
+    let depreciated_price = item.original_price;
+    const yearOld = getYearDifference(item.purchase_date, moment(dateToday).format("YYYY-MM-DD"))
+    if (data.type === 1) {
+      if (yearOld === 1) {
+        depreciated_price = data.original_price * 0.9
+      } else if (yearOld === 2) {
+        depreciated_price = data.original_price * 0.8
+      } else if (yearOld === 3) {
+        depreciated_price = data.original_price * 0.7
+      } else {
+        depreciated_price = data.original_price
+      }
+    } else if (data.type === 2) {
+      if (yearOld === 2) {
+        depreciated_price = data.original_price * 0.9
+      } else if (yearOld === 3) {
+        depreciated_price = data.original_price * 0.8
+      } else {
+        depreciated_price = data.original_price
+      }
+    } else if (data.type === 3) {
+      if (yearOld === 3) {
+        depreciated_price = data.original_price * 0.9
+      } else if (yearOld === 4) {
+        depreciated_price = data.original_price * 0.8
+      } else if (yearOld === 5) {
+        depreciated_price = data.original_price * 0.7
+      } else {
+        depreciated_price = data.original_price
+      }
+    } else {
+      if (yearOld === 3) {
+        depreciated_price = data.original_price * 0.9
+      } else if (yearOld === 4) {
+        depreciated_price = data.original_price * 0.8
+      } else if (yearOld === 5) {
+        depreciated_price = data.original_price * 0.7
+      } else {
+        depreciated_price = data.original_price
+      }
+    }
+    return `<tr>
+      <td>${data.asset_name}</td>
+      <td>${data.original_price}</td>
+      <td>${data.purchase_date}</td>
+      <td>${depreciated_price.toFixed(2)}</td>
+    </tr>`;
+  }).join('') :
+    reportData.map(data => `<tr><td>${data.item}</td><td>${data.details}</td></tr>`).join('');
 
   const createPDF = async () => {
     const htmlContent = `
@@ -69,8 +145,7 @@ const ReportScreen = ({ navigation, route }) => {
           <h6>${moment(dateFrom).format("MM/DD/YY")} - ${moment(dateTo).format("MM/DD/YY")}</h6>
           <table>
             <tr>
-              <th>Item</th>
-              <th>Details</th>
+              ${headers}
             </tr>
             ${rows}
           </table>
@@ -94,17 +169,6 @@ const ReportScreen = ({ navigation, route }) => {
       console.error('Error creating PDF:', error);
     }
   };
-
-
-  const reports = [
-    { value: "Asset", label: "Asset" },
-    { value: "Maintenance", label: "Maintenance" },
-    { value: "Asset Movement", label: "Asset Movement" },
-    { value: "Depreciation", label: "Depreciation" },
-    { value: "Audit Trail", label: "Audit Trail"},
-    { value: "Asset Utilization", label: "Asset Utilization" },
-    { value: "Asset Performance", label: "Asset Performance"},
-  ]
 
   // asset inventory report
   // audit trail report
@@ -152,12 +216,6 @@ const ReportScreen = ({ navigation, route }) => {
     }
   }
 
-  const data = [
-    { id: '1', title: 'Item 1' },
-    { id: '2', title: 'Item 2' },
-    { id: '3', title: 'Item 3' },
-    // Add more items as needed
-  ];
 
   const dateFromTemp = dateFrom.toDateString();
   const withoutWeekdayFrom = dateFromTemp.split(' ').slice(1).join(' ');
@@ -179,8 +237,8 @@ const ReportScreen = ({ navigation, route }) => {
     <View style={{ justifyContent: 'center', backgroundColor: '#f2f3f8', }}>
       <Loader loading={loading} />
       <View style={{ marginTop: 20 }}>
-        {/* <TouchableOpacity onPress={() => setVisible(true)}> */}
-        <TouchableOpacity onPress={()=>createPDF()}>
+        <TouchableOpacity onPress={() => setVisible(true)}>
+        {/* <TouchableOpacity onPress={()=>createPDF()}> */}
           <Input
             label="Report Type"
             labelStyle={styles.label}

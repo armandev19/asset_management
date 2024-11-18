@@ -35,6 +35,7 @@ const HomeScreen = ({ navigation, props }) => {
   const [totalValue, setTotalValue] = useState('');
   const [forMaintenanceAssets, setForMaintenanceAssets] = useState(0);
   const [schedMaintenanceToday, setSchedMaintenanceToday] = useState([]);
+  const [forDepreciationToday, setForDepreciationToday] = useState([]);
   const [xData, setXData] = useState([]);
   const [yData, setYData] = useState([]);
   const [xDataStatus, setXDataStatus] = useState([]);
@@ -45,11 +46,11 @@ const HomeScreen = ({ navigation, props }) => {
   const [device_token, setDeviceToken] = useState(fbKey);
   const dispatch = useDispatch();
 
-  const [totalValueShow, setTotalValueShow] = useState(true);
-  const [assetTransferShow, setAssetTransferShow] = useState(true);
-  const [underMaintenanceShow, setUnderMaintenanceShow] = useState(true);
-  const [assetMaintenanceShow, setAssetMaintenanceShow] = useState(true);
-  const [assetDepreShow, setAssetDepreShow] = useState(true);
+  const [totalValueShow, setTotalValueShow] = useState(false);
+  const [assetTransferShow, setAssetTransferShow] = useState(false);
+  const [underMaintenanceShow, setUnderMaintenanceShow] = useState(false);
+  const [assetMaintenanceShow, setAssetMaintenanceShow] = useState(false);
+  const [assetDepreShow, setAssetDepreShow] = useState(false);
 
   const [settingsShow, setSettingsShow] = useState(false);
 
@@ -177,12 +178,14 @@ const HomeScreen = ({ navigation, props }) => {
     })
       .then((response) => response.json())
       .then(data => {
+        console.log("mainte",data.schedMaintenanceToday)
         setOperationalAssets(data.operational);
         setNewAssets(data.newAssets);
         setForMaintenanceAssets(data.forMaintenance);
         setTotalValue(data.totalValue);
         setAssetTransfer(data.assetTransfers);
         setSchedMaintenanceToday(data.schedMaintenanceToday);
+        setForDepreciationToday(data.assetsForDepreciationToday);
       })
       .catch(error => {
         console.error('Error:', error);
@@ -256,14 +259,6 @@ const HomeScreen = ({ navigation, props }) => {
       });
   }
 
-  // const toggleCheckbox = (item) => {
-  //   setSelectedItems((prevItems) =>
-  //     prevItems.includes(item.value)
-  //       ? prevItems.filter((val) => val !== item.value) // Remove if unchecked
-  //       : [...prevItems, item.value] // Add if checked
-  //   );
-  // };
-
   const toggleCheckbox = (item) => {
     setSelectedItems((prevItems) => {
       const isSelected = prevItems.includes(item.value);
@@ -274,8 +269,6 @@ const HomeScreen = ({ navigation, props }) => {
         : [...prevItems, item.value]; // Add if checked
     });
   };
-
-  console.log("selecteItems", selectedItems);
 
   const serverkey = 'MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDaT+j/s+f9pKP7\nObSieH1Z77ENtVlanTl5J/YoeSXR+2nO7IeXhhwhyqZrE9PVpXtCmKhqfQQgevD6\nCM/x6lLBQEl2aLM5PBQgxtpogZvYkHzFLI3R6XoaDrkt4KS3AtWEB9cuGP4aT9JE\nQTYpsao7Q8MsDWZOO3VwHZeZFBn4ilMFtAgMqwxcp2zi1p8qLOoz7tmz6bzFmjjh\nnAUVAjmfQTTyguQq4+r3PJnT4SeDbNKe1JztPrRHYx+Ch1BRBXbnMoT3iaGQOuKV\nP2YXM03wHFo2xZk7CJjgUmr8hpYWZMJPMz2y2vYdeIDEoOqQFfYMhqzo6cgN6GNk\nz+owJh/RAgMBAAECggEAHripEra3+lcdZmCX/VcUWMAku8ed4+UFLfoEJ2zo+BQ3\nrxFVAWszcUPpyF65bDLF1jjSVm3yUznJyH3N+X6el6hazilssyyzrmsdWCCJFGA8\n1qhu6q++6YTR5VVcCI8DCfnqe4ez1nMOJWHB4/sm+AEQqZXXJEI0xAq+ByIvh2x5\nHj5byL9nqIPMrs7pGkLP5wd6qw9uZ3uw1Hg1Z5Yx7W6K0MGrCnPt6gebfBuBkT37\nMhbdG5OIA5lhUb4NAQCtVqg5B1U64AXu+lbNsHRaXnHNPYqW900IPFhd/ExcgJAB\n4Ul6MnzzkBTQ3Chx+v41Uabfouva5foqNo0Wv5+DEwKBgQD6VwZQjZE3D0tEdVdW\nS++w8P3MMmjiIJGQzantqegEpwNmSk8KsthnXdjDBjAZrnV6QO4khBxK34+Alp8n\nu0XimhcO6EU6sj5iLMeC7yyw0ZocK+F4aU7y41w2YGhdWWUa3peUl2qd00Jhmjea\nd6tNUgekh5rn1gCiUGIaao0c8wKBgQDfP4H0iKiKbTpCec4tCSfb9OqmJameNBxe\nvH4NQ7l/OCfQ3pFC7s8r4mhHrR4cdB3R3MuUwONbQleV5Y3I7cAuNg1pDan2mx9E\nyi7pBSHyVB512tGSVuUsF2YIu8C1tTLFutLUl2OTH1sqrBNJT2oNuwg7x7VWHLNT\n2/JOm2lxKwKBgHEvbZR4HWL2kEJYh29mD+5BV46+b/tlXEtLIXxqKJQJ6xiRmmEs\n8XjyznGG17KU1Vq8BrAN5zjXEWvDLhxpqLRGlQxRahOayWfb9Sy29M7RRctc76lg\ne6iHsYaIWkdyhqr6XzB4sWTAQrAcaO13E8V2xCvYf+o4MLsyetiUuk6PAoGAfCzR\n9xdQT/bjcfhYcvplvlXjctj+GK45nYRQxMYH1riAhRBXUhiNCYbcpAmp9v+rWoDq\nh+omTCuBljHiBIIh5FJScT2VbULpSJUBNMGTGTwq2TkGWtSUkkrNiUwNq8SG4i7B\neFhgnYPSbNDbxWozvkFrGf1CYwyBvsJXa9vL8ZMCgYEAySdj7n+r8OrfPinU6O0Y\np1oZ+mwKqZ87uTJtqBviFmJKal6T5Z3qPSI7Wik4R8R+K1Yn009Xl+B673T/m9cL\nyO9vEe2WngRIGBKuYE8g2Wklqo4mhgQRgqGhXzEIrBszr7trpLghQXb0sBORnuRe\niJC7XJwB7wna/UzugPREJHg=';
 
@@ -364,14 +357,6 @@ const HomeScreen = ({ navigation, props }) => {
     setFilter(value)
   }
 
-  const reports = [
-    { value: "Asset", label: "Asset" },
-    { value: "Maintenance", label: "Maintenance" },
-    { value: "Asset Transfer", label: "Asset Transfer" },
-    { value: "Depreciation", label: "Depreciation" },
-  ]
-
-
   const dataStatus = {
     dataSets: [
       {
@@ -440,10 +425,15 @@ const HomeScreen = ({ navigation, props }) => {
     setFilterShow(val);
   };
 
-  const logout = () => {
-    AsyncStorage.removeItem('user_id');
-    dispatch(setUserData(null));
-  }
+  const forDepreciationTodayFinal = Object.entries(forDepreciationToday)
+  .reduce((acc, [key, items]) => {
+    const processedItems = items.map(item => ({
+      ...item,
+      type: key, // Add the type for context if needed
+    }));
+    return [...acc, ...processedItems];
+  }, []);
+
   return (
     <Provider>
       <ScrollView style={{ flex: 1, backgroundColor: '#ffffff' }}>
@@ -537,7 +527,29 @@ const HomeScreen = ({ navigation, props }) => {
                 <View style={{ padding: 5, marginVertical: 5 }}>
                   <Text style={{ color: '#fc8953' }}>Assets for Depreciation</Text>
                 </View>
-                <View style={{ padding: 5, alignItems: 'flex-end' }}>
+                <View>
+                {forDepreciationTodayFinal?.length > 0 ? (
+                    forDepreciationTodayFinal?.map((item, index) => {
+                      return (
+                        <View key={index} style={{ padding: 5, width: '100%' }}>
+                          <View style={{ flexDirection: 'row', paddingBottom: 5 }}>
+                            <View style={{ }}>
+                              <Text style={{ fontSize: 13, fontWeight: '500', color: 'black', textTransform: 'uppercase' }}>{item.type}</Text>
+                              <Text style={{ fontSize: 13, fontWeight: '400', color: 'black' }}>Asset Code: {item.asset_code}</Text>
+                              <Text style={{ fontSize: 13, fontWeight: '400', color: 'black' }}>Asset Name: {item.asset_name}</Text>
+                              <Text style={{ fontSize: 13, fontWeight: '400', color: 'black' }}>Purchased Date: {item.purchase_date}</Text>
+                              <Text style={{ fontSize: 13, fontWeight: '400', color: 'black' }}>Current Value: ₱{item.current_price}</Text>
+                            </View>
+                          </View>
+                          <Divider />
+                        </View>
+                      );
+                    })
+                  ) : (
+                    <View style={{ alignItems: 'center', marginTop: 20 }}>
+                      <Text style={{ fontSize: 16, color: 'grey' }}>No depreciated assets today.</Text>
+                    </View>
+                  )}
                 </View>
               </View>
             }
@@ -548,26 +560,32 @@ const HomeScreen = ({ navigation, props }) => {
                   <Text style={{ color: '#fc8953' }}>Scheduled Maintenance Today</Text>
                 </View>
                 <View>
-                  {schedMaintenanceToday?.length > 0 && schedMaintenanceToday?.map((item, index) => {
-                    const statusColor = item.status === 'Pending' ? 'red' : item.status === 'Ongoing' ? 'orange' : 'green'
-                    const schedDate = moment(item.schedule).format('ddd, MMM DD')
-                    return (
-                      <View style={{ padding: 3 }}>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                          <View style={{ width: '50%' }}>
-                            <Text style={{ fontSize: 14, fontWeight: '600' }}>{item.asset_code}</Text>
-                            <Text style={{ fontSize: 14, fontWeight: '500' }}>{item.asset_name}</Text>
-                            <Text style={{ fontSize: 13, fontWeight: '400', color: 'darkgrey' }}>{item.maintenance_description}</Text>
+                  {schedMaintenanceToday?.length > 0 ? (
+                    schedMaintenanceToday.map((item, index) => {
+                      const statusColor = item.status === 'Pending' ? 'red' : item.status === 'Ongoing' ? 'orange' : 'green';
+                      const schedDate = moment(item.schedule).format('ddd, MMM DD');
+                      return (
+                        <View key={index} style={{ padding: 3 }}>
+                          <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingBottom: 5 }}>
+                            <View style={{ width: '50%' }}>
+                              <Text style={{ fontSize: 13, fontWeight: '500', color: 'black' }}>{item.asset_code}</Text>
+                              <Text style={{ fontSize: 13, fontWeight: '500', color: 'black' }}>{item.asset_name}</Text>
+                              <Text style={{ fontSize: 13, fontWeight: '400', color: 'black' }}>{item.maintenance_description}</Text>
+                            </View>
+                            <View style={{ alignItems: 'flex-end', width: '50%' }}>
+                              <Text style={{ color: statusColor, textTransform: 'uppercase' }}>{item.status}</Text>
+                              <Text style={{ fontSize: 13, fontWeight: '400', color: 'black' }}>{schedDate}</Text>
+                            </View>
                           </View>
-                          <View style={{ alignItems: 'flex-end', width: '50%' }}>
-                            <Text style={{ color: statusColor }}>{item.status}</Text>
-                            <Text>{schedDate}</Text>
-                          </View>
+                          <Divider />
                         </View>
-                        <Divider />
-                      </View>
-                    )
-                  })}
+                      );
+                    })
+                  ) : (
+                    <View style={{ alignItems: 'center', marginTop: 20 }}>
+                      <Text style={{ fontSize: 16, color: 'grey' }}>No scheduled maintenance for today.</Text>
+                    </View>
+                  )}
                 </View>
               </View>
             }
@@ -726,7 +744,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 20,
     width: '90%',
-    minHeight: 200,
+    minHeight: 100,
     padding: 5,
     marginTop: 10,
     paddingBottom: 10

@@ -170,7 +170,7 @@ const UpdateAssetScreen = ({ route, navigation }) => {
 			.then((response) => response.json())
 			.then((responseJson) => {
 				setLoading(false);
-				setTypeList(responseJson.data);
+				setTypeList(responseJson?.data);
 			})
 			.catch((error) => {
 				alert(error);
@@ -323,7 +323,7 @@ const UpdateAssetScreen = ({ route, navigation }) => {
 						inputContainerStyle={styles.inputContainer}
 						inputStyle={{ fontSize: 15 }}
 						placeholder={"Select Location"}
-						value={location.label}
+						value={location?.label}
 						editable={false}
 						rightIcon={{ type: 'feather', name: 'chevron-down', size: 15 }}
 						leftIcon={{ type: 'feather', name: 'map-pin', size: 15 }}

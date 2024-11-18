@@ -96,9 +96,9 @@ const onRefresh = () => {
 // 00cc44 green operational
 // ffcc00 orange in repair
 // e62e00 red disposed
-useEffect(()=>{
-  getAssets();
-}, [])
+// useEffect(()=>{
+//   getAssets();
+// }, [])
 
 useFocusEffect(
   React.useCallback(() => {
@@ -107,7 +107,7 @@ useFocusEffect(
 );
 
   return (
-      <View style={{justifyContent: 'center', backgroundColor: '#ffffff', marginTop: 32}}>
+      <View style={{ height: "100%", backgroundColor: '#ffffff'}}>
         <Loader loading={loading} />
         <Portal>
           {isFocused && (
@@ -177,6 +177,7 @@ useFocusEffect(
             assets?.map((item, index)=>{
               const imageUri = item.image?.image_location; // Replace with your actual URI or set it to null for local image
               const localImage = require('../../assets/noimage.jpg'); 
+              const statusColor = item.status === 'Active' ? 'green' : item.status === 'Idle' ? 'blue' : item.status === 'Under Repair' ? 'orange' : 'red';
               return (
                 <TouchableOpacity style={{
                   marginBottom: 5, 
@@ -201,12 +202,12 @@ useFocusEffect(
                     </View>
                     <View style={styles.item}>
                       <View style={{}}>
-                        <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 14, fontWeight: '500'}}>Description: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 14, fontWeight: 'bold' }}>{item.asset_description}</Text></Text>
+                        <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 14, fontWeight: '500'}}>Type: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 14, fontWeight: 'bold' }}>{item.asset_type }</Text></Text>
                       </View>
                     </View>
                     <View style={styles.item}>
                       <View style={{}}>
-                        <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 14, fontWeight: '500'}}>Type: <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 14, fontWeight: 'bold' }}>{item.asset_type }</Text></Text>
+                        <Text adjustsFontSizeToFit style={{color: '#404040', fontSize: 14, fontWeight: '500'}}>Status: <Text adjustsFontSizeToFit style={{ color: statusColor, fontSize: 14, fontWeight: 'bold' }}>{item.status}</Text></Text>
                       </View>
                     </View>
                     <View style={styles.item}>
