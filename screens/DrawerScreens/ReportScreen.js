@@ -68,18 +68,28 @@ const ReportScreen = ({ navigation, route }) => {
     { value: "Asset Utilization", label: "Asset Utilization" },
     { value: "Asset Performance", label: "Asset Performance"},
   ]
+
+  
+  const getYearDifference = (startDate, endDate) => {
+    const startMoment = moment(startDate);
+    const endMoment = moment(endDate);
+    return endMoment.diff(startMoment, 'years');
+  }
   
   const rows = 
   (reportType === 'Asset') ? 
-    reportData.map(data => `<tr><td>${data.asset_code}</td><td>${data.asset_name}</td><td>${data.status}</td><td>${data.purchase_date}</td></tr>`).join('') : 
+    reportData.map(data => 
+      `<tr><td>${data.asset_code}</td><td>${data.asset_name}</td><td>${data.status}</td><td>${data.purchase_date}</td></tr>`).join('') : 
   (reportType === "Maintenance") ? 
-    reportData.map(data => `<tr><td>${data.asset_name}</td><td>${data.desc}</td><td>${data.status}</td><td>${data.sched}</td></tr>`).join('') : 
+    reportData.map(data => 
+      `<tr><td>${data.asset_name}</td><td>${data.desc}</td><td>${data.status}</td><td>${data.sched}</td></tr>`).join('') : 
   (reportType === "Asset Transfer") ?
-    reportData.map(data => `<tr><td>${data.asset_name}</td><td>${data.from}</td><td>${data.to}</td><td>${data.transfer_date}</td></tr>`).join('') : 
+    reportData.map(data => 
+      `<tr><td>${data.asset_name}</td><td>${data.from}</td><td>${data.to}</td><td>${data.transfer_date}</td></tr>`).join('') : 
   (reportType === "Depreciation") ?
   reportData.map(data => {
-    let depreciated_price = item.original_price;
-    const yearOld = getYearDifference(item.purchase_date, moment(dateToday).format("YYYY-MM-DD"))
+    let depreciated_price = data.original_price;
+    const yearOld = getYearDifference(data.purchase_date, moment(dateToday).format("YYYY-MM-DD"))
     if (data.type === 1) {
       if (yearOld === 1) {
         depreciated_price = data.original_price * 0.9
@@ -121,9 +131,9 @@ const ReportScreen = ({ navigation, route }) => {
     }
     return `<tr>
       <td>${data.asset_name}</td>
-      <td>${data.original_price}</td>
       <td>${data.purchase_date}</td>
-      <td>${depreciated_price.toFixed(2)}</td>
+      <td>${data.original_price}</td>
+      <td>${depreciated_price ? depreciated_price : '0.00'}</td>
     </tr>`;
   }).join('') :
     reportData.map(data => `<tr><td>${data.item}</td><td>${data.details}</td></tr>`).join('');
@@ -221,12 +231,6 @@ const ReportScreen = ({ navigation, route }) => {
   const withoutWeekdayFrom = dateFromTemp.split(' ').slice(1).join(' ');
   const dateToTemp = dateTo.toDateString();
   const withoutWeekdayTo = dateToTemp.split(' ').slice(1).join(' ');
-
-  const getYearDifference = (startDate, endDate) => {
-    const startMoment = moment(startDate);
-    const endMoment = moment(endDate);
-    return endMoment.diff(startMoment, 'years');
-  }
 
   const selectReportType = (item) => {
     setReportType(item);
@@ -384,53 +388,52 @@ const ReportScreen = ({ navigation, route }) => {
                   <>
                     <View style={styles.tableRow}>
                       <Text style={styles.tableHeader}>Asset</Text>
-                      <Text style={styles.tableHeader}>Purchaed Price</Text>
+                      <Text style={styles.tableHeader}>Purchased Price</Text>
                       <Text style={styles.tableHeader}>Purchased Date</Text>
                       <Text style={styles.tableHeader}>Current Value</Text>
                     </View>
                     {reportData?.map(item => {
-                      let depreciated_price = item.original_price;
+                      var depreciated_price = item.original_price;
                       const yearOld = getYearDifference(item.purchase_date, moment(dateToday).format("YYYY-MM-DD"))
-                      if (item.type === 1) {
-                        if (yearOld === 1) {
+                      if (item.type == 1) {
+                        if (yearOld == 1) {
                           depreciated_price = item.original_price * 0.9
-                        } else if (yearOld === 2) {
+                        } else if (yearOld == 2) {
                           depreciated_price = item.original_price * 0.8
-                        } else if (yearOld === 3) {
+                        } else if (yearOld == 3) {
                           depreciated_price = item.original_price * 0.7
                         } else {
                           depreciated_price = item.original_price
                         }
-                      } else if (item.type === 2) {
-                        if (yearOld === 2) {
+                      } else if (item.type == 2) {
+                        if (yearOld == 2) {
                           depreciated_price = item.original_price * 0.9
-                        } else if (yearOld === 3) {
+                        } else if (yearOld == 3) {
                           depreciated_price = item.original_price * 0.8
                         } else {
                           depreciated_price = item.original_price
                         }
-                      } else if (item.type === 3) {
-                        if (yearOld === 3) {
+                      } else if (item.type == 3) {
+                        if (yearOld == 3) {
                           depreciated_price = item.original_price * 0.9
-                        } else if (yearOld === 4) {
+                        } else if (yearOld == 4) {
                           depreciated_price = item.original_price * 0.8
-                        } else if (yearOld === 5) {
+                        } else if (yearOld == 5) {
                           depreciated_price = item.original_price * 0.7
                         } else {
                           depreciated_price = item.original_price
                         }
                       } else {
-                        if (yearOld === 3) {
+                        if (yearOld == 3) {
                           depreciated_price = item.original_price * 0.9
-                        } else if (yearOld === 4) {
+                        } else if (yearOld == 4) {
                           depreciated_price = item.original_price * 0.8
-                        } else if (yearOld === 5) {
+                        } else if (yearOld == 5) {
                           depreciated_price = item.original_price * 0.7
                         } else {
                           depreciated_price = item.original_price
                         }
                       }
-
                       return (
                         <View key={item.id} style={styles.tableRow}>
                           <Text style={{ flex: 1, textAlign: 'center', fontSize: 12, color: 'black' }}>{item.asset_name}</Text>
@@ -509,7 +512,8 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     flex: 1,
     textAlign: 'center',
-    color: 'black'
+    color: 'black',
+    fontSize: 11
   },
   tableCell: {
     flex: 1,

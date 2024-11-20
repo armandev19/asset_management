@@ -3,15 +3,27 @@ const mysql = require('mysql');
 const moment = require('moment');
 const app = express();
 const nodemailer = require('nodemailer');
-
+const axios = require('axios');
 const admin = require('firebase-admin');
 const cron = require('node-cron');
+const { GoogleAuth } = require('google-auth-library')
 
-const serviceAccount = require('./asset-54ae3-firebase-adminsdk-df262-e76605c701.json');
+const serviceAccount = require('./asset-54ae3-firebase-adminsdk-df262-fafebee9a6.json');
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });
+
+const getAccessToken = async () => {
+  const auth = new GoogleAuth({
+    keyFile: '../asset-54ae3-7f6cb6aafe24.json',
+    scopes: ['https://www.googleapis.com/auth/firebase.messaging'],
+  });
+
+  const client = await auth.getClient();
+  const token = await client.getAccessToken();
+  return token;
+};
 
 // app.use(express.json());
 
@@ -58,6 +70,56 @@ const sendPushNotification = (token, title, body) => {
 };
 
 const token = "eusFNRCYQDuW-YFbNjIjrY:APA91bHGcGVTaqHyzjTb02QKuiE88630P_8Yp9Fjf5FYrLD59-YhINtHRCRX5P2LnKRoobFkpPcR_8BQ2VYnlq55fUUw9ML2_7oph9gyxi9an6M6rYFxKipDLCDti2ha9jC8c4szjpDL"
+
+const sendNotification = async (deviceToken, title, body) => {
+  const projectId = 'asset-54ae3'; // Replace with your project ID
+  const url = `https://fcm.googleapis.com/v1/projects/${projectId}/messages:send`;
+
+  const message = {
+    message: {
+      token: deviceToken, // The device's FCM token
+      notification: {
+        title: title,
+        body: body,
+      },
+      android: {
+        priority: 'high',
+      },
+      apns: {
+        payload: {
+          aps: {
+            alert: {
+              title: title,
+              body: body,
+            },
+            sound: 'default',
+          },
+        },
+      },
+    },
+  };
+
+  const accessToken = await getAccessToken();
+
+  try {
+    const response = await axios.post(url, message, {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+    });
+    console.log('Notification sent successfully:', response.data);
+  } catch (error) {
+    console.error('Error sending notification:', error.response.data);
+  }
+};
+
+// Example usage
+// sendNotification(
+//   'eusFNRCYQDuW-YFbNjIjrY:APA91bHGcGVTaqHyzjTb02QKuiE88630P_8Yp9Fjf5FYrLD59-YhINtHRCRX5P2LnKRoobFkpPcR_8BQ2VYnlq55fUUw9ML2_7oph9gyxi9an6M6rYFxKipDLCDti2ha9jC8c4szjpDL', // Replace with the device's FCM token
+//   'Test Notification',
+//   'This is a message sent using the HTTPv1 API!'
+// );
 
 app.post('/testEmail', (req, res) => {
   // emailSender("test123@gmail.com", "arman.jacolbe19@gmail.com", "Test subject", "Test email content");

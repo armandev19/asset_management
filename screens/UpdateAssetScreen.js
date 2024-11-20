@@ -10,25 +10,23 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 
 const UpdateAssetScreen = ({ route, navigation }) => {
-
 	const params = route.params
-	const [details, setAssetDetails] = useState([]);
 	const [loading, setLoading] = useState(false);
-
 	const currentUserData = useSelector(selectUserData);
-	const [showDropDown, setShowDropDown] = useState(false);
-	const [showDropDownStatus, setShowDropDownStatus] = useState(false);
-	const [name, setName] = useState('');
-	const [description, setDescription] = useState('');
-	const [location, setLocation] = useState({ label: '', id: '' });
-	const [price, setPrice] = useState(0);
-	const [status, setStatus] = useState('');
-	const [qty, setQty] = useState(1);
-	const [type, setType] = useState({ label: '', id: '' });
+	const [name, setName] = useState(params.asset_name);
+	const [description, setDescription] = useState(params.asset_description);
+	const [location, setLocation] = useState(params.original_location);
+	const [locationName, setLocationName] = useState('');
+	const [type, setType] = useState(params.type_id);
+	const [typeName, setTypeName] = useState('');
+	const [price, setPrice] = useState(params.price);
+	const [status, setStatus] = useState(params.status);
+	const [qty, setQty] = useState(params.qty);
 	const [locationList, setLocationList] = useState([]);
 	const [typeList, setTypeList] = useState([]);
 	const [isPickerShow, setIsPickerShow] = useState(false);
-	const [date, setDate] = useState('');
+	const [date, setDate] = useState(new Date());
+	const [purchaseDate, setPurchaseDate] = useState(date);
 	const [visible1, setVisible1] = useState(false);
 	const [selectedImage, setSelectedImage] = useState({
 		id: "",
@@ -38,14 +36,20 @@ const UpdateAssetScreen = ({ route, navigation }) => {
 	const [isVisibleStatus, setIsVisibleStatus] = useState(false);
 	const [isVisibleType, setIsVisibleType] = useState(false);
 
+	const fetchDefaultDate = async () => {
+		const defaultDate = params.purchase_date ? new Date(params.purchase_date) : new Date(); // Example date from the database
+		setDate(defaultDate);
+	};
+
 	const showPicker = () => {
 		setIsPickerShow(true);
 	};
 
-	const onChange = (event, value) => {
+	const onChange = (event, selectedDate) => {
 		setIsPickerShow(false);
-		setDate(value);
-		console.log('update', value)
+		if (selectedDate) {
+			setDate(selectedDate); // Update state with the selected date
+		}
 	};
 
 	const viewImage = (id, filename) => {
@@ -55,13 +59,14 @@ const UpdateAssetScreen = ({ route, navigation }) => {
 
 	const updateAsset = () => {
 		setLoading(true);
-		let dataToSend = { name: name, description: description, price: price, purchaseDate: date, location: location.value, id: params.id, status: status, created_by: currentUserData.id, qty: qty, type: type.value };
+		let dataToSend = { name: name, description: description, price: price, purchaseDate: date, location: location, id: params.id, status: status, created_by: currentUserData.id, qty: qty, type: type };
 		let formBody = [];
 		for (let key in dataToSend) {
 			let encodedKey = encodeURIComponent(key);
 			let encodedValue = encodeURIComponent(dataToSend[key]);
 			formBody.push(encodedKey + '=' + encodedValue);
 		}
+
 		formBody = formBody.join('&');
 		fetch(global.url + 'updateAsset.php', {
 			method: 'POST',
@@ -90,50 +95,11 @@ const UpdateAssetScreen = ({ route, navigation }) => {
 	}
 
 	const dropdownStatus = [
-		{ value: "Operational", label: "Operational", icon: 'check', color: 'green' },
-		{ value: "Under Repair", label: "Under Repair", icon: 'wrench', color: 'orange'  },
-		{ value: "Retired/Disposed", label: "Retired/Disposed", icon: 'trash', color: 'red'  },
+		{ value: "Active", label: "Active", icon: 'control-play', color: 'green' },
+		{ value: "Idle", label: "Idle", icon: 'control-pause', color: 'blue' },
+		{ value: "Under Repair", label: "Under Repair", icon: 'wrench', color: 'orange' },
+		{ value: "Retired/Disposed", label: "Retired/Disposed", icon: 'trash', color: 'red' },
 	]
-
-	const dropdownType = [
-		{ value: 1, label: "Operational" },
-		{ value: 2, label: "Under Repair" },
-		{ value: 3, label: "Retired/Disposed" },
-	]
-
-	const getAssetDetails = async () => {
-		setLoading(true);
-		let dataToSend = { id: params.asset_code };
-		let formBody = [];
-		for (let key in dataToSend) {
-			let encodedKey = encodeURIComponent(key);
-			let encodedValue = encodeURIComponent(dataToSend[key]);
-			formBody.push(encodedKey + '=' + encodedValue);
-		}
-		formBody = formBody.join('&');
-		await fetch(global.url + 'getAssetDetails.php', {
-			method: 'POST',
-			body: formBody,
-			headers: {
-				'Content-Type':
-					'application/x-www-form-urlencoded;charset=UTF-8',
-			},
-		})
-			.then((response) => response.json())
-			.then((responseJson) => {
-				setAssetDetails(responseJson?.data[0])
-				setQty(responseJson?.data[0].qty);
-				setLocation(responseJson?.data[0].curr_loc);
-				setName(responseJson.data[0].asset_name)
-				setDescription(responseJson.data[0].asset_description)
-				setPrice(responseJson.data[0].current_price);
-				setDate(responseJson.data[0].purchase_date);
-			})
-			.catch((error) => {
-				console.log("test", error)
-				setLoading(false);
-			});
-	}
 
 	const getLocationDropdown = () => {
 		setLoading(true)
@@ -179,9 +145,33 @@ const UpdateAssetScreen = ({ route, navigation }) => {
 			});
 	}
 
+
+
+	const preSelectLocation = async () => {
+		const selectedLocation = locationList.find((location) => location.value === params.original_location);
+		if (selectedLocation) {
+			setLocationName(selectedLocation.label); // Set the label to populate the text field
+		}
+	}
+
+	const preSelectType = async () => {
+		const selectedType = typeList.find((type) => type.value === params.type_id);
+		if (selectedType) {
+			setTypeName(selectedType.label); // Set the label to populate the text field
+		}
+	}
+
 	const onSelectLocation = (location) => {
-		setLocation({ label: location.label, value: location.value })
+		console.log("location", location)
+		setLocation(location.value)
+		setLocationName(location.label)
 		setIsVisible(!isVisible);
+	}
+
+	const onSelectType = (type) => {
+		setType(type.value)
+		setTypeName(type.label)
+		setIsVisibleType(!isVisibleType);
 	}
 
 	const onSelectStatus = (status) => {
@@ -189,22 +179,19 @@ const UpdateAssetScreen = ({ route, navigation }) => {
 		setIsVisibleStatus(!isVisibleStatus);
 	}
 
-	const onSelectType = (type) => {
-		setType({ label: type.label, value: type.value })
-		setIsVisibleType(!isVisibleType);
-	}
-
 	useEffect(() => {
-		// getAssetDetails();
 		getTypeList();
 		getLocationDropdown();
+		fetchDefaultDate();
 	}, [])
 
-	useFocusEffect(
-		React.useCallback(() => {
-			getAssetDetails();
-		}, []),
-	);
+	useEffect(() => {
+		preSelectLocation();
+	}, [locationList, location])
+
+	useEffect(() => {
+		preSelectType();
+	}, [typeList, type])
 
 	return (
 		<ScrollView style={{ backgroundColor: 'white' }}>
@@ -260,7 +247,7 @@ const UpdateAssetScreen = ({ route, navigation }) => {
 					inputContainerStyle={styles.inputContainer}
 					inputStyle={{ fontSize: 15 }}
 					placeholder={"Enter Text Here"}
-					value={details.asset_code}
+					value={params.asset_code}
 					disabled
 				/>
 				<Input
@@ -289,7 +276,7 @@ const UpdateAssetScreen = ({ route, navigation }) => {
 						inputContainerStyle={styles.inputContainer}
 						inputStyle={{ fontSize: 15 }}
 						placeholder={"Selecte type"}
-						value={type.label ? type.label : details.type}
+						value={typeName}
 						editable={false}
 					/>
 				</TouchableOpacity>
@@ -323,7 +310,7 @@ const UpdateAssetScreen = ({ route, navigation }) => {
 						inputContainerStyle={styles.inputContainer}
 						inputStyle={{ fontSize: 15 }}
 						placeholder={"Select Location"}
-						value={location?.label}
+						value={locationName}
 						editable={false}
 						rightIcon={{ type: 'feather', name: 'chevron-down', size: 15 }}
 						leftIcon={{ type: 'feather', name: 'map-pin', size: 15 }}
@@ -337,7 +324,7 @@ const UpdateAssetScreen = ({ route, navigation }) => {
 						inputContainerStyle={styles.inputContainer}
 						inputStyle={{ fontSize: 15 }}
 						placeholder={"Enter Text Here"}
-						value={details.purchase_date}
+						value={date.toLocaleDateString()}
 						editable={false}
 						leftIcon={{ type: 'feather', name: 'calendar', size: 16 }}
 					/>
@@ -350,7 +337,7 @@ const UpdateAssetScreen = ({ route, navigation }) => {
 						inputContainerStyle={styles.inputContainer}
 						inputStyle={{ fontSize: 15 }}
 						placeholder={"Select Status"}
-						value={status ? status : details.status}
+						value={status}
 						editable={false}
 						rightIcon={{ type: 'feather', name: 'chevron-down', size: 15 }}
 						leftIcon={{ type: 'feather', name: 'activity', size: 15 }}
@@ -398,7 +385,7 @@ const UpdateAssetScreen = ({ route, navigation }) => {
 				{isPickerShow && (
 					<DateTimePicker
 						value={date}
-						mode={'date'}
+						mode="date"
 						onChange={onChange}
 						// style={styles.datePicker}
 						format='MM DD YYYY'
@@ -426,7 +413,7 @@ const UpdateAssetScreen = ({ route, navigation }) => {
 							size: 20,
 							color: 'white',
 						}}
-						onPress={() => updateAsset()}
+						onPress={() => navigation.goBack()}
 						buttonStyle={{ backgroundColor: 'rgba(214, 61, 57, 1)', marginTop: 20 }}
 					/>
 				</View>

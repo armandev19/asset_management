@@ -44,7 +44,6 @@ const AssetDetailsScreen = ({ navigation, route }) => {
       .then((responseJson) => {
         setAssetDetails(responseJson.data[0]);
         setLoading(false);
-        console.log('rawr', responseJson.data[0]);
       })
       .catch((error) => {
         console.log("error", error)
@@ -60,6 +59,8 @@ const AssetDetailsScreen = ({ navigation, route }) => {
       getAssetDetails();
     }, []),
   );
+
+  console.log("details", details)
 
   return (
     <ScrollView style={{}}>
@@ -155,11 +156,11 @@ const AssetDetailsScreen = ({ navigation, route }) => {
         </View>
         <View style={{ flexDirection: 'row', marginBottom: 3 }}>
           <Text style={styles.col_title}>Original Location </Text>
-          <Text style={styles.col_content}>{details.curr_loc ? details.curr_loc : 'N/A'}</Text>
+          <Text style={styles.col_content}>{details.orig_loc ? details.orig_loc : 'N/A'}</Text>
         </View>
         <View style={{ flexDirection: 'row', marginBottom: 3 }}>
           <Text style={styles.col_title}>Current Location </Text>
-          <Text style={styles.col_content}>{details.curr_loc ? details.curr_loc : 'N/A'}</Text>
+          <Text style={styles.col_content}>{details.curr_loc === 'N/A' ? details.orig_loc : details.curr_loc}</Text>
         </View>
         <View style={{ flexDirection: 'row', marginBottom: 3 }}>
           <Text style={styles.col_title}>Original Price </Text>
