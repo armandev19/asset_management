@@ -118,8 +118,8 @@ const LoginScreen = ({navigation}) => {
           source={require('../assets/amslogo.png')}
           style={{width: 150, height: 150, justifyContent: 'center', alignSelf: 'center' ,borderRadius: 5}}
         />
-        <Text style={{textAlign: 'center', fontSize: 27, fontWeight: 'bold', color: '#f5571d'}}>ASSET & PROPERTY</Text>
-        <Text style={{textAlign: 'center', fontSize: 23, fontWeight: 'bold', marginBottom: 10, color: '#f5571d'}}>Management System</Text>
+        <Text style={{textAlign: 'center', fontSize: 27, fontWeight: 'bold', color: '#f5571d'}}>Asset</Text>
+        <Text style={{textAlign: 'center', fontSize: 27, fontWeight: 'bold', marginBottom: 10, color: '#f5571d'}}>Management System</Text>
         <View style={{
           backgroundColor: 'transparent', 
           marginLeft: 20,

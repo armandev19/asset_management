@@ -21,6 +21,7 @@ import PushNotification from 'react-native-push-notification';
 import { Icon, Overlay, ListItem, Divider } from '@rneui/themed';
 
 const HomeScreen = ({ navigation, props }) => {
+  console.log("navigation", navigation.navigate)
   // const [userData, setUserData] = useState({});
   let currentDate = moment().format('ddd MMM DD, YYYY');
   const [users, setUsers] = useState({});
@@ -178,7 +179,7 @@ const HomeScreen = ({ navigation, props }) => {
     })
       .then((response) => response.json())
       .then(data => {
-        console.log("mainte",data.schedMaintenanceToday)
+        console.log("mainte", data.schedMaintenanceToday)
         setOperationalAssets(data.operational);
         setNewAssets(data.newAssets);
         setForMaintenanceAssets(data.forMaintenance);
@@ -426,13 +427,13 @@ const HomeScreen = ({ navigation, props }) => {
   };
 
   const forDepreciationTodayFinal = Object.entries(forDepreciationToday)
-  .reduce((acc, [key, items]) => {
-    const processedItems = items.map(item => ({
-      ...item,
-      type: key, // Add the type for context if needed
-    }));
-    return [...acc, ...processedItems];
-  }, []);
+    .reduce((acc, [key, items]) => {
+      const processedItems = items.map(item => ({
+        ...item,
+        type: key, // Add the type for context if needed
+      }));
+      return [...acc, ...processedItems];
+    }, []);
 
   return (
     <Provider>
@@ -444,17 +445,19 @@ const HomeScreen = ({ navigation, props }) => {
             <Icon name="settings" type="feather" size={20} color="white" style={{ justifyContent: 'center', marginTop: 3 }} onPress={() => toggleSettingsShow()} />
           </View>
         </View>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', marginTop: 15, marginHorizontal: 10 }}>
-          <View style={{ borderRadius: 5, width: 150, height: 100, padding: 5, backgroundColor: '#fc8953' }}>
-            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-              <Icon type="ionicon" name="cash-outline" color={"white"} style={{ marginRight: 5, marginTop: 8 }} />
-              <Text style={{ color: "white", fontSize: 18, fontWeight: '500', textAlign: 'center', marginTop: 10 }}>
-                Assets
-              </Text>
+        <View style={{ flexDirection: 'row', marginTop: 15, marginHorizontal: 10, alignSelf: 'center' }}>
+          <TouchableOpacity onPress={() => navigation.navigate('AssetsScreen')}>
+            <View style={{ borderRadius: 5, width: 300, height: 100, padding: 5, backgroundColor: '#fc8953' }}>
+              <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                <Icon type="ionicon" name="cash-outline" color={"white"} style={{ marginRight: 5, marginTop: 8 }} />
+                <Text style={{ color: "white", fontSize: 18, fontWeight: '500', textAlign: 'center', marginTop: 10 }}>
+                  Assets
+                </Text>
+              </View>
+              <Text style={{ color: "white", fontSize: 35, textAlign: 'center', fontWeight: 'bold' }}>{newAssets}</Text>
             </View>
-            <Text style={{ color: "white", fontSize: 35, textAlign: 'center', fontWeight: 'bold' }}>{newAssets}</Text>
-          </View>
-          <View style={{ borderRadius: 5, width: 150, height: 100, padding: 5, backgroundColor: '#fc8953' }}>
+          </TouchableOpacity>
+          {/* <View style={{ borderRadius: 5, width: 150, height: 100, padding: 5, backgroundColor: '#fc8953' }}>
             <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
               <Icon type="ionicon" name="business-outline" color={"white"} style={{ marginRight: 5, marginTop: 8 }} />
               <Text style={{ color: "white", fontSize: 18, fontWeight: '500', textAlign: 'center', marginTop: 10 }}>
@@ -462,7 +465,7 @@ const HomeScreen = ({ navigation, props }) => {
               </Text>
             </View>
             <Text style={{ color: "white", fontSize: 35, textAlign: 'center', fontWeight: 'bold' }}>{operationalAssets}</Text>
-          </View>
+          </View> */}
         </View>
         <View style={{ flex: 5, backgroundColor: 'white', top: 0, minHeight: 600 }}>
           <View
@@ -491,23 +494,27 @@ const HomeScreen = ({ navigation, props }) => {
               </View>
             }
             {assetTransferShow &&
-              <View style={styles.cardDataContainer}>
-                <View style={{ padding: 10, marginHorizontal: 5, marginVertical: 5 }}>
-                  <Icon
-                    type="feather"
-                    name='truck'
-                    size={35}
-                    color={"#fc8953"}
-                  />
-                </View>
-                <View style={{ padding: 5, alignItems: 'flex-end' }}>
-                  <Text style={styles.cardDataDescription}>Asset Transfers</Text>
-                  <Text style={styles.cardData}>{assetTransfer}</Text>
-                </View>
-              </View>
+              <TouchableOpacity style={styles.cardDataContainer} onPress={() => navigation.navigate('AssetTransferScreen')}>
+                {/* <View  onPress={() => navigation.navigate('AssetTransferScreen')}> */}
+                  <View style={{ padding: 10, marginHorizontal: 5, marginVertical: 5 }}>
+                    <Icon
+                      type="feather"
+                      name='truck'
+                      size={35}
+                      color={"#fc8953"}
+                    />
+                  </View>
+                  <View style={{ padding: 5, alignItems: 'flex-end' }}>
+                    <Text style={styles.cardDataDescription}>Asset Transfers</Text>
+                    <Text style={styles.cardData}>{assetTransfer}</Text>
+                  </View>
+                {/* </View> */}
+              </TouchableOpacity>
             }
             {underMaintenanceShow &&
-              <View style={styles.cardDataContainer}>
+            
+            <TouchableOpacity style={styles.cardDataContainer} onPress={() => navigation.navigate('AssetMaintenanceScreen', forMaintenanceAssets[0])}>
+              {/* <View style={styles.cardDataContainer}> */}
                 <View style={{ padding: 10, marginHorizontal: 5, marginVertical: 5 }}>
                   <Icon
                     type="feather"
@@ -520,7 +527,8 @@ const HomeScreen = ({ navigation, props }) => {
                   <Text style={styles.cardDataDescription}>Under Maintenance</Text>
                   <Text style={styles.cardData}>{forMaintenanceAssets}</Text>
                 </View>
-              </View>
+              {/* </View> */}
+              </TouchableOpacity>
             }
             {assetDepreShow &&
               <View style={styles.cardDataContainerLarge}>
@@ -528,12 +536,12 @@ const HomeScreen = ({ navigation, props }) => {
                   <Text style={{ color: '#fc8953' }}>Assets for Depreciation</Text>
                 </View>
                 <View>
-                {forDepreciationTodayFinal?.length > 0 ? (
+                  {forDepreciationTodayFinal?.length > 0 ? (
                     forDepreciationTodayFinal?.map((item, index) => {
                       return (
                         <View key={index} style={{ padding: 5, width: '100%' }}>
                           <View style={{ flexDirection: 'row', paddingBottom: 5 }}>
-                            <View style={{ }}>
+                            <View style={{}}>
                               <Text style={{ fontSize: 13, fontWeight: '500', color: 'black', textTransform: 'uppercase' }}>{item.type}</Text>
                               <Text style={{ fontSize: 13, fontWeight: '400', color: 'black' }}>Asset Code: {item.asset_code}</Text>
                               <Text style={{ fontSize: 13, fontWeight: '400', color: 'black' }}>Asset Name: {item.asset_name}</Text>

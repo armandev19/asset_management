@@ -21,9 +21,9 @@ const Stack = createStackNavigator();
 
 
 const App = () => {
-  global.url = "http://192.168.1.5/asset_management/";
+  global.url = "http://192.168.1.3/asset_management/";
   global.backendUrl = "";
-  // global.url = "https://solid-poets-pick.loca.lt/asset_management/";
+  // global.url = "https://clean-crews-cheer.loca.lt/asset_management/";
   // global.url = "http://192.168.192.35/asset_management/";
   // global.url = "http://153.92.4.169/asset_management/"
   const appState = useRef(AppState.currentState);

@@ -82,7 +82,7 @@ const Navigation = (props) => {
     return (
       <Stack.Navigator initialRouteName="HomeScreen">
         <Stack.Screen
-          name="Assets"
+          name="Home"
           component={HomeScreen}
           options={{
             title: 'Home',

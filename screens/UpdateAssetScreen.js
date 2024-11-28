@@ -343,6 +343,19 @@ const UpdateAssetScreen = ({ route, navigation }) => {
 						leftIcon={{ type: 'feather', name: 'activity', size: 15 }}
 					/>
 				</TouchableOpacity>
+				{status == 'Retired/Disposed' &&
+					<Input
+						label="Reason"
+						labelStyle={styles.label}
+						inputContainerStyle={styles.inputContainer}
+						inputStyle={{ fontSize: 15 }}
+						placeholder={"Retired/Disposed Reason"}
+						value={status}
+						editable={false}
+						rightIcon={{ type: 'feather', name: 'chevron-down', size: 15 }}
+						leftIcon={{ type: 'feather', name: 'activity', size: 15 }}
+					/>
+				}
 				<View>
 					<Text style={{ marginLeft: 10, fontWeight: '500', color: 'grey' }}>Images</Text>
 					<View style={{ padding: 5, flexDirection: 'row' }}>

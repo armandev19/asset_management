@@ -1,6 +1,6 @@
-import React, {useState, useEffect} from 'react';
-import {View, Text, SafeAreaView, FlatList, StyleSheet, TouchableOpacity, Modal, ToastAndroid, Alert, TextInput, RefreshControl, Image} from 'react-native';
-import {Card, Title, Paragraph, Divider, List, Button, IconButton, Searchbar, Chip } from 'react-native-paper';
+import React, { useState, useEffect } from 'react';
+import { View, Text, SafeAreaView, FlatList, StyleSheet, TouchableOpacity, Modal, ToastAndroid, Alert, TextInput, RefreshControl, Image } from 'react-native';
+import { Card, Title, Paragraph, Divider, List, Button, IconButton, Searchbar, Chip } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Loader from './../Components/loader';
@@ -9,87 +9,98 @@ import { useSelector } from 'react-redux';
 import { useFocusEffect } from '@react-navigation/native';
 import { ScrollView } from 'react-native-gesture-handler';
 
-const NotificationiScreen = ({navigation, route}) => {
+const NotificationiScreen = ({ navigation, route }) => {
 
-const [loading, setLoading] = useState(false);
-const [notifications, setNotifications] = useState([]);
-const [selectedId, setSelectedId] = useState(null);
-const [userdata, setUserData] = useState('');
-const [search, setSearch] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [selectedId, setSelectedId] = useState(null);
+  const [userdata, setUserData] = useState('');
+  const [search, setSearch] = useState('');
 
-const currentUserData = useSelector(selectUserData);
+  const currentUserData = useSelector(selectUserData);
 
-const getNotifications = () => {
-  setLoading(true)
-  fetch(global.url+'getNotifications.php', {
-    method: 'POST',
-    // body: formBody,
-    headers: { "bypass-tunnel-reminder": "true",
-      'Content-Type':
-      'application/x-www-form-urlencoded;charset=UTF-8',
-    },
-  })
-    .then((response) => response.json())
-    .then((responseJson) => {
-      setLoading(false);
-      setNotifications(responseJson.data);
+  const getNotifications = () => {
+    setLoading(true)
+    let dataToSend = { user_id: currentUserData.id };
+    let formBody = [];
+
+    for (let key in dataToSend) {
+      let encodedKey = encodeURIComponent(key);
+      let encodedValue = encodeURIComponent(dataToSend[key]);
+      formBody.push(encodedKey + '=' + encodedValue);
+    }
+
+    formBody = formBody.join('&')
+    fetch(global.url + 'getNotifications.php', {
+      method: 'POST',
+      body: formBody,
+      headers: {
+        "bypass-tunnel-reminder": "true",
+        'Content-Type':
+          'application/x-www-form-urlencoded;charset=UTF-8',
+      },
     })
-    .catch((error) => {
-      alert(error);
-      setLoading(false);
-      console.error(error);
-    });
+      .then((response) => response.json())
+      .then((responseJson) => {
+        setLoading(false);
+        setNotifications(responseJson.data);
+      })
+      .catch((error) => {
+        alert(error);
+        setLoading(false);
+        console.error(error);
+      });
   }
 
-const onRefresh = () => {
-  getNotifications();
-};
-// 00cc44 green operational
-// ffcc00 orange in repair
-// e62e00 red disposed
-useEffect(()=>{
-  getNotifications();
-}, [])
+  const onRefresh = () => {
+    getNotifications();
+  };
+  // 00cc44 green operational
+  // ffcc00 orange in repair
+  // e62e00 red disposed
+  useEffect(() => {
+    getNotifications();
+  }, [])
 
   return (
-        <View styles={{flex: 1, padding: 6, alignSelf: 'center'}}>
-          <ScrollView style={{padding: 5}}>
-            
-          <Loader loading={loading} />
-          {notifications?.length == 0 ? (
-            <Text style={{color: 'black', fontWeight: 'bold', textAlign: 'center'}}>No new notification.</Text>
-          ): (
-            notifications?.map((item, index)=>{
-              return (
-                <TouchableOpacity style={{
-                  padding: 10,
-                  marginBottom: 5, 
-                  backgroundColor: 'white', 
-                  borderColor: 'lightgrey', 
-                  borderWidth: 1, 
-                  borderRadius: 5,
-                  elevation: 2
-                  }} onPress={() => navigation.navigate("ViewNotifScreen", item.id)}>
-                    <View style={{marginLeft: 2}}>
-                        {/* title */}
-                        <View style={{}}>
-                            <Text style={{color: '#404040', fontSize: 15, fontWeight: 'bold'}}>{item.title}</Text>
-                        </View>
-                        {/* description */}
-                        <View style={{}}>
-                            <Text style={{color: '#404040', fontSize: 13}}>{item.body}</Text>
-                        </View>
-                    </View>
-                </TouchableOpacity>
-              )
-            })
-          )}
-          </ScrollView>
-        </View>
+    <View styles={{ flex: 1, padding: 6, alignSelf: 'center' }}>
+      <ScrollView style={{ padding: 5 }}>
+
+        <Loader loading={loading} />
+        {notifications?.length == 0 ? (
+          <Text style={{ color: 'black', fontWeight: 'bold', textAlign: 'center' }}>No new notification.</Text>
+        ) : (
+          notifications?.map((item, index) => {
+            return (
+              <TouchableOpacity style={{
+                padding: 10,
+                marginBottom: 5,
+                backgroundColor: 'white',
+                borderColor: 'lightgrey',
+                borderWidth: 1,
+                borderRadius: 5,
+                elevation: 2
+              }} onPress={() => navigation.navigate("ViewNotifScreen", item.id)}>
+                <View style={{ marginLeft: 2 }}>
+                  {/* title */}
+                  <View style={{}}>
+                    <Text style={{ color: '#404040', fontSize: 15, fontWeight: 'bold' }}>{item.title}</Text>
+                  </View>
+                  {/* description */}
+                  <View style={{}}>
+                    <Text style={{ color: '#404040', fontSize: 13 }}>{item.body}</Text>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            )
+          })
+        )}
+      </ScrollView>
+    </View>
   )
 };
 
- 
+
 export default NotificationiScreen;
 
 const styles = StyleSheet.create({
@@ -143,7 +154,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     borderRadius: 20,
     shadowColor: '#ccc',
-    shadowOffset: {width: 0, height: 3},
+    shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.5,
     shadowRadius: 5,
     elevation: 10,
