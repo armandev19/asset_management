@@ -512,9 +512,7 @@ const HomeScreen = ({ navigation, props }) => {
               </TouchableOpacity>
             }
             {underMaintenanceShow &&
-            
-            <TouchableOpacity style={styles.cardDataContainer} onPress={() => navigation.navigate('AssetMaintenanceScreen', forMaintenanceAssets[0])}>
-              {/* <View style={styles.cardDataContainer}> */}
+              <View style={styles.cardDataContainer}>
                 <View style={{ padding: 10, marginHorizontal: 5, marginVertical: 5 }}>
                   <Icon
                     type="feather"
@@ -527,8 +525,7 @@ const HomeScreen = ({ navigation, props }) => {
                   <Text style={styles.cardDataDescription}>Under Maintenance</Text>
                   <Text style={styles.cardData}>{forMaintenanceAssets}</Text>
                 </View>
-              {/* </View> */}
-              </TouchableOpacity>
+              </View>
             }
             {assetDepreShow &&
               <View style={styles.cardDataContainerLarge}>

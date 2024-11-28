@@ -97,6 +97,20 @@ const Navigation = (props) => {
             headerShown: false
           }}
         />
+        <Stack.Screen
+          name="Assets"
+          component={AssetScreen}
+          options={{
+            title: 'Assets',
+            headerStyle: {
+              backgroundColor: '#fc8953',
+            },
+            headerTintColor: '#ffffff',
+            headerTitleStyle: {
+              fontWeight: 'bold',
+            },
+          }}
+        />
         
       </Stack.Navigator>
     );
