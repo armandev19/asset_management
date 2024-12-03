@@ -1,25 +1,52 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, KeyboardAvoidingView, TouchableOpacity, Image, Dim } from 'react-native';
-import { Card, Title, Paragraph, Divider, Modal, FAB, Portal } from 'react-native-paper';
+import { FAB, Portal } from 'react-native-paper';
 import QRCode from 'react-native-qrcode-svg';
 import Loader from './Components/loader';
-import { selectUserData, setUserData } from './redux/navSlice';
-import { useSelector } from 'react-redux';
-import Moment from 'moment';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import Swiper from 'react-native-swiper';
-import { Input, Icon, Overlay, ListItem, Button } from '@rneui/themed';
+import { Icon, Overlay, Button } from '@rneui/themed';
+import RNFS from "react-native-fs";
+import Toast from 'react-native-toast-message';
+
 const AssetDetailsScreen = ({ navigation, route }) => {
   const params = route.params;
 
   const [details, setAssetDetails] = useState([]);
   const [loading, setLoading] = useState(false);
   const isFocused = useIsFocused();
-
+  const qrCodeRef = useRef();
   const [open, setOpen] = useState(false);
   const onStateChange = ({ open }) => setOpen(open);
   const [modalVisible, setModalVisible] = useState(false);
+
+  const showToast = (type, message) => {
+    Toast.show({
+      type: type,
+      text1: message,
+      text2: ''
+    });
+  }
+
+  const generateQRCode = async () => {
+    try {
+      // Convert QRCode to a base64 image
+      let fileName = details.asset_code;
+      qrCodeRef.current.toDataURL(async (data) => {
+        // Define the file path
+        const path = `${RNFS.DownloadDirectoryPath}/${fileName}.png`;
+
+        // Write the base64 image to a file
+        await RNFS.writeFile(path, data, "base64");
+        console.log("qweqwe", path)
+        showToast('success', `QR Code Saved to: ${path}.`);
+      });
+    } catch (error) {
+      console.error("Error saving QR code:", error);
+      Alert.alert("Error", "Could not save QR code.");
+    }
+  };
 
   const getAssetDetails = async () => {
     // setLoading(true);
@@ -59,8 +86,6 @@ const AssetDetailsScreen = ({ navigation, route }) => {
       getAssetDetails();
     }, []),
   );
-
-  console.log("details", details)
 
   return (
     <ScrollView style={{}}>
@@ -105,18 +130,6 @@ const AssetDetailsScreen = ({ navigation, route }) => {
         )}
       </Portal>
       <View style={{ marginHorizontal: 10, marginVertical: 10, padding: 5, marginBottom: 10 }}>
-        {/* <View style={{ marginBottom: 5, elevation: 1, height: 200}}>
-              <Swiper showsPagination={true}>
-                {details?.images?.map((image, index) => (
-                  <View key={index}>
-                    <Image source={{ uri : global.url + image?.image_location }} style={{
-                        width: '100%',
-                        height: '100%',
-                      }} />
-                  </View>
-                ))}
-              </Swiper>
-            </View> */}
         {details?.images?.length > 0 ?
           <View style={{ marginBottom: 5, elevation: 1, height: 200 }}>
             <Swiper showsPagination={true}>
@@ -149,10 +162,6 @@ const AssetDetailsScreen = ({ navigation, route }) => {
         <View style={{ flexDirection: 'row', marginBottom: 3 }}>
           <Text style={styles.col_title}>Type </Text>
           <Text style={styles.col_content}>{details.type ? details.type : 'N/A'}</Text>
-        </View>
-        <View style={{ flexDirection: 'row', marginBottom: 3 }}>
-          <Text style={styles.col_title}>Qty </Text>
-          <Text style={styles.col_content}>{details.qty ? details.qty : 'N/A'}</Text>
         </View>
         <View style={{ flexDirection: 'row', marginBottom: 3 }}>
           <Text style={styles.col_title}>Original Location </Text>
@@ -224,6 +233,8 @@ const AssetDetailsScreen = ({ navigation, route }) => {
         }}>
         <View style={styles.centeredView}>
           <KeyboardAvoidingView enabled style={styles.modalView}>
+            <Icon style={{alignSelf: 'flex-end'}} name="x" type="feather" onPress={() => setModalVisible(false)}>
+            </Icon>
             <View style={{ padding: 10 }}>
               <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
                 <Text style={{ color: '#404040', fontSize: 20, fontWeight: 'bold' }}>{details.asset_code}</Text>
@@ -231,14 +242,16 @@ const AssetDetailsScreen = ({ navigation, route }) => {
               <View style={{ alignSelf: 'center', marginTop: 10 }}>
                 <QRCode size={300}
                   value={details.asset_code}
+                  getRef={(c) => (qrCodeRef.current = c)} // Attach the ref
                 />
               </View>
             </View>
-            <Button title="Close" buttonStyle={{ marginTop: 10 }} onPress={() => setModalVisible(false)}>
+            <Button title="Download" buttonStyle={{ marginTop: 10 }} onPress={() => generateQRCode()}>
             </Button>
           </KeyboardAvoidingView>
         </View>
       </Overlay>
+      <Toast/>
     </ScrollView>
   )
 };
@@ -253,18 +266,9 @@ const styles = StyleSheet.create({
   },
   modalView: {
     margin: 20,
-    height: 450,
+    minHeight: 450,
     backgroundColor: 'white',
-    borderRadius: 5,
     padding: 10,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
   },
   col_title: { color: '#73706e', width: '45%', fontSize: 16, fontWeight: '400', fontFamily: 'Roboto' },
   col_content: { color: '#000', fontSize: 16, width: '55%', textAlign: 'right', fontFamily: 'Roboto' }

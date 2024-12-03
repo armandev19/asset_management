@@ -74,6 +74,11 @@ const AddAssetTransferScreen = ({ route, navigation }) => {
 
   const saveAssetTransfer = () => {
     setLoading(true);
+    if (!targetLocation || !remarks || selectedItems?.length <= 0) {
+      alert("Please fill in all required fields.");
+      setLoading(false);
+      return;
+    }
     let dataToSend = { asset: JSON.stringify(selectedItems), targetLocation: targetLocation, remarks: remarks, created_by: currentUserData.id };
     let formBody = [];
     for (let key in dataToSend) {
@@ -176,7 +181,7 @@ const AddAssetTransferScreen = ({ route, navigation }) => {
 							/> */}
             <TouchableOpacity onPress={() => setVisible(true)}>
               <Input
-                label="Asset"
+                label="Asset *"
                 labelStyle={styles.label}
                 inputContainerStyle={styles.inputContainer}
                 inputStyle={{ fontSize: 15 }}
@@ -190,7 +195,7 @@ const AddAssetTransferScreen = ({ route, navigation }) => {
 
             <TouchableOpacity onPress={() => setVisibleLocation(true)}>
               <Input
-                label="Transfer To"
+                label="Transfer To *"
                 labelStyle={styles.label}
                 inputContainerStyle={styles.inputContainer}
                 inputStyle={{ fontSize: 15 }}
@@ -201,7 +206,7 @@ const AddAssetTransferScreen = ({ route, navigation }) => {
               />
             </TouchableOpacity>
             <Input
-              label="Remarks"
+              label="Remarks *"
               labelStyle={styles.label}
               inputContainerStyle={{ ...styles.inputContainer, height: 100 }}
               inputStyle={{ fontSize: 15, textAlignVertical: 'top' }}

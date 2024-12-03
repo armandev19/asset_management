@@ -22,6 +22,11 @@ const AddLocationScreen = ({route, navigation}) => {
 
 	const saveLocation = () => {
 		setLoading(true);
+    if (!name || !address) {
+      alert("Please fill in all required fields.");
+      setLoading(false);
+      return;
+    }
 		let dataToSend = { name: name, address : address, created_by: currentUserData.id };
 		let formBody = [];
 		for (let key in dataToSend) {
@@ -63,7 +68,7 @@ const AddLocationScreen = ({route, navigation}) => {
 					}}>
             <KeyboardAvoidingView enabled style={{paddingVertical: 20, marginTop: 10}}>
               <Input
-                label="Name"
+                label="Name *"
                 labelStyle={styles.label}
                 inputContainerStyle={{...styles.inputContainer}}
                 inputStyle={{ fontSize: 15}}
@@ -72,7 +77,7 @@ const AddLocationScreen = ({route, navigation}) => {
                 onChangeText={name => setName(name)}
               />
               <Input
-                label="Address"
+                label="Address *"
                 labelStyle={styles.label}
                 inputContainerStyle={{...styles.inputContainer}}
                 inputStyle={{ fontSize: 15}}

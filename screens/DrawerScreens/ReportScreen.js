@@ -9,6 +9,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
 import RNFS from 'react-native-fs';
 import { Input, Icon, BottomSheet, ListItem, Dialog, Button, Overlay } from '@rneui/themed';
+import Toast from 'react-native-toast-message';
 
 const ReportScreen = ({ navigation, route }) => {
   const [reportType, setReportType] = useState('');
@@ -68,6 +69,14 @@ const ReportScreen = ({ navigation, route }) => {
     { value: "Asset Utilization", label: "Asset Utilization" },
     { value: "Asset Performance", label: "Asset Performance"},
   ]
+
+  const showToast = (type, message) => {
+    Toast.show({
+      type: type,
+      text1: message,
+      text2: ''
+    });
+  }
 
   
   const getYearDifference = (startDate, endDate) => {
@@ -163,17 +172,19 @@ const ReportScreen = ({ navigation, route }) => {
       </html>
     `;
 
+  const reportName = `${reportType}_${moment(dateFrom).format("MM-DD-YY")}_${moment(dateTo).format("MM-DD-YY")}`;
     const options = {
       html: htmlContent,
-      fileName: 'Report',
+      fileName: reportName,
       directory: 'Downloads',
     };
 
     try {
       const file = await RNHTMLtoPDF.convert(options);
-      const newPath = `${RNFS.DownloadDirectoryPath}/Reportsss.pdf`;
+      const newPath = `${RNFS.DownloadDirectoryPath}/${reportName}.pdf`;
 
       await RNFS.moveFile(file.filePath, newPath);
+      showToast('success', 'PDF saved to:'+newPath)
       console.log('PDF saved to:', newPath);
     } catch (error) {
       console.error('Error creating PDF:', error);
@@ -479,9 +490,10 @@ const ReportScreen = ({ navigation, route }) => {
             marginVertical: 20,
             alignSelf: 'center'
           }}
-          onPress={()=>createPDF()}
+          onPress={()=> createPDF()}
           ><Text style={{textAlign: 'center', color: '#fff'}}>EXPORT TO PDF</Text></TouchableOpacity>
       </View>
+      <Toast/>
     </View>
   );
 };

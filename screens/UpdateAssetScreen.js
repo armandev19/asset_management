@@ -7,7 +7,6 @@ import { useSelector } from 'react-redux';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Input, Icon, BottomSheet, ListItem, Dialog, Button, Divider, Overlay } from '@rneui/themed';
 import { ScrollView } from 'react-native-gesture-handler';
-import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 
 const UpdateAssetScreen = ({ route, navigation }) => {
 	const params = route.params
@@ -21,7 +20,9 @@ const UpdateAssetScreen = ({ route, navigation }) => {
 	const [typeName, setTypeName] = useState('');
 	const [price, setPrice] = useState(params.price);
 	const [status, setStatus] = useState(params.status);
-	const [qty, setQty] = useState(params.qty);
+	const [disposeReason, setDisposeReason] = useState(params.disposeReason)
+	
+	const [utilizationPurpose, setUtilizationPurpose] = useState(params.utilizationPurpose)
 	const [locationList, setLocationList] = useState([]);
 	const [typeList, setTypeList] = useState([]);
 	const [isPickerShow, setIsPickerShow] = useState(false);
@@ -59,7 +60,7 @@ const UpdateAssetScreen = ({ route, navigation }) => {
 
 	const updateAsset = () => {
 		setLoading(true);
-		let dataToSend = { name: name, description: description, price: price, purchaseDate: date, location: location, id: params.id, status: status, created_by: currentUserData.id, qty: qty, type: type };
+		let dataToSend = { name: name, description: description, price: price, purchaseDate: date, location: location, id: params.id, status: status, created_by: currentUserData.id, type: type };
 		let formBody = [];
 		for (let key in dataToSend) {
 			let encodedKey = encodeURIComponent(key);
@@ -281,16 +282,6 @@ const UpdateAssetScreen = ({ route, navigation }) => {
 					/>
 				</TouchableOpacity>
 				<Input
-					label="Qty"
-					labelStyle={styles.label}
-					inputContainerStyle={styles.inputContainer}
-					inputStyle={{ fontSize: 15 }}
-					placeholder={"Enter Text Here"}
-					value={qty}
-					onChangeText={qty => setQty(qty)}
-					keyboardType='numeric'
-				/>
-				<Input
 					label="Current Value"
 					labelStyle={styles.label}
 					inputContainerStyle={styles.inputContainer}
@@ -345,15 +336,24 @@ const UpdateAssetScreen = ({ route, navigation }) => {
 				</TouchableOpacity>
 				{status == 'Retired/Disposed' &&
 					<Input
-						label="Reason"
+						label="Retired/Disposed Reason"
 						labelStyle={styles.label}
 						inputContainerStyle={styles.inputContainer}
 						inputStyle={{ fontSize: 15 }}
 						placeholder={"Retired/Disposed Reason"}
-						value={status}
-						editable={false}
-						rightIcon={{ type: 'feather', name: 'chevron-down', size: 15 }}
-						leftIcon={{ type: 'feather', name: 'activity', size: 15 }}
+						onChangeText={(disposeReason)=>setDisposeReason(disposeReason)}
+						value={disposeReason}
+					/>
+				}
+				{status == 'Active' &&
+					<Input
+						label="Utilization Purpose"
+						labelStyle={styles.label}
+						inputContainerStyle={styles.inputContainer}
+						inputStyle={{ fontSize: 15 }}
+						placeholder={"Utilization Purpose"}
+						onChangeText={(utilizationPurpose) => setUtilizationPurpose(utilizationPurpose)}
+						value={utilizationPurpose}
 					/>
 				}
 				<View>

@@ -31,8 +31,9 @@ const AddAssetScreen = ({ route, navigation }) => {
   const [price, setPrice] = useState("");
   const [purchaseDate, setPurchaseDate] = useState("");
   const [location, setLocation] = useState("");
+  const [locationName, setLocationName] = useState("");
   const [type, setType] = useState("");
-  const [qty, setQty] = useState(1);
+  const [typeName, setTypeName] = useState("");
   const [locationList, setLocationList] = useState([]);
   const [assetType, setAssetType] = useState([]);
   const currentUserData = useSelector(selectUserData);
@@ -45,6 +46,7 @@ const AddAssetScreen = ({ route, navigation }) => {
   const [typeList, setTypeList] = useState([]);
   const [status, setStatus] = useState('');
   const [utilizationPurpose, setUtilizationPurpose] = useState('');
+  const [disposeReason, setDisposeReason] = useState('');
 
   const assetDeets = useSelector(selectAssetData);
 
@@ -92,8 +94,13 @@ const AddAssetScreen = ({ route, navigation }) => {
   ]
 
   const saveAsset = () => {
-    // setLoading(true);
-    let dataToSend = { name: name, description: description, qty: qty, type: type, price: price, purchaseDate: date, location: location, created_by: currentUserData.id, utilizationPurpose: utilizationPurpose, status: status, images: JSON.stringify(assetDeets?.images) };
+    setLoading(true);
+    if (!name || !description || !type || !price || !date || !location || !status) {
+      alert("Please fill in all required fields.");
+      setLoading(false);
+      return;
+    }
+    let dataToSend = { name: name, description: description, type: type, price: price, purchaseDate: date, location: location, created_by: currentUserData.id, utilizationPurpose: utilizationPurpose, status: status, images: JSON.stringify(assetDeets?.images), disposeReason: disposeReason };
     let formBody = [];
 
     for (let key in dataToSend) {
@@ -229,7 +236,7 @@ const AddAssetScreen = ({ route, navigation }) => {
         } else {
           const imageData = response.assets;
           console.log("response.assets", imageData)
-          dispatch(setAssetData({ name: name, description: description, price: price, purchaseDate: purchaseDate, location: location, type: type, qty: qty, images: imageData }));
+          dispatch(setAssetData({ name: name, description: description, price: price, purchaseDate: purchaseDate, location: location, type: type, images: imageData }));
           // Save all selected images
           uploadImages(response.assets); // Upload the selected images
         }
@@ -277,20 +284,23 @@ const AddAssetScreen = ({ route, navigation }) => {
     { value: "Retired/Disposed", label: "Retired/Disposed", icon: 'trash', color: 'red' },
   ]
 
-  const onSelectLocation = (location) => {
-    setLocation({ label: location.label, value: location.value })
-    setIsVisible(!isVisible);
-  }
-
   const onSelectStatus = (status) => {
     setStatus(status)
     setIsVisibleStatus(!isVisibleStatus);
   }
 
-  const onSelectType = (type) => {
-    setType({ label: type.label, value: type.value })
-    setIsVisibleType(!isVisibleType);
-  }
+  const onSelectLocation = (location) => {
+		console.log("location", location)
+		setLocation(location.value)
+		setLocationName(location.label)
+		setIsVisible(!isVisible);
+	}
+
+	const onSelectType = (type) => {
+		setType(type.value)
+		setTypeName(type.label)
+		setIsVisibleType(!isVisibleType);
+	}
 
   useEffect(() => {
     getLocationDropdown();
@@ -367,10 +377,10 @@ const AddAssetScreen = ({ route, navigation }) => {
               editable={false}
             />
             <Input
-              label="Asset name"
+              label="Asset name *"
               labelStyle={styles.label}
               inputContainerStyle={styles.inputContainer}
-              inputStyle={{ fontSize: 15 }}
+              inputStyle={{ fontSize: 15, }}
               placeholder={"Enter asset name"}
               value={name ? name : assetDeets?.name}
               onChangeText={name => setName(name)}
@@ -385,17 +395,7 @@ const AddAssetScreen = ({ route, navigation }) => {
               onChangeText={description => setDescription(description)}
             />
             <Input
-              label="Qty"
-              labelStyle={styles.label}
-              inputContainerStyle={styles.inputContainer}
-              inputStyle={{ fontSize: 15 }}
-              placeholder={"Enter quantity"}
-              keyboardType='numeric'
-              value={qty ? qty : assetDeets?.qty}
-              onChangeText={qty => setQty(qty)}
-            />
-            <Input
-              label="Price"
+              label="Price *"
               labelStyle={styles.label}
               inputContainerStyle={styles.inputContainer}
               inputStyle={{ fontSize: 15 }}
@@ -407,7 +407,7 @@ const AddAssetScreen = ({ route, navigation }) => {
             <TouchableOpacity
               onPress={showPicker}>
               <Input
-                label="Purcase Date"
+                label="Purcase Date *"
                 labelStyle={styles.label}
                 inputContainerStyle={styles.inputContainer}
                 inputStyle={{ fontSize: 15 }}
@@ -420,12 +420,12 @@ const AddAssetScreen = ({ route, navigation }) => {
             <TouchableOpacity
               onPress={() => setIsVisibleType(true)}>
               <Input
-                label="Type"
+                label="Type *"
                 labelStyle={styles.label}
                 inputContainerStyle={styles.inputContainer}
                 inputStyle={{ fontSize: 15 }}
                 placeholder={"Selecte type"}
-                value={type.label}
+                value={typeName}
                 editable={false}
               />
             </TouchableOpacity>
@@ -437,7 +437,7 @@ const AddAssetScreen = ({ route, navigation }) => {
                 inputContainerStyle={styles.inputContainer}
                 inputStyle={{ fontSize: 15 }}
                 placeholder={"Select Location"}
-                value={location.label}
+                value={locationName}
                 editable={false}
                 rightIcon={{ type: 'feather', name: 'chevron-down', size: 15 }}
                 leftIcon={{ type: 'feather', name: 'map-pin', size: 15 }}
@@ -465,6 +465,17 @@ const AddAssetScreen = ({ route, navigation }) => {
                   inputStyle={{ fontSize: 15 }}
                   placeholder={"Usage Reason"}
                   value={utilizationPurpose}
+                />
+              )
+            }
+            {status === 'Retired/Disposed' && (
+              <Input
+                  label="Dispose Reason"
+                  labelStyle={styles.label}
+                  inputContainerStyle={styles.inputContainer}
+                  inputStyle={{ fontSize: 15 }}
+                  placeholder={"Dispose Reason"}
+                  value={disposeReason}
                 />
               )
             }
@@ -555,7 +566,7 @@ const styles = StyleSheet.create({
   label: {
     fontWeight: '400',
     fontSize: 13,
-    marginTop: -15,
+    marginTop: -5,
     color: '#0d0c0c'
   },
   inputContainer: {

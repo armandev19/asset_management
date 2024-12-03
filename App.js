@@ -23,7 +23,7 @@ const Stack = createStackNavigator();
 
 
 const App = () => {
-  global.url = "http://192.168.1.3/asset_management/";
+  global.url = "http://192.168.218.43/asset_management/";
   global.backendUrl = "";
   // global.url = API_URL+"/";
   // global.url = "http://192.168.192.35/asset_management/";
