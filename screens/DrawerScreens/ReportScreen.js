@@ -12,6 +12,8 @@ import { Input, Icon, BottomSheet, ListItem, Dialog, Button, Overlay } from '@rn
 import Toast from 'react-native-toast-message';
 
 const ReportScreen = ({ navigation, route }) => {
+
+  const currentUserData = useSelector(selectUserData);
   const [reportType, setReportType] = useState('');
   const [isPickerShowFrom, setIsPickerShowFrom] = useState(false);
   const [dateFrom, setDateFrom] = useState(new Date(Date.now()));
@@ -30,7 +32,6 @@ const ReportScreen = ({ navigation, route }) => {
   const onChangeFrom = (event, value) => {
     setIsPickerShowFrom(false);
     setDateFrom(value);
-    console.log(date)
   };
 
   const showPickerTo = () => {
@@ -40,7 +41,6 @@ const ReportScreen = ({ navigation, route }) => {
   const onChangeTo = (event, value) => {
     setIsPickerShowTo(false);
     setDateTo(value);
-    console.log(date)
   };
 
   const dynamicData = [
@@ -49,13 +49,14 @@ const ReportScreen = ({ navigation, route }) => {
     { item: "Item 3", details: "Details about Item 3" },
   ];
 
-  console.log('report type', reportType)
-
   const headersMapping = {
     Asset: ['Asset Code', 'Asset Name', 'Status', 'Purchase Date'],
     Maintenance: ['Asset Name', 'Description', 'Status', 'Scheduled Date'],
     'Asset Transfer': ['Asset Name', 'From', 'To', 'Transfer Date'],
     Depreciation: ['Asset Name', 'Original Price', 'Purchased Date', 'Current Value'],
+    'Audit Trail': ['Asset Name', 'Original Price', 'Purchased Date', 'Current Value'],
+    'Asset Utilization': ['Asset', 'Status', 'Utilization'],
+    'Asset Performance': ['Asset', 'Status', 'Purchased Date', 'Up/Down Time(Days)'],
   };
 
   const headers = headersMapping[reportType]?.map(header => `<th>${header}</th>`).join('') || '';
@@ -63,11 +64,11 @@ const ReportScreen = ({ navigation, route }) => {
   const reports = [
     { value: "Asset", label: "Asset" },
     { value: "Maintenance", label: "Maintenance" },
-    { value: "Asset Transfer", label: "Asset Transfer" },
+    { value: "Asset Transfer", label: "Asset Movement" },
     { value: "Depreciation", label: "Depreciation" },
-    { value: "Audit Trail", label: "Audit Trail"},
+    { value: "Audit Trail", label: "Audit Trail" },
     { value: "Asset Utilization", label: "Asset Utilization" },
-    { value: "Asset Performance", label: "Asset Performance"},
+    { value: "Asset Performance", label: "Asset Performance" },
   ]
 
   const showToast = (type, message) => {
@@ -78,74 +79,84 @@ const ReportScreen = ({ navigation, route }) => {
     });
   }
 
-  
+
   const getYearDifference = (startDate, endDate) => {
     const startMoment = moment(startDate);
     const endMoment = moment(endDate);
     return endMoment.diff(startMoment, 'years');
   }
-  
-  const rows = 
-  (reportType === 'Asset') ? 
-    reportData.map(data => 
-      `<tr><td>${data.asset_code}</td><td>${data.asset_name}</td><td>${data.status}</td><td>${data.purchase_date}</td></tr>`).join('') : 
-  (reportType === "Maintenance") ? 
-    reportData.map(data => 
-      `<tr><td>${data.asset_name}</td><td>${data.desc}</td><td>${data.status}</td><td>${data.sched}</td></tr>`).join('') : 
-  (reportType === "Asset Transfer") ?
-    reportData.map(data => 
-      `<tr><td>${data.asset_name}</td><td>${data.from}</td><td>${data.to}</td><td>${data.transfer_date}</td></tr>`).join('') : 
-  (reportType === "Depreciation") ?
-  reportData.map(data => {
-    let depreciated_price = data.original_price;
-    const yearOld = getYearDifference(data.purchase_date, moment(dateToday).format("YYYY-MM-DD"))
-    if (data.type === 1) {
-      if (yearOld === 1) {
-        depreciated_price = data.original_price * 0.9
-      } else if (yearOld === 2) {
-        depreciated_price = data.original_price * 0.8
-      } else if (yearOld === 3) {
-        depreciated_price = data.original_price * 0.7
-      } else {
-        depreciated_price = data.original_price
-      }
-    } else if (data.type === 2) {
-      if (yearOld === 2) {
-        depreciated_price = data.original_price * 0.9
-      } else if (yearOld === 3) {
-        depreciated_price = data.original_price * 0.8
-      } else {
-        depreciated_price = data.original_price
-      }
-    } else if (data.type === 3) {
-      if (yearOld === 3) {
-        depreciated_price = data.original_price * 0.9
-      } else if (yearOld === 4) {
-        depreciated_price = data.original_price * 0.8
-      } else if (yearOld === 5) {
-        depreciated_price = data.original_price * 0.7
-      } else {
-        depreciated_price = data.original_price
-      }
-    } else {
-      if (yearOld === 3) {
-        depreciated_price = data.original_price * 0.9
-      } else if (yearOld === 4) {
-        depreciated_price = data.original_price * 0.8
-      } else if (yearOld === 5) {
-        depreciated_price = data.original_price * 0.7
-      } else {
-        depreciated_price = data.original_price
-      }
-    }
-    return `<tr>
+
+  const rows =
+    (reportType === 'Asset') ?
+      reportData.map(data =>
+        `<tr><td>${data.asset_code}</td><td>${data.asset_name}</td><td>${data.status}</td><td>${data.purchase_date}</td></tr>`).join('') :
+      (reportType === "Maintenance") ?
+        reportData.map(data =>
+          `<tr><td>${data.asset_name}</td><td>${data.desc}</td><td>${data.status}</td><td>${data.sched}</td></tr>`).join('') :
+        (reportType === "Asset Transfer") ?
+          reportData.map(data =>
+            `<tr><td>${data.asset_name}</td><td>${data.from}</td><td>${data.to}</td><td>${data.transfer_date}</td></tr>`).join('') :
+          (reportType === "Audit Trail") ?
+            reportData.map(data =>
+              `<tr><td>${data.name}</td><td>${data.logs_description}</td><td>${data.created_date}</td></tr>`).join('') :
+            (reportType === "Asset Utilization") ?
+              reportData.map(data =>
+                // {(item.utilizationPurpose != '') ? item.utilizationPurpose : (item.disposeReason != '') ? item.disposeReason : 'No data'}
+                `<tr><td>${data.asset_name}</td><td>${data.status}</td><td>${(data.utilizationPurpose != '') ? data.utilizationPurpose : (data.disposeReason != '') ? data.disposeReason : 'No data'}</td></tr>`).join('') :
+              (reportType === "Asset Performance") ?
+                reportData.map(data =>
+                  `<tr><td>${data.asset_name}</td><td>${data.status}</td><td>${data.purchase_date}</td><td>${data.uptime_or_downtime}</td></tr>`).join('') :
+                (reportType === "Depreciation") ?
+                  reportData.map(data => {
+                    let depreciated_price = data.original_price;
+                    const yearOld = getYearDifference(data.purchase_date, moment(dateToday).format("YYYY-MM-DD"))
+                    if (data.type === 1) {
+                      if (yearOld === 1) {
+                        depreciated_price = data.original_price * 0.9
+                      } else if (yearOld === 2) {
+                        depreciated_price = data.original_price * 0.8
+                      } else if (yearOld === 3) {
+                        depreciated_price = data.original_price * 0.7
+                      } else {
+                        depreciated_price = data.original_price
+                      }
+                    } else if (data.type === 2) {
+                      if (yearOld === 2) {
+                        depreciated_price = data.original_price * 0.9
+                      } else if (yearOld === 3) {
+                        depreciated_price = data.original_price * 0.8
+                      } else {
+                        depreciated_price = data.original_price
+                      }
+                    } else if (data.type === 3) {
+                      if (yearOld === 3) {
+                        depreciated_price = data.original_price * 0.9
+                      } else if (yearOld === 4) {
+                        depreciated_price = data.original_price * 0.8
+                      } else if (yearOld === 5) {
+                        depreciated_price = data.original_price * 0.7
+                      } else {
+                        depreciated_price = data.original_price
+                      }
+                    } else {
+                      if (yearOld === 3) {
+                        depreciated_price = data.original_price * 0.9
+                      } else if (yearOld === 4) {
+                        depreciated_price = data.original_price * 0.8
+                      } else if (yearOld === 5) {
+                        depreciated_price = data.original_price * 0.7
+                      } else {
+                        depreciated_price = data.original_price
+                      }
+                    }
+                    return `<tr>
       <td>${data.asset_name}</td>
       <td>${data.purchase_date}</td>
       <td>${data.original_price}</td>
       <td>${depreciated_price ? depreciated_price : '0.00'}</td>
     </tr>`;
-  }).join('') :
-    reportData.map(data => `<tr><td>${data.item}</td><td>${data.details}</td></tr>`).join('');
+                  }).join('') :
+                  reportData?.map(data => `<tr><td>${data.item}</td><td>${data.details}</td></tr>`).join('');
 
   const createPDF = async () => {
     const htmlContent = `
@@ -172,7 +183,7 @@ const ReportScreen = ({ navigation, route }) => {
       </html>
     `;
 
-  const reportName = `${reportType}_${moment(dateFrom).format("MM-DD-YY")}_${moment(dateTo).format("MM-DD-YY")}`;
+    const reportName = `${reportType}_${moment(dateFrom).format("MM-DD-YY")}_${moment(dateTo).format("MM-DD-YY")}`;
     const options = {
       html: htmlContent,
       fileName: reportName,
@@ -184,18 +195,12 @@ const ReportScreen = ({ navigation, route }) => {
       const newPath = `${RNFS.DownloadDirectoryPath}/${reportName}.pdf`;
 
       await RNFS.moveFile(file.filePath, newPath);
-      showToast('success', 'PDF saved to:'+newPath)
+      showToast('success', 'PDF saved to:' + newPath)
       console.log('PDF saved to:', newPath);
     } catch (error) {
       console.error('Error creating PDF:', error);
     }
   };
-
-  // asset inventory report
-  // audit trail report
-  // asset utilization
-  // asset performance report
-  // 
 
   const assetHeader = ["Code", "Asset", "Status", "Purchase Date"];
   const assetTransferHeader = ["Asset", "From", "To", "Schedule Date"];
@@ -226,7 +231,6 @@ const ReportScreen = ({ navigation, route }) => {
         .then((responseJson) => {
           setReportData(responseJson.data);
           setLoading(false);
-          console.log("data", responseJson)
         })
         .catch((error) => {
           setLoading(false);
@@ -249,11 +253,11 @@ const ReportScreen = ({ navigation, route }) => {
   }
 
   return (
-    <View style={{ justifyContent: 'center', backgroundColor: '#f2f3f8', }}>
+    <ScrollView style={{ backgroundColor: '#f2f3f8', }}>
       <Loader loading={loading} />
       <View style={{ marginTop: 20 }}>
         <TouchableOpacity onPress={() => setVisible(true)}>
-        {/* <TouchableOpacity onPress={()=>createPDF()}> */}
+          {/* <TouchableOpacity onPress={()=>createPDF()}> */}
           <Input
             label="Report Type"
             labelStyle={styles.label}
@@ -336,7 +340,7 @@ const ReportScreen = ({ navigation, route }) => {
             right={<TextInput.Icon name="calendar" onPress={showPickerTo} />}
           /> */}
         </View>
-        <Button buttonStyle={{ marginVertical: 5, marginHorizontal: 20, borderRadius: 5}} onPress={() => handleSubmit()}>
+        <Button buttonStyle={{ marginVertical: 5, marginHorizontal: 20, borderRadius: 5 }} onPress={() => handleSubmit()}>
           <Icon name="doc" type="simple-line-icon" color="white" /> Generate
         </Button>
         <ScrollView style={{ marginTop: 20, backgroundColor: 'white', marginHorizontal: 3, borderWidth: 1, borderColor: 'lightgray' }}>
@@ -378,7 +382,7 @@ const ReportScreen = ({ navigation, route }) => {
                   </View>
                 ))}
               </>
-              : reportType === 'Asset Transfer' ?
+              : reportType === 'Asset Movement' ?
                 <>
                   <View style={styles.tableRow}>
                     <Text style={styles.tableHeader}>Asset</Text>
@@ -386,14 +390,16 @@ const ReportScreen = ({ navigation, route }) => {
                     <Text style={styles.tableHeader}>To</Text>
                     <Text style={styles.tableHeader}>Schedule</Text>
                   </View>
-                  {reportData.map(item => (
-                    <View key={item.id} style={styles.tableRow}>
-                      <Text style={styles.tableCell}>{item.asset_name}</Text>
-                      <Text style={styles.tableCell}>{item.from}</Text>
-                      <Text style={styles.tableCell}>{item.to}</Text>
-                      <Text style={styles.tableCell}>{item.transfer_date}</Text>
-                    </View>
-                  ))}
+                  {reportData.map((item, index) => {
+                    return (
+                      <View key={item.id} style={styles.tableRow}>
+                        <Text style={styles.tableCell}>{item.asset_name}</Text>
+                        <Text style={styles.tableCell}>{item.from ? item.from : item.orig_asset_loc}</Text>
+                        <Text style={styles.tableCell}>{item.to}</Text>
+                        <Text style={styles.tableCell}>{item.transfer_date}</Text>
+                      </View>
+                    )
+                  })}
                 </>
                 : reportType === 'Depreciation' ?
                   <>
@@ -456,20 +462,79 @@ const ReportScreen = ({ navigation, route }) => {
                     })}
                   </>
 
-                  :
-                  <>
-                    <View style={{ marginTop: 10, alignContent: 'center', marginBottom: 5 }}>
-                      <Text style={{ color: 'black', fontSize: 14, textAlign: 'center' }}>No data found</Text>
-                    </View>
-                  </>
+                  : reportType === 'Audit Trail' ?
+                    <>
+                      <View style={styles.tableRow}>
+                        <Text style={styles.tableHeader}>User</Text>
+                        <Text style={styles.tableHeader}>Action</Text>
+                        <Text style={styles.tableHeader}>Transaction Date</Text>
+                      </View>
+                      {reportData?.map((item, index) => {
+                        return (
+                          <View key={item.id} style={styles.tableRow}>
+                            <Text style={styles.tableCell}>{item.name}</Text>
+                            <Text style={styles.tableCell}>{item.log_description}</Text>
+                            <Text style={styles.tableCell}>{item.created_date}</Text>
+                          </View>
+                        )
+                      })}
+                    </>
+                    : reportType === 'Asset Utilization' ?
+                      <>
+                        <View style={styles.tableRow}>
+                          <Text style={styles.tableHeader}>Asset</Text>
+                          <Text style={styles.tableHeader}>Status</Text>
+                          <Text style={styles.tableHeader}>Utilization</Text>
+                        </View>
+                        {reportData?.map((item, index) => {
+                          return (
+                            <View key={item.id} style={styles.tableRow}>
+                              <Text style={styles.tableCell}>{item.asset_name}</Text>
+                              <Text style={styles.tableCell}>{item.status}</Text>
+                              <Text style={styles.tableCell}>{(item.utilizationPurpose != '') ? item.utilizationPurpose : (item.disposeReason != '') ? item.disposeReason : 'No data'}</Text>
+                            </View>
+                          )
+                        })}
+                      </>
+                      : reportType === 'Asset Performance' ?
+                        <>
+                          <View style={styles.tableRow}>
+                            <Text style={styles.tableHeader}>Asset</Text>
+                            <Text style={styles.tableHeader}>Status</Text>
+                            <Text style={styles.tableHeader}>Purchase Date</Text>
+                            <Text style={styles.tableHeader}>Up/Down Time(Days)</Text>
+                          </View>
+                          {reportData?.map((item, index) => {
+                            console.log(item)
+                            return (
+                              <View key={item.id} style={styles.tableRow}>
+                                <Text style={styles.tableCell}>{item.asset_name}</Text>
+                                <Text style={styles.tableCell}>{item.status}</Text>
+                                <Text style={styles.tableCell}>{item.purchase_date}</Text>
+                                {item.status == 'Active' ? (
+                                  <Text style={[styles.tableCell, { color: 'green' }]}>{item.uptime_or_downtime}</Text>
+                                ) : (
+                                  <Text style={[styles.tableCell, { color: 'red' }]}>{item.uptime_or_downtime}</Text>
+                                )}
+                              </View>
+                            )
+                          })}
+                        </>
+                        :
+                        <>
+                          <View style={{ marginTop: 10, alignContent: 'center', marginBottom: 5 }}>
+                            <Text style={{ color: 'black', fontSize: 14, textAlign: 'center' }}>No data found</Text>
+                          </View>
+                        </>
           }
 
         </ScrollView>
         <Overlay isVisible={visible} onBackdropPress={() => setVisible(false)} overlayStyle={{ height: '50%', width: '80%' }}>
           <Text>Select Report</Text>
           <ScrollView>
-            {reports?.map((item, index) => {
-              return (
+            {reports
+              ?.filter((item) => currentUserData?.access_level !== 'Maintenance' || item.value !== 'Asset Transfer') // Filter out "asset_transfer" for "Maintenance"
+              .map((item, index) => (
                 <ListItem key={index} bottomDivider style={{ height: 'auto' }} onPress={() => selectReportType(item.label)}>
                   <Icon name="tag" type="simple-line-icon" size={15} />
                   <ListItem.Content >
@@ -477,24 +542,24 @@ const ReportScreen = ({ navigation, route }) => {
                   </ListItem.Content>
                 </ListItem>
               )
-            })}
+              )}
           </ScrollView>
         </Overlay>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={{
-            borderRadius: 3, 
-            backgroundColor: 'grey', 
-            width: '40%', 
-            marginTop: 5,   
+            borderRadius: 3,
+            backgroundColor: 'grey',
+            width: '40%',
+            marginTop: 5,
             padding: 5,
             marginVertical: 20,
             alignSelf: 'center'
           }}
-          onPress={()=> createPDF()}
-          ><Text style={{textAlign: 'center', color: '#fff'}}>EXPORT TO PDF</Text></TouchableOpacity>
+          onPress={() => createPDF()}
+        ><Text style={{ textAlign: 'center', color: '#fff' }}>EXPORT TO PDF</Text></TouchableOpacity>
       </View>
-      <Toast/>
-    </View>
+      <Toast />
+    </ScrollView>
   );
 };
 

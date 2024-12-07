@@ -21,6 +21,8 @@ const AssetScreen = ({ navigation, route }) => {
   const currentUserData = useSelector(selectUserData);
   const isFocused = useIsFocused();
 
+  console.log("currentUserData", currentUserData.access_level)
+
   const [open, setOpen] = useState(false);
   const onStateChange = ({ open }) => setOpen(open);
 
@@ -70,7 +72,7 @@ const AssetScreen = ({ navigation, route }) => {
   };
 
   const getAssets = (sort) => {
-    // setLoading(true)
+    setLoading(true)
     let dataToSend = { sort: sort };
     let formBody = [];
 
@@ -92,7 +94,6 @@ const AssetScreen = ({ navigation, route }) => {
     })
       .then((response) => response.json())
       .then((responseJson) => {
-        console.log('rawrasdasd',responseJson)
         setLoading(false);
         setAssets(responseJson.data);
       })
@@ -114,20 +115,68 @@ const AssetScreen = ({ navigation, route }) => {
   // }, [])
 
   const sortDropdown = [
-		{ value: "Type", label: "Type"},
-		{ value: "Location", label: "Location" },
-	]
+    { value: "Type", label: "Type" },
+    { value: "Location", label: "Location" },
+  ]
 
-  
-	const onSelectSort = (item) => {
+
+  const onSelectSort = (item) => {
     getAssets(item.value);
-		setModalVisible(!modalVisible);
-	}
+    setModalVisible(!modalVisible);
+  }
 
   useFocusEffect(
     React.useCallback(() => {
       getAssets();
     }, []),
+  );
+
+  const currentUserAccesLevel = {
+    access_level: currentUserData.access_level, // This value will change dynamically
+  };
+  
+  const actions = [
+    {
+      icon: 'plus',
+      label: 'Add',
+      labelTextColor: '#000',
+      labelStyle: { backgroundColor: '#fff' },
+      style: { backgroundColor: '#fff' },
+      onPress: () => navigation.navigate("AddAssetScreen"),
+      restrictedTo: ["Maintenance"], // Restricted for maintenance
+    },
+    {
+      icon: 'map-marker',
+      label: 'Locations',
+      labelTextColor: '#000',
+      labelStyle: { backgroundColor: '#fff' },
+      style: { backgroundColor: '#fff' },
+      onPress: () => navigation.navigate("LocationScreen"),
+      restrictedTo: ["Maintenance"], // Restricted for maintenance
+    },
+    {
+      icon: 'truck',
+      label: 'Transfer',
+      labelTextColor: '#000',
+      labelStyle: { backgroundColor: '#fff' },
+      style: { backgroundColor: '#fff' },
+      onPress: () => navigation.navigate("AssetTransferScreen"),
+      restrictedTo: ["Maintenance"], // Restricted for maintenance
+    },
+    {
+      icon: 'qrcode-scan',
+      label: 'Scan',
+      labelTextColor: '#000',
+      labelStyle: { backgroundColor: '#fff' },
+      style: { backgroundColor: '#fff' },
+      onPress: () => navigation.navigate("TrackerScreen"),
+      restrictedTo: [], // No restrictions
+    },
+  ];
+  
+  // Use the dynamic access level to filter actions
+  const filteredActions = actions.filter(
+    (action) => !action.restrictedTo || !action.restrictedTo.includes(currentUserAccesLevel.access_level)
   );
 
   return (
@@ -142,41 +191,7 @@ const AssetScreen = ({ navigation, route }) => {
             icon={open ? 'cog' : 'more'}
             color="white"
             fabStyle={{ backgroundColor: '#fc8953' }}
-            actions={[
-              {
-                icon: 'plus',
-                label: 'Add',
-                labelTextColor: '#000',
-                labelStyle: { backgroundColor: '#fff' },
-                style: { backgroundColor: '#fff' },
-                onPress: () => navigation.navigate("AddAssetScreen"),
-              },
-              {
-                icon: 'map-marker',
-                label: 'Locations',
-                labelTextColor: '#000',
-                labelStyle: { backgroundColor: '#fff' },
-                style: { backgroundColor: '#fff' },
-                onPress: () => navigation.navigate("LocationScreen"),
-              },
-              {
-                icon: 'truck',
-                label: 'Transfer',
-                labelTextColor: '#000',
-                labelStyle: { backgroundColor: '#fff' },
-                style: { backgroundColor: '#fff' },
-                onPress: () => navigation.navigate("AssetTransferScreen"),
-              },
-              {
-                icon: 'qrcode-scan',
-                label: 'Scan',
-                labelTextColor: '#000',
-                labelStyle: { backgroundColor: '#fff' },
-                style: { backgroundColor: '#fff' },
-                onPress: () => navigation.navigate("TrackerScreen"),
-              },
-            ]}
-
+            actions={filteredActions}
             onStateChange={onStateChange}
           />
         )}
@@ -188,9 +203,10 @@ const AssetScreen = ({ navigation, route }) => {
               placeholder="Search"
               onChangeText={handleSearchQueryChange}
               value={search}
-              style={{ margin: 2, flex: 1, borderRadius: 5, backgroundColor: 'white' }}
+              style={{ margin: 2, flex: 1, borderRadius: 5, backgroundColor: 'white'}}
               placeholderTextColor={"black"}
               iconColor='black'
+              color='black'
             />
             <Button buttonStyle={{ marginVertical: 5, marginLeft: 5, borderRadius: 5 }} onPress={() => onModalClick()}>
               <Icon name="sort" color="white" />
@@ -244,7 +260,7 @@ const AssetScreen = ({ navigation, route }) => {
                       </View>
                       <View style={styles.item}>
                         <View style={{}}>
-                          <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 14, fontWeight: '500' }}>Current Location: <Text adjustsFontSizeToFit style={{ fontSize: 14, fontWeight: 'bold' }}>{item.loc_name ? item.loc_name : 'N/A'}</Text></Text>
+                          <Text adjustsFontSizeToFit style={{ color: '#404040', fontSize: 14, fontWeight: '500' }}>Current Location: <Text adjustsFontSizeToFit style={{ fontSize: 14, fontWeight: 'bold' }}>{item.curr_loc_name ? item.curr_loc_name : item.loc_name}</Text></Text>
                         </View>
                       </View>
                     </View>
@@ -254,7 +270,7 @@ const AssetScreen = ({ navigation, route }) => {
             })
           )}
           <Overlay isVisible={modalVisible} onBackdropPress={() => setModalVisible(!modalVisible)} overlayStyle={{ height: '50%', width: '80%' }}>
-            <Text style={{color: 'black'}}>Sort By</Text>
+            <Text style={{ color: 'black' }}>Sort By</Text>
             <ScrollView>
               {sortDropdown?.map((item, index) => {
                 return (

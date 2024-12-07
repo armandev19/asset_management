@@ -9,10 +9,13 @@ import Swiper from 'react-native-swiper';
 import { Icon, Overlay, Button } from '@rneui/themed';
 import RNFS from "react-native-fs";
 import Toast from 'react-native-toast-message';
+import { useSelector } from 'react-redux';
+import { selectUserData, setUserData } from './redux/navSlice';
 
 const AssetDetailsScreen = ({ navigation, route }) => {
   const params = route.params;
 
+  const currentUserData = useSelector(selectUserData);
   const [details, setAssetDetails] = useState([]);
   const [loading, setLoading] = useState(false);
   const isFocused = useIsFocused();
@@ -20,7 +23,6 @@ const AssetDetailsScreen = ({ navigation, route }) => {
   const [open, setOpen] = useState(false);
   const onStateChange = ({ open }) => setOpen(open);
   const [modalVisible, setModalVisible] = useState(false);
-
   const showToast = (type, message) => {
     Toast.show({
       type: type,
@@ -49,7 +51,7 @@ const AssetDetailsScreen = ({ navigation, route }) => {
   };
 
   const getAssetDetails = async () => {
-    // setLoading(true);
+    setLoading(true);
     let dataToSend = { id: params };
     let formBody = [];
     for (let key in dataToSend) {
@@ -212,7 +214,7 @@ const AssetDetailsScreen = ({ navigation, route }) => {
         {details.status === 'Active' &&
         <View style={{ flexDirection: 'row', marginBottom: 3 }}>
           <Text style={styles.col_title}>Purpose </Text>
-          <Text style={styles.col_content}>{details.utilizationPurpose ? details.utilizationPurpose : 'N/A'}</Text>
+          <Text style={styles.col_content}>{details.utilizationPurpose ? details.utilizationPurpose : 'Not displayed'}</Text>
         </View>
         }
         <View style={{ flexDirection: 'row', marginBottom: 3 }}>

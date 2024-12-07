@@ -15,6 +15,7 @@ import { useSelector } from 'react-redux';
 import DropDown from "react-native-paper-dropdown";
 import { Input, Icon, BottomSheet, ListItem, Dialog, Button, Overlay } from '@rneui/themed';
 import { TouchableOpacity } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 
 const AddAssetTransferScreen = ({ route, navigation }) => {
@@ -25,15 +26,26 @@ const AddAssetTransferScreen = ({ route, navigation }) => {
   const [asset, setAsset] = useState([]);
   const [targetLocation, setTargetLocation] = useState("");
   const [remarks, setRemarks] = useState("");
+  const [transferDate, setTransferDate] = useState("");
+  const [date, setDate] = useState(new Date(Date.now()));
   const [assetList, setAssetList] = useState([]);
   const [locationList, setLocationList] = useState([]);
   const [selectedAssets, setSelectedAssets] = useState([])
   const [visible, setVisible] = useState(false);
   const [visibleLocation, setVisibleLocation] = useState(false);
   const [targetLocationName, setTargetLocationName] = useState('');
-
+  const [isPickerShow, setIsPickerShow] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
 
+
+  const onChange = (event, value) => {
+    setIsPickerShow(false);
+    setTransferDate(value);
+  };
+
+  const showPicker = () => {
+    setIsPickerShow(true);
+  };
   const toggleCheckbox = (item) => {
     setSelectedItems((prevSelectedItems) => {
       if (prevSelectedItems.includes(item.value)) {
@@ -79,7 +91,7 @@ const AddAssetTransferScreen = ({ route, navigation }) => {
       setLoading(false);
       return;
     }
-    let dataToSend = { asset: JSON.stringify(selectedItems), targetLocation: targetLocation, remarks: remarks, created_by: currentUserData.id };
+    let dataToSend = { asset: JSON.stringify(selectedItems), targetLocation: targetLocation, transfer_date: transferDate, remarks: remarks, created_by: currentUserData.id };
     let formBody = [];
     for (let key in dataToSend) {
       let encodedKey = encodeURIComponent(key);
@@ -203,6 +215,28 @@ const AddAssetTransferScreen = ({ route, navigation }) => {
                 value={targetLocationName}
                 editable={false}
                 rightIcon={{ type: 'simple-line-icon', name: 'arrow-down', size: 15 }}
+              />
+            </TouchableOpacity>
+            {isPickerShow && (
+              <DateTimePicker
+                value={date}
+                mode={'date'}
+                onChange={onChange}
+                style={styles.datePicker}
+                format='MM DD YYYY'
+              />
+            )}
+            <TouchableOpacity
+              onPress={showPicker}>
+              <Input
+                label="Transfer Date *"
+                labelStyle={styles.label}
+                inputContainerStyle={styles.inputContainer}
+                inputStyle={{ fontSize: 15 }}
+                placeholder={"Select date"}
+                value={date.toDateString()}
+                editable={false}
+                leftIcon={{ type: 'feather', name: 'calendar', size: 16 }}
               />
             </TouchableOpacity>
             <Input

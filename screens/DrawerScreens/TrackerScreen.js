@@ -17,10 +17,11 @@ const TrackerScreen = ({ navigation, route }) => {
     setLoading(true)
     setScannedAssetCode(data);
     getAssetDetails(data); // Ensure the function is awaited if asynchronous
-    
+
   };
 
   const getAssetDetails = (data) => {
+
     let dataToSend = { asset_code: data };
     let formBody = [];
     for (let key in dataToSend) {
@@ -30,17 +31,19 @@ const TrackerScreen = ({ navigation, route }) => {
     }
 
     formBody = formBody.join('&');
-    
-    fetch(global.url+'getAssetDetailsQR.php', {
+
+    fetch(global.url + 'getAssetDetailsQR.php', {
       method: 'POST',
       body: formBody,
-      headers: { "bypass-tunnel-reminder": "true",
+      headers: {
+        "bypass-tunnel-reminder": "true",
         'Content-Type':
-        'application/x-www-form-urlencoded;charset=UTF-8',
+          'application/x-www-form-urlencoded;charset=UTF-8',
       },
     })
       .then((response) => response.json())
       .then((responseJson) => {
+        console.log(responseJson)
         setLoading(false);
         setAssetDetails(responseJson.data[0]);
       })
@@ -84,14 +87,7 @@ const TrackerScreen = ({ navigation, route }) => {
             </View>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
               <Text style={{ color: "grey", fontSize: 20 }}>Status: </Text>
-              {details.status === 'Operational' ? (
-                <Text style={{ color: "#2eb82e", fontSize: 20 }}>{details.status}</Text>
-              )
-                : details.status === 'Operational' ? (
-                  <Text style={{ color: "yellow", fontSize: 20 }}>{details.status}</Text>
-                ) :
-                  <Text style={{ color: "yellow", fontSize: 20 }}>{details.status}</Text>
-              }
+              <Text style={{ color: "grey", fontSize: 20 }}>{details.status}</Text>
             </View>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
               <Text style={{ color: "grey", fontSize: 20 }}>Location: </Text>
@@ -103,11 +99,11 @@ const TrackerScreen = ({ navigation, route }) => {
             </View>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
               <Text style={{ color: "grey", fontSize: 20 }}>Maintenance: </Text>
-              <Text style={{ color: "grey", fontSize: 20 }}>{assetMaintenance.length > 0 ? assetMaintenance.schedule : 'N/A'}</Text>
+              <Text style={{ color: "grey", fontSize: 20 }}>{assetMaintenance.length > 0 ? assetMaintenance.schedule : 'No data'}</Text>
             </View>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
               <Text style={{ color: "grey", fontSize: 20 }}>Transfer: </Text>
-              <Text style={{ color: "grey", fontSize: 20 }}>{assetTransfer.length > 0 ? assetTransfer.schedule : 'N/A'}</Text>
+              <Text style={{ color: "grey", fontSize: 20 }}>{assetTransfer.length > 0 ? assetTransfer.schedule : 'No data'}</Text>
             </View>
           </View>
           <View style={{ width: "50%", alignSelf: 'center', marginTop: 20 }}>

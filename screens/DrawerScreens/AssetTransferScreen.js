@@ -184,6 +184,7 @@ const AssetTransferScreen = ({ navigation, route }) => {
 
   return (
     <View style={{ justifyContent: 'center', backgroundColor: '#f2f3f8', }}>
+      <Loader loading={loading} />
       <View style={{ padding: 6, borderRadius: 20 }}>
         <View style={{ flexDirection: 'row' }}>
           <Searchbar
@@ -193,6 +194,7 @@ const AssetTransferScreen = ({ navigation, route }) => {
             style={{ margin: 2, flex: 1, borderRadius: 5, backgroundColor: 'white' }}
             placeholderTextColor={"black"}
             iconColor='black'
+            color='black'
           />
           <Button buttonStyle={{ marginVertical: 5, marginLeft: 5, borderRadius: 5 }} onPress={() => navigation.navigate('AddAssetTransferScreen')}>
             <Icon name="add" color="white" />
@@ -200,7 +202,9 @@ const AssetTransferScreen = ({ navigation, route }) => {
         </View>
       </View>
       <ScrollView style={{ padding: 5, }} contentContainerStyle={{ paddingBottom: 40 }}>
-        {assets && assets?.map((item, index) => {
+      {assets?.length == 0 ? (
+            <Text style={{ color: 'black', fontWeight: 'bold', textAlign: 'center' }}>No results found.</Text>
+          ) : (assets?.map((item, index) => {
           return (
             <TouchableOpacity
               style={{
@@ -255,7 +259,7 @@ const AssetTransferScreen = ({ navigation, route }) => {
               </View>
             </TouchableOpacity>
           )
-        })}
+        }))}
       </ScrollView>
       <Overlay isVisible={modalVisible} onBackdropPress={() => setModalVisible(false)} overlayStyle={{ height: '20%', width: '80%' }}>
 
@@ -291,7 +295,7 @@ const AssetTransferScreen = ({ navigation, route }) => {
           </View>
         </KeyboardAvoidingView>
       </Overlay>
-      <Toast/>
+      <Toast />
     </View>
   )
 };

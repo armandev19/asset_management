@@ -66,19 +66,17 @@ const LoginScreen = ({navigation}) => {
       formBody.push(encodedKey + '=' + encodedValue);
     }
     formBody = formBody.join('&');
- 
     fetch(global.url+'loginValidation.php', {
       method: 'POST',
       body: formBody,
       headers: { 
-        "bypass-tunnel-reminder": "true",
         'Content-Type':
         'application/x-www-form-urlencoded;charset=UTF-8',
       },
     })
       .then((response) => response.json())
       .then((responseJson) => {
-        console.log(responseJson)
+        // console.log(responseJson)
         setLoading(false);
         if (responseJson.status === 'success') {
           AsyncStorage.setItem('user_id', JSON.stringify(responseJson.user_data));

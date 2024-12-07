@@ -16,10 +16,10 @@ admin.initializeApp({
 });
 
 const db = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: 'YgtDGdmoEn',
-  database: 'asset_management',
+  host: 'srv1632.hstgr.io',
+  user: 'u601949799_ams',
+  password: '#5]=xk2y@S',
+  database: 'u601949799_ams',
 });
 
 // localhost', 'root', 'YgtDGdmoEn'
@@ -35,7 +35,7 @@ db.connect((err) => {
 let accessToken;
 async function getAccessToken() {
   const auth = new GoogleAuth({
-    keyFilename: './asset-54ae3-9db6a8994ad7.json',
+    keyFilename: './asset-54ae3-4d4be887c78a.json',
     scopes: ['https://www.googleapis.com/auth/cloud-platform'], // Scope for FCM HTTP v1 API
   });
 
@@ -187,7 +187,7 @@ function maintenanceReminder() {
 }
 
  /* THIS IS THE CRONJOB */
-cron.schedule('08 16 * * *', maintenanceReminder, {
+cron.schedule('59 00 * * *', maintenanceReminder, {
   scheduled: true,
   timezone: "Asia/Kuala_Lumpur" // Optional: specify your timezone
 });

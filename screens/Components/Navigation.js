@@ -53,6 +53,8 @@ const Navigation = (props) => {
   const [userEmail, setUserEmail] = useState('');
   const [userPassword, setUserPassword] = useState('');
   const dispatch = useDispatch();
+  
+  const currentUserData = useSelector(selectUserData);
 
   const showAlert = () => {
     Alert.alert(
@@ -102,6 +104,20 @@ const Navigation = (props) => {
           component={AssetScreen}
           options={{
             title: 'Assets',
+            headerStyle: {
+              backgroundColor: '#fc8953',
+            },
+            headerTintColor: '#ffffff',
+            headerTitleStyle: {
+              fontWeight: 'bold',
+            },
+          }}
+        />
+        <Stack.Screen
+          name="AssetDetailsScreen"
+          component={AssetDetailsScreen}
+          options={{
+            title: 'Assets Details',
             headerStyle: {
               backgroundColor: '#fc8953',
             },
@@ -406,7 +422,7 @@ const Navigation = (props) => {
       </Stack.Navigator>
     );
   };
-
+  
   return (
         <Tab.Navigator
           initialRouteName="Home"
@@ -447,6 +463,7 @@ const Navigation = (props) => {
               ),
             }}
           />
+          {currentUserData.access_level == 'Admin' || currentUserData == 'Manager' ?
           <Tab.Screen name="UsersScreen" component={UsersStack} 
             options={{
               headerShown: false,
@@ -456,6 +473,7 @@ const Navigation = (props) => {
               ),
             }}
           />
+          : null }
           <Tab.Screen name="Logout"
             listeners={({ navigation }) => ({
               tabPress: e => {

@@ -18,7 +18,7 @@ import Toast from 'react-native-toast-message';
 
 const AssetMaintenanceScreen = ({ navigation, route }) => {
   const params = route.params;
-
+  console.log("params", params)
   const [loading, setLoading] = useState(false);
   const [assets, setAssets] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
@@ -332,13 +332,14 @@ const AssetMaintenanceScreen = ({ navigation, route }) => {
       </View>
       <View style={{ justifyContent: 'center', alignItems: "flex-start", padding: 10, backgroundColor: '#fff', elevation: 5, marginHorizontal: 8, borderRadius: 5, marginBottom: 5 }}>
         <Text style={{ color: 'black', fontWeight: '500', fontSize: 14 }}>Asset Name: {params.asset_name}</Text>
-        <Text style={{ color: 'black', fontWeight: '500', fontSize: 14 }}>Status: {params.status}</Text>
+        <Text style={{ color: 'black', fontWeight: '500', fontSize: 14 }}>Status: {params.maintenance_status}</Text>
       </View>
       <ScrollView style={{ paddingHorizontal: 5, marginTop: 5 }}>
         {assets?.length == 0 ? (
           <Text style={{ color: 'black', fontWeight: 'bold', textAlign: 'center' }}>No results found.</Text>
         ) : (
           assets?.map((item, index) => {
+            console.log("", params.maintenance_status)
             const statusColor = item.status === 'Completed' ? 'green' : item.status === 'Pending' ? 'red' : 'orange';
             console.log(statusColor)
             return (

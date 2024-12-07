@@ -21,7 +21,6 @@ import PushNotification from 'react-native-push-notification';
 import { Icon, Overlay, ListItem, Divider } from '@rneui/themed';
 
 const HomeScreen = ({ navigation, props }) => {
-  console.log("navigation", navigation.navigate)
   // const [userData, setUserData] = useState({});
   let currentDate = moment().format('ddd MMM DD, YYYY');
   const [users, setUsers] = useState({});
@@ -179,7 +178,6 @@ const HomeScreen = ({ navigation, props }) => {
     })
       .then((response) => response.json())
       .then(data => {
-        console.log("mainte", data.schedMaintenanceToday)
         setOperationalAssets(data.operational);
         setNewAssets(data.newAssets);
         setForMaintenanceAssets(data.forMaintenance);
@@ -422,6 +420,12 @@ const HomeScreen = ({ navigation, props }) => {
     }
   }, [])
 
+  useFocusEffect(
+    React.useCallback(() => {
+      test();
+    }, []),
+  );
+
   const closeModal = (val) => {
     setFilterShow(val);
   };
@@ -493,24 +497,24 @@ const HomeScreen = ({ navigation, props }) => {
                 </View>
               </View>
             }
-            {assetTransferShow &&
+            {currentUserData.access_level != 'Maintenance' && assetTransferShow && (
               <TouchableOpacity style={styles.cardDataContainer} onPress={() => navigation.navigate('AssetTransferScreen')}>
                 {/* <View  onPress={() => navigation.navigate('AssetTransferScreen')}> */}
-                  <View style={{ padding: 10, marginHorizontal: 5, marginVertical: 5 }}>
-                    <Icon
-                      type="feather"
-                      name='truck'
-                      size={35}
-                      color={"#fc8953"}
-                    />
-                  </View>
-                  <View style={{ padding: 5, alignItems: 'flex-end' }}>
-                    <Text style={styles.cardDataDescription}>Asset Transfers</Text>
-                    <Text style={styles.cardData}>{assetTransfer}</Text>
-                  </View>
+                <View style={{ padding: 10, marginHorizontal: 5, marginVertical: 5 }}>
+                  <Icon
+                    type="feather"
+                    name='truck'
+                    size={35}
+                    color={"#fc8953"}
+                  />
+                </View>
+                <View style={{ padding: 5, alignItems: 'flex-end' }}>
+                  <Text style={styles.cardDataDescription}>Asset Transfers</Text>
+                  <Text style={styles.cardData}>{assetTransfer}</Text>
+                </View>
                 {/* </View> */}
               </TouchableOpacity>
-            }
+            )}
             {underMaintenanceShow &&
               <View style={styles.cardDataContainer}>
                 <View style={{ padding: 10, marginHorizontal: 5, marginVertical: 5 }}>
@@ -567,10 +571,11 @@ const HomeScreen = ({ navigation, props }) => {
                 <View>
                   {schedMaintenanceToday?.length > 0 ? (
                     schedMaintenanceToday.map((item, index) => {
+                      console.log("item", item)
                       const statusColor = item.status === 'Pending' ? 'red' : item.status === 'Ongoing' ? 'orange' : 'green';
                       const schedDate = moment(item.schedule).format('ddd, MMM DD');
                       return (
-                        <View key={index} style={{ padding: 3 }}>
+                        <TouchableOpacity key={index} style={{ padding: 3 }} onPress={()=>navigation.navigate("AssetDetailsScreen", item.asset_code)}>
                           <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingBottom: 5 }}>
                             <View style={{ width: '50%' }}>
                               <Text style={{ fontSize: 13, fontWeight: '500', color: 'black' }}>{item.asset_code}</Text>
@@ -583,7 +588,7 @@ const HomeScreen = ({ navigation, props }) => {
                             </View>
                           </View>
                           <Divider />
-                        </View>
+                        </TouchableOpacity>
                       );
                     })
                   ) : (
@@ -634,16 +639,22 @@ const HomeScreen = ({ navigation, props }) => {
             </View> */}
             <Overlay isVisible={settingsShow} onBackdropPress={() => setSettingsShow(!settingsShow)} overlayStyle={{ height: '50%', width: '80%' }}>
               <ScrollView>
-                {settingsDisplay?.map((item, index) => {
-                  return (
+                {settingsDisplay
+                  ?.filter((item) => currentUserData?.access_level !== 'Maintenance' || item.value !== 'Asset Transfers') // Filter out "asset_transfer" for "Maintenance"
+                  .map((item, index) => (
                     <ListItem key={index} bottomDivider style={{ height: 'auto' }}>
-                      <ListItem.CheckBox checked={selectedItems.includes(item.value)} onPress={() => toggleCheckbox(item)} size={18} />
-                      <ListItem.Content >
-                        <ListItem.Title style={{ fontSize: 14 }}>{item.label || "No name"}</ListItem.Title>
+                      <ListItem.CheckBox
+                        checked={selectedItems.includes(item.value)}
+                        onPress={() => toggleCheckbox(item)}
+                        size={18}
+                      />
+                      <ListItem.Content>
+                        <ListItem.Title style={{ fontSize: 14 }}>
+                          {item.label || "No name"}
+                        </ListItem.Title>
                       </ListItem.Content>
                     </ListItem>
-                  )
-                })}
+                  ))}
               </ScrollView>
             </Overlay>
           </View>

@@ -40,6 +40,11 @@ const AddAssetMaintenanceScreen = ({route, navigation}) => {
   };
 	
 	const saveAsset = () => {
+    if (!name || !description || !price || !purchaseDate || !location) {
+      alert("Please fill in all required fields.");
+      setLoading(false);
+      return;
+    }
 		setLoading(true);
 		let dataToSend = { name: name, description : description, price: price, purchaseDate: date, location: location, created_by: currentUserData.id };
 		let formBody = [];
